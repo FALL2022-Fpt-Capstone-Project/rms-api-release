@@ -1,4 +1,4 @@
-package vn.com.fpt.service.services;
+package vn.com.fpt.service.rooms;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

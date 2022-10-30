@@ -1,4 +1,4 @@
-package vn.com.fpt.service.services;
+package vn.com.fpt.service.rooms;
 
 import vn.com.fpt.requests.RoomsRequest;
 import vn.com.fpt.responses.RoomsResponse;

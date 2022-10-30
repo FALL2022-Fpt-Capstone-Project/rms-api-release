@@ -30,7 +30,6 @@ public class BasicAssets extends BaseEntity{
     private String assetName;
 
     @Column(name = "asset_type_id")
-    @JsonProperty("asset_type_id")
     private Long assetTypeId;
 
 }
