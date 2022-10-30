@@ -12,7 +12,6 @@ import java.math.BigInteger;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @Entity
 @SqlResultSetMapping(name = GeneralServiceDTO.SQL_RESULT_SET_MAPPING,
         classes = @ConstructorResult(
@@ -20,9 +19,10 @@ import java.math.BigInteger;
                 columns = {
                         @ColumnResult(name = "general_service_id", type = BigInteger.class),
                         @ColumnResult(name = "service_price", type = Double.class),
+                        @ColumnResult(name = "note", type = String.class),
                         @ColumnResult(name = "service_type_id", type = BigInteger.class),
                         @ColumnResult(name = "service_type_name", type = String.class),
-                        @ColumnResult(name = "service_type_id", type = BigInteger.class),
+                        @ColumnResult(name = "service_id", type = BigInteger.class),
                         @ColumnResult(name = "service_name", type = String.class),
                         @ColumnResult(name = "service_show_name", type = String.class),
                 }))
@@ -37,7 +37,7 @@ public class GeneralServiceDTO implements Serializable {
 
     private String note;
 
-    private Long serviceTypeId;
+    private BigInteger serviceTypeId;
 
     private String serviceTypeName;
 
@@ -47,7 +47,7 @@ public class GeneralServiceDTO implements Serializable {
 
     private String serviceShowName;
 
-    public GeneralServiceDTO(BigInteger generalServiceId, Double servicePrice, String note, Long serviceTypeId, String serviceTypeName, BigInteger serviceId, String serviceName, String serviceShowName) {
+    public GeneralServiceDTO(BigInteger generalServiceId, Double servicePrice, String note, BigInteger serviceTypeId, String serviceTypeName, BigInteger serviceId, String serviceName, String serviceShowName) {
         this.generalServiceId = generalServiceId;
         this.servicePrice = servicePrice;
         this.note = note;

@@ -24,7 +24,7 @@ public class ServicesServiceImpl implements ServicesService {
         selectBuild.append("mgs.note,");
         selectBuild.append("mgs.service_type_id,");
         selectBuild.append("mst.service_type_name,");
-        selectBuild.append("mgs.service_type_id,");
+        selectBuild.append("mgs.service_id,");
         selectBuild.append("mbs.service_name,");
         selectBuild.append("mbs.service_show_name ");
 
