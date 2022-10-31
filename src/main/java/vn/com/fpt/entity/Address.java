@@ -8,6 +8,7 @@ import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 import vn.com.fpt.configs.AppConfigs;
 import vn.com.fpt.entity.authentication.Account;
+import vn.com.fpt.requests.AddContractRequest;
 import vn.com.fpt.requests.RegisterRequest;
 
 import javax.persistence.*;
@@ -47,12 +48,17 @@ public class Address extends BaseEntity {
     private Renters renters;
 
     public static Address of(RegisterRequest registerRequest) {
-       return Address.builder()
+        var address = Address.builder()
                 .addressCity(registerRequest.getAddressCity())
                 .addressDistrict(registerRequest.getAddressDistrict())
                 .addressWards(registerRequest.getAddressWards())
                 .addressMoreDetails(registerRequest.getAddressMoreDetail())
                 .build();
+        return address;
+    }
+
+    public static Address add() {
+        return null;
     }
 
 }
