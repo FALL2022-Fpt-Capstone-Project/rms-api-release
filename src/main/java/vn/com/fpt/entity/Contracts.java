@@ -1,15 +1,18 @@
 package vn.com.fpt.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicUpdate;
+import vn.com.fpt.common.utils.DateUtils;
 import vn.com.fpt.configs.AppConfigs;
+import vn.com.fpt.requests.AddContractRequest;
 
 import javax.persistence.*;
 import java.util.Date;
+
+import static vn.com.fpt.constants.ManagerConstants.CONTRACT_FOR_RENTER;
 
 
 @Entity
@@ -22,13 +25,9 @@ import java.util.Date;
 @Setter
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @AttributeOverride(name = "id", column = @Column(name = "contract_id"))
-public class Contracts {
+public class Contracts extends BaseEntity {
 
     public static final String TABLE_NAME = AppConfigs.TABLE_MANAGER + "contracts";
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     @Column(name = "contract_name")
     private String contractName;
@@ -72,4 +71,28 @@ public class Contracts {
 
     @Column(name = "contract_type")
     private Integer contractType;
+
+    public static Contracts of(AddContractRequest request) {
+        return Contracts.builder()
+                .contractName(request.getContractName())
+                .contractPrice(request.getContractPrice())
+                .contractDeposit(request.getContractDeposit())
+                .contractBillCycle(request.getContractBillCycle())
+                .contractPaymentCycle(request.getContractPaymentCycle())
+                .contractStartDate(DateUtils.parse(request.getContractStartDate(), DateUtils.DATE_FORMAT_3))
+                .contractEndDate(DateUtils.parse(request.getContractEndDate(), DateUtils.DATE_FORMAT_3))
+                .note(request.getContractNote())
+                .contractTerm(request.getContractTerm())
+                .renters(request.getRenterOldId())
+                .roomId(request.getRoomId())
+                .groupId(request.getGroupId()).build();
+    }
+
+    private static Contracts addForRenter(AddContractRequest request, Long operator) {
+        var renterContract = of(request);
+        renterContract.setContractType(CONTRACT_FOR_RENTER);
+        renterContract.setCreatedBy(operator);
+        renterContract.setCreatedAt(DateUtils.now());
+        return renterContract;
+    }
 }

@@ -36,7 +36,4 @@ public class RegisterRequest {
 
     private String addressMoreDetail;
 
-    private String createdDate;
-
-    private String createdBy;
 }

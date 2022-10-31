@@ -22,7 +22,7 @@ import static vn.com.fpt.configs.AppConfigs.MANAGER_PATH;
 import static vn.com.fpt.configs.AppConfigs.STAFF_PATH;
 
 @SecurityRequirement(name = "BearerAuth")
-@Tag(name = "Authentication", description = "Đăng nhập vào hệ thống")
+@Tag(name = "Staff manager", description = "Quản lý tài khoản cho nhân viên")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(StaffController.PATH)

@@ -16,7 +16,7 @@ import vn.com.fpt.responses.AccountResponse;
 import vn.com.fpt.service.authentication.AuthenticationService;
 import vn.com.fpt.common.utils.Operator;
 
-@Tag(name = "Staff Manager", description = "Quản lý tài khoản nhân viên")
+@Tag(name = "Đăng nhập vào hệ thống", description = "Đăng nhập vào hệ thống")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(AuthenticationController.PATH)
@@ -30,10 +30,14 @@ public class AuthenticationController {
         return AppResponse.success(authenticationService.login(request));
     }
 
-    @PostMapping("/add")
+    @PostMapping("/register")
     public ResponseEntity<BaseResponse<AccountResponse>> add(@RequestBody RegisterRequest request) {
         return AppResponse.success(authenticationService.register(request, Operator.operator()));
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<BaseResponse<String>> logout() {
+        return AppResponse.success(authenticationService.logout());
+    }
 
 }

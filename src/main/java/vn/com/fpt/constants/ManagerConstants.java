@@ -22,30 +22,31 @@ public class ManagerConstants {
     int[] PERMISSION_ALL = new int[]{PERMISSION_MATERIAL, PERMISSION_MONEY, PERMISSION_RECEIPT, PERMISSION_CONTRACT};
 
     //assets type
-    Long TYPE_BATH_ROOM = 1L;
-    Long TYPE_LIVING_ROOM = 2L;
-    Long TYPE_KITCHEN = 3L;
-    Long TYPE_BED_ROOM = 4L;
-    Long TYPE_ANOTHER = 5L;
-    Long TYPE_OFFICE = 6L;
-
+    public static final Long TYPE_BATH_ROOM = 1L;
+    public static final Long TYPE_LIVING_ROOM = 2L;
+    public static final Long TYPE_KITCHEN = 3L;
+    public static final Long TYPE_BED_ROOM = 4L;
+    public static final Long TYPE_ANOTHER = 5L;
+    public static final Long TYPE_OFFICE = 6L;
     //basic service
-    Long SERVICE_ELECTRIC = 1L;
-    Long SERVICE_WATER = 2L;
-    Long SERVICE_VEHICLES = 3L;
-    Long SERVICE_INTERNET = 4L;
-    Long SERVICE_CLEANING = 5L;
-    Long SERVICE_OTHER = 6L;
+    public static final Long SERVICE_ELECTRIC = 1L;
+    public static final Long SERVICE_WATER = 2L;
+    public static final Long SERVICE_VEHICLES = 3L;
+    public static final Long SERVICE_INTERNET = 4L;
+    public static final Long SERVICE_CLEANING = 5L;
+    public static final Long SERVICE_OTHER = 6L;
 
     //service types
-    Long SERVICE_TYPE_METER = 1L;
-    Long SERVICE_TYPE_MONTH = 2L;
-    Long SERVICE_TYPE_PERSON = 3L;
+    public static final Long SERVICE_TYPE_METER = 1L;
+    public static final Long SERVICE_TYPE_MONTH = 2L;
+    public static final Long SERVICE_TYPE_PERSON = 3L;
 
     //service default prices
-    Double ELECTRIC_DEFAULT_PRICE = 3500.0;
-    Double WATER_DEFAULT_PRICE = 30000.0;
-    Double INTERNET_DEFAULT_PRICE = 100000.0;
-    Double VEHICLES_DEFAULT_PRICE = 50000.0;
+    public static final Double ELECTRIC_DEFAULT_PRICE = 3500.0;
+    public static final Double WATER_DEFAULT_PRICE = 30000.0;
+    public static final Double INTERNET_DEFAULT_PRICE = 100000.0;
+    public static final Double VEHICLES_DEFAULT_PRICE = 50000.0;
+
+    public static final Integer CONTRACT_FOR_RENTER = 1;
 
 }
