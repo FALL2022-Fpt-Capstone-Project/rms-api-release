@@ -32,7 +32,7 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public ResponseEntity<BaseResponse<AccountResponse>> add(@RequestBody RegisterRequest request) {
-        return AppResponse.success(authenticationService.register(request, Operator.operator()));
+        return AppResponse.success(authenticationService.register(request, 1L));
     }
 
     @PostMapping("/logout")

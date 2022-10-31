@@ -83,12 +83,11 @@ public class Contracts extends BaseEntity {
                 .contractEndDate(DateUtils.parse(request.getContractEndDate(), DateUtils.DATE_FORMAT_3))
                 .note(request.getContractNote())
                 .contractTerm(request.getContractTerm())
-                .renters(request.getRenterOldId())
                 .roomId(request.getRoomId())
                 .groupId(request.getGroupId()).build();
     }
 
-    private static Contracts addForRenter(AddContractRequest request, Long operator) {
+    public static Contracts addForRenter(AddContractRequest request, Long operator) {
         var renterContract = of(request);
         renterContract.setContractType(CONTRACT_FOR_RENTER);
         renterContract.setCreatedBy(operator);
