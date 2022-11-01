@@ -80,6 +80,7 @@ public class AccountResponse {
         response.setAddressDistrict(account.getAddress().getAddressDistrict());
         response.setAddressWards(account.getAddress().getAddressWards());
         response.setAddressMoreDetails(account.getAddress().getAddressMoreDetails());
+        response.setIsDeactivate(account.isDeactivate());
 
         return response;
     }

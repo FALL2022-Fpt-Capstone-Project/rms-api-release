@@ -20,7 +20,7 @@ public class RegisterRequest {
     private String password;
 
     @NotBlank(message = "Thiếu thông tin quyền")
-    private Set<String> roles;
+    private String roles;
 
     private String fullName;
 
@@ -35,5 +35,7 @@ public class RegisterRequest {
     private String addressWards;
 
     private String addressMoreDetail;
+
+    private Boolean deactivate;
 
 }

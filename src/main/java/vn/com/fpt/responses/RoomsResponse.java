@@ -30,6 +30,8 @@ public class RoomsResponse {
 
     private Long contractId;
 
+    private Double roomPrice;
+
     public static RoomsResponse of(Rooms rooms) {
         return RoomsResponse.builder()
                 .roomId(rooms.getId())
@@ -39,6 +41,7 @@ public class RoomsResponse {
                 .roomCurrentWaterIndex(rooms.getRoomCurrentWaterIndex())
                 .roomCurrentElectricIndex(rooms.getRoomCurrentElectricIndex())
                 .groupId(rooms.getGroupId())
+                .roomPrice(rooms.getRoomPrice())
                 .contractId(rooms.getContractId()).build();
     }
 }

@@ -45,4 +45,7 @@ public class Rooms extends BaseEntity{
 
     @Column(name = "contract_id")
     private Long contractId;
+
+    @Column(name = "room_price")
+    private Double roomPrice;
 }

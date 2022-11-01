@@ -12,7 +12,7 @@ import vn.com.fpt.requests.AddContractRequest;
 import javax.persistence.*;
 import java.util.Date;
 
-import static vn.com.fpt.constants.ManagerConstants.CONTRACT_FOR_RENTER;
+import static vn.com.fpt.constants.ManagerConstants.SUBLEASE_CONTRACT;
 
 
 @Entity
@@ -89,7 +89,7 @@ public class Contracts extends BaseEntity {
 
     public static Contracts addForRenter(AddContractRequest request, Long operator) {
         var renterContract = of(request);
-        renterContract.setContractType(CONTRACT_FOR_RENTER);
+        renterContract.setContractType(SUBLEASE_CONTRACT);
         renterContract.setCreatedBy(operator);
         renterContract.setCreatedAt(DateUtils.now());
         return renterContract;

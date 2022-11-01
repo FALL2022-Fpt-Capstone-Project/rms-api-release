@@ -14,7 +14,6 @@ import vn.com.fpt.requests.LoginRequest;
 import vn.com.fpt.requests.RegisterRequest;
 import vn.com.fpt.responses.AccountResponse;
 import vn.com.fpt.service.authentication.AuthenticationService;
-import vn.com.fpt.common.utils.Operator;
 
 @Tag(name = "Đăng nhập vào hệ thống", description = "Đăng nhập vào hệ thống")
 @RestController

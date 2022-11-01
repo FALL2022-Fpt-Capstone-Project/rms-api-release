@@ -14,5 +14,5 @@ public interface AuthenticationService {
 
     String logout();
 
-    Set<Role> roleChecker(Set<String> strRoles);
+    Set<Role> roleChecker(String strRoles);
 }
