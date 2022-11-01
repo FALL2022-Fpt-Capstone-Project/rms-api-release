@@ -43,7 +43,7 @@ public class AccountResponse {
 
     private String addressWards;
 
-    private String addressMoreDetails;
+    private String addressMoreDetail;
 
     private Boolean isOwner;
 
@@ -79,7 +79,7 @@ public class AccountResponse {
         response.setAddressCity(account.getAddress().getAddressCity());
         response.setAddressDistrict(account.getAddress().getAddressDistrict());
         response.setAddressWards(account.getAddress().getAddressWards());
-        response.setAddressMoreDetails(account.getAddress().getAddressMoreDetails());
+        response.setAddressMoreDetail(account.getAddress().getAddressMoreDetails());
         response.setIsDeactivate(account.isDeactivate());
 
         return response;
