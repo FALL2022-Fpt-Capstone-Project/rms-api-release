@@ -61,7 +61,22 @@ public class AccountDTO implements Serializable {
 
     private String roleName;
 
-    public AccountDTO(BigInteger accountId, String fullName, Boolean gender, String phoneNumber, String userName, Boolean deactivate, Date createdAt, BigInteger addressId, String addressDistrict, String addressCity, String addressWards, String addressMoreDetail, String roleName) {
+    private Boolean isDeactivate;
+
+    public AccountDTO(BigInteger accountId,
+                      String fullName,
+                      Boolean gender,
+                      String phoneNumber,
+                      String userName,
+                      Boolean deactivate,
+                      Date createdAt,
+                      BigInteger addressId,
+                      String addressDistrict,
+                      String addressCity,
+                      String addressWards,
+                      String addressMoreDetail,
+                      String roleName,
+                      Boolean isDeactivate) {
         this.accountId = accountId;
         this.fullName = fullName;
         this.gender = gender;
@@ -75,5 +90,6 @@ public class AccountDTO implements Serializable {
         this.addressWards = addressWards;
         this.addressMoreDetail = addressMoreDetail;
         this.roleName = roleName;
+        this.isDeactivate = isDeactivate;
     }
 }

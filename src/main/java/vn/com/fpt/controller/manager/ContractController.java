@@ -34,5 +34,4 @@ public class ContractController {
         return AppResponse.success(contractService.addContract(request,  Operator.operator()));
     }
 
-
 }

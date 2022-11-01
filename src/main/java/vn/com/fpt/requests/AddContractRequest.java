@@ -67,6 +67,7 @@ public class AddContractRequest {
     @Setter
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class HandOverAssetsRequest {
+        private Long handOverAssetId;
 
         private Long assetsId;
 

@@ -72,10 +72,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @SneakyThrows
     @Override
-    public Set<Role> roleChecker(Set<String> strRoles) {
+    public Set<Role> roleChecker(String strRoles) {
         Set<Role> roles = new HashSet<>();
-        strRoles.forEach(role -> {
-            switch (role) {
+            switch (strRoles) {
                 case "admin":
                     Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN).orElse(null);
                     if (!Objects.isNull(adminRole)) roles.add(adminRole);
@@ -87,7 +86,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 default:
                     roles.add(new Role());
             }
-        });
         if (roles.isEmpty()) throw new BusinessException(INVALID_ROLE, "Quyền: " + strRoles);
         return roles;
     }

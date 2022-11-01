@@ -1,0 +1,64 @@
+package vn.com.fpt.service.group;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import vn.com.fpt.constants.ManagerConstants;
+import vn.com.fpt.entity.Address;
+import vn.com.fpt.repositories.AddressRepository;
+import vn.com.fpt.repositories.ContractRepository;
+import vn.com.fpt.repositories.GroupRepository;
+import vn.com.fpt.repositories.RoomsRepository;
+import vn.com.fpt.responses.GroupResponse;
+import vn.com.fpt.responses.RoomsResponse;
+import vn.com.fpt.service.assets.AssetService;
+import vn.com.fpt.service.services.ServicesService;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static vn.com.fpt.constants.ManagerConstants.LEASE_CONTRACT;
+
+@Service
+@RequiredArgsConstructor
+public class GroupServiceImpl implements GroupService {
+    private final RoomsRepository roomsRepository;
+
+    private final ServicesService servicesService;
+
+    private final GroupRepository groupRepository;
+
+    private final ContractRepository contractRepository;
+
+    private final AssetService assetService;
+
+    private final AddressRepository addressRepository;
+
+    @Override
+    public GroupResponse group(Long groupId) {
+        var contract = contractRepository.findAllByGroupIdAndContractType(groupId, LEASE_CONTRACT);
+        var group = groupRepository.findById(contract.getRoomId()).get();
+        var rooms = roomsRepository.findAllByGroupId(groupId)
+                .stream()
+                .map(RoomsResponse::of)
+                .collect(Collectors.toList());
+        var address = addressRepository.findById(group.getAddress()).get();
+        var generalService = servicesService.listGeneralService(contract.getId());
+        var handOverAsset = assetService.listHandOverAsset(contract.getId());
+        var totalRoom = roomsRepository.findAllRoomsByGroupId(groupId).size() + 1;
+        var totalFloor = roomsRepository.findAllFloorByGroupId(groupId).size() + 1;
+
+        return GroupResponse.of(group,
+                address,
+                rooms,
+                generalService,
+                handOverAsset,
+                totalFloor,
+                totalRoom);
+    }
+
+    @Override
+    public List<GroupResponse> list() {
+        return null;
+    }
+}

@@ -6,4 +6,5 @@ import vn.com.fpt.entity.Contracts;
 
 @Repository
 public interface ContractRepository extends JpaRepository<Contracts, Long> {
+    Contracts findAllByGroupIdAndContractType(Long groupId, Integer contractType);
 }

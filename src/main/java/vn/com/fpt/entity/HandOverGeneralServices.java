@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
+import vn.com.fpt.common.utils.DateUtils;
 import vn.com.fpt.configs.AppConfigs;
 
 import javax.persistence.AttributeOverride;
@@ -39,4 +40,26 @@ public class HandOverGeneralServices extends BaseEntity {
     @Column(name = "hand_over_general_service_date_delivery")
     private Date dateDelivery;
 
+    public static HandOverGeneralServices of(Long contractId, Integer handOverGeneralServiceIndex, Date dateDelivery) {
+        return HandOverGeneralServices.builder()
+                .handOverGeneralServiceIndex(handOverGeneralServiceIndex)
+                .contractId(contractId)
+                .dateDelivery(dateDelivery)
+                .build();
+    }
+
+    public static HandOverGeneralServices add(Long contractId, Integer handOverGeneralServiceIndex, Date dateDelivery, Long operator) {
+        var handOverGeneralServices = of(contractId, handOverGeneralServiceIndex, dateDelivery);
+        handOverGeneralServices.setCreatedAt(DateUtils.now());
+        handOverGeneralServices.setCreatedBy(operator);
+        return handOverGeneralServices;
+    }
+
+    public static HandOverGeneralServices modify(Long id, Long contractId, Integer handOverGeneralServiceIndex, Date dateDelivery, Long operator) {
+        var handOverGeneralServices = of(contractId, handOverGeneralServiceIndex, dateDelivery);
+        handOverGeneralServices.setId(id);
+        handOverGeneralServices.setModifiedAt(DateUtils.now());
+        handOverGeneralServices.setModifiedBy(operator);
+        return handOverGeneralServices;
+    }
 }

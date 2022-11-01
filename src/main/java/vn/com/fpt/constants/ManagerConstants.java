@@ -47,6 +47,7 @@ public class ManagerConstants {
     public static final Double INTERNET_DEFAULT_PRICE = 100000.0;
     public static final Double VEHICLES_DEFAULT_PRICE = 50000.0;
 
-    public static final Integer CONTRACT_FOR_RENTER = 1;
+    public static final Integer SUBLEASE_CONTRACT = 1;
+    public static final Integer LEASE_CONTRACT = 0;
 
 }
