@@ -14,6 +14,7 @@ import vn.com.fpt.responses.RoomsResponse;
 import vn.com.fpt.service.assets.AssetService;
 import vn.com.fpt.service.services.ServicesService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,8 +46,9 @@ public class GroupServiceImpl implements GroupService {
         var address = addressRepository.findById(group.getAddress()).get();
         var generalService = servicesService.listGeneralService(contract.getId());
         var handOverAsset = assetService.listHandOverAsset(contract.getId());
-        var totalRoom = roomsRepository.findAllRoomsByGroupId(groupId).size() + 1;
+
         var totalFloor = roomsRepository.findAllFloorByGroupId(groupId).size() + 1;
+        var totalRoom = roomsRepository.findAllRoomsByGroupId(groupId).size() + 1;
 
         return GroupResponse.of(group,
                 address,
@@ -59,6 +61,23 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public List<GroupResponse> list() {
-        return null;
+        List<GroupResponse> groupResponse = new ArrayList<>();
+        groupRepository.findAll()
+                .forEach(group -> {
+                    var contract = contractRepository.findAllByGroupIdAndContractType(group.getId(), LEASE_CONTRACT);
+                    groupResponse.add(GroupResponse.of(
+                            group,
+                            addressRepository.findById(group.getAddress()).get(),
+                            roomsRepository.findAllByGroupId(group.getId())
+                                    .stream()
+                                    .map(RoomsResponse::of)
+                                    .collect(Collectors.toList()),
+                            servicesService.listGeneralService(contract.getId()),
+                            assetService.listHandOverAsset(contract.getId()),
+                            roomsRepository.findAllFloorByGroupId(group.getId()).size() + 1,
+                            roomsRepository.findAllRoomsByGroupId(group.getId()).size() + 1
+                    ));
+                });
+        return groupResponse;
     }
 }

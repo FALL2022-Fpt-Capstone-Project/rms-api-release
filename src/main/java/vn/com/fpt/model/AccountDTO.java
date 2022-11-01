@@ -75,8 +75,7 @@ public class AccountDTO implements Serializable {
                       String addressCity,
                       String addressWards,
                       String addressMoreDetail,
-                      String roleName,
-                      Boolean isDeactivate) {
+                      String roleName) {
         this.accountId = accountId;
         this.fullName = fullName;
         this.gender = gender;
