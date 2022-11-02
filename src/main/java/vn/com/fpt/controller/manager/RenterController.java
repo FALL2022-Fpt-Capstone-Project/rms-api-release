@@ -1,5 +1,6 @@
 package vn.com.fpt.controller.manager;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ public class RenterController {
     private final RenterService renterService;
 
     @GetMapping("")
+    @Operation(description = "Danh sách thông tin khách thuê")
     public ResponseEntity<BaseResponse<List<RentersResponse>>> listRenter(@RequestParam(required = false) Long group,
                                                                           @RequestParam(required = false) Long room,
                                                                           @RequestParam(required = false) Boolean gender,
@@ -38,23 +40,33 @@ public class RenterController {
     }
 
     @GetMapping("/{id}")
+    @Operation(description = "Lấy thông tin khách thuê")
     public ResponseEntity<BaseResponse<RentersResponse>> renter(@PathVariable Long id) {
         return AppResponse.success(renterService.renter(id));
     }
 
     @PostMapping("/add")
+    @Operation(description = "Thêm mới khách thuê")
     public ResponseEntity<BaseResponse<RentersResponse>> addRenter(@RequestBody RenterRequest request) {
         return AppResponse.success(renterService.addRenter(request, Operator.operator()));
     }
 
     @PutMapping("/{id}")
+    @Operation(description = "Cập nhập thông tin khách khách thuê")
     public ResponseEntity<BaseResponse<RentersResponse>> updateRenter(@RequestBody RenterRequest request,
                                                                       @PathVariable Long id) {
         return AppResponse.success(renterService.updateRenter(id, request, Operator.operator()));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<BaseResponse<String>> removerRenter(@PathVariable Long id) {
-        return null;
+    @Operation(description = "Xóa thông tin khách thuê")
+    public ResponseEntity<BaseResponse<String>> deleteRenter(@PathVariable Long id) {
+        return AppResponse.success(renterService.deleteRenter(id));
+    }
+
+    @GetMapping("/remove/{id}")
+    @Operation(description = "Xóa khách thuê ra khỏi phòng")
+    public ResponseEntity<BaseResponse<RentersResponse>> removeFromRoom(@PathVariable Long id) {
+        return AppResponse.success(renterService.removeFromRoom(id, Operator.operator()));
     }
 }

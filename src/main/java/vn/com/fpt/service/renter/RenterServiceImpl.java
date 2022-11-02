@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.com.fpt.common.BusinessException;
+import vn.com.fpt.common.utils.DateUtils;
 import vn.com.fpt.entity.Address;
 import vn.com.fpt.entity.Renters;
 import vn.com.fpt.repositories.RenterRepository;
@@ -94,9 +95,11 @@ public class RenterServiceImpl implements RenterService {
     }
 
     @Override
-    public RentersResponse removeFromRoom(Long id) {
+    public RentersResponse removeFromRoom(Long id, Long operator) {
         var renter = findRenter(id);
         renter.setRoomId(null);
+        renter.setModifiedAt(DateUtils.now());
+        renter.setModifiedBy();
         return RentersResponse.of(renterRepository.save(renter));
     }
 

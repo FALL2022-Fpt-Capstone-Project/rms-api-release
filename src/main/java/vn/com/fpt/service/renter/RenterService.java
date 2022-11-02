@@ -17,7 +17,7 @@ public interface RenterService {
 
     String deleteRenter(Long id);
 
-    RentersResponse removeFromRoom(Long id);
+    RentersResponse removeFromRoom(Long id, Long operator);
 
     Renters findRenter(Long id);
 
