@@ -1,5 +1,6 @@
 package vn.com.fpt.service.rooms;
 
+import vn.com.fpt.entity.Rooms;
 import vn.com.fpt.requests.RoomsRequest;
 import vn.com.fpt.responses.RoomsResponse;
 
@@ -12,7 +13,13 @@ public interface RoomService {
 
     RoomsResponse removeRoom(Long id);
 
-    RoomsResponse updateRoom(Long id, RoomsRequest roomsRequest);
+    Rooms updateRoom(Long id, RoomsRequest roomsRequest);
 
-    void roomChecker(Long id);
+    Rooms roomChecker(Long id);
+
+    Rooms getRoom(Long id);
+
+    Rooms emptyRoom(Long id);
+
+    Rooms updateRoomStatus(Long id, Long contractId, Long operator);
 }

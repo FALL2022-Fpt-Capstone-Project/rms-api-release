@@ -66,6 +66,7 @@ public class Renters extends BaseEntity {
                 .licensePlates(renter.getLicensePlates())
                 .identityNumber(renter.getIdentityCard())
                 .address(address)
+                .represent(renter.getRepresent())
                 .renterIdentity(new Identity())
                 .build();
     }

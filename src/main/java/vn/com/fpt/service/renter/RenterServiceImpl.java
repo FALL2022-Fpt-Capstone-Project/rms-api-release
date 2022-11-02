@@ -66,7 +66,10 @@ public class RenterServiceImpl implements RenterService {
                 request.getAddressWards(),
                 request.getAddressMoreDetail(),
                 operator);
-        return RentersResponse.of(renterRepository.save(Renters.of(request, address)));
+
+        // add thành viên
+        request.setRepresent(false);
+        return RentersResponse.of(renterRepository.save(Renters.add(request, address, operator)));
     }
 
     @Override
@@ -80,6 +83,9 @@ public class RenterServiceImpl implements RenterService {
                 renter.getAddress().getAddressWards(),
                 renter.getAddress().getAddressMoreDetails(),
                 operator);
+
+        //update thành viên
+        request.setRepresent(false);
         return RentersResponse.of(renterRepository.save(Renters.modify(renter, request, address, operator)));
     }
 

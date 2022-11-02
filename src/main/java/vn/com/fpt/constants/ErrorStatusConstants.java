@@ -17,6 +17,8 @@ public enum ErrorStatusConstants {
 
     INVALID_ROLE(HttpStatus.BAD_REQUEST, 400001, "Quyền không tồn tại, vui lòng kiểm tra lại!!"),
 
+    INVALID_TIME(HttpStatus.BAD_REQUEST, 400002, "Ngày giờ không hợp lệ, vui lòng kiểm tra lại!!"),
+
     EXISTED_ACCOUNT(HttpStatus.BAD_REQUEST, 400002, "Tài khoản đã tồn tại, vui lòng kiểm tra lại!!"),
 
     WRONG_LOGIN_INFORMATION(HttpStatus.FORBIDDEN, 403001, "Sai thông tin đăng nhập, vui lòng kiểm tra lại!!"),
@@ -32,6 +34,8 @@ public enum ErrorStatusConstants {
     GENERAL_SERVICE_NOT_FOUND(HttpStatus.BAD_REQUEST, 403004, "Không tìm thấy dịch vụ chung, vui kiểm tra lại!!"),
 
     GENERAL_SERVICE_EXISTED(HttpStatus.BAD_REQUEST, 403005, "Dịch vụ chung đã tồn tại, vui lòng kiểm tra lại"),
+
+    ROOM_NOT_AVAILABLE(HttpStatus.BAD_REQUEST, 403006, "Phòng đã có người thuê, vui lòng kiểm tra lại"),
 
     UNAUTHORIZED_ERROR(HttpStatus.UNAUTHORIZED, 401001, "Bạn không có quyền truy cập!!"),
 

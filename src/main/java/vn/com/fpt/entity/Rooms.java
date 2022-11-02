@@ -48,4 +48,5 @@ public class Rooms extends BaseEntity{
 
     @Column(name = "room_price")
     private Double roomPrice;
+
 }

@@ -36,4 +36,19 @@ public class RenterRequest {
 
     private String address;
 
+    private Boolean represent;
+
+    public static RenterRequest contractOf(RoomContractRequest request){
+        return RenterRequest.builder()
+                .name(request.getRenterName())
+                .phoneNumber(request.getRenterPhoneNumber())
+                .email(request.getRenterEmail())
+                .gender(request.getRenterGender())
+                .identityCard(request.getRenterIdentityCard())
+                // khách thuê đại diện ký
+                .represent(true)
+                .roomId(request.getRoomId())
+
+                .build();
+    }
 }
