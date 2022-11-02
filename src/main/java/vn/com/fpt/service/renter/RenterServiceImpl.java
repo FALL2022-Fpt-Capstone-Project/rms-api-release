@@ -99,7 +99,7 @@ public class RenterServiceImpl implements RenterService {
         var renter = findRenter(id);
         renter.setRoomId(null);
         renter.setModifiedAt(DateUtils.now());
-        renter.setModifiedBy();
+        renter.setModifiedBy(operator);
         return RentersResponse.of(renterRepository.save(renter));
     }
 
