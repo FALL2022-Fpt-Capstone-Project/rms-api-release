@@ -13,4 +13,6 @@ public interface RoomService {
     RoomsResponse removeRoom(Long id);
 
     RoomsResponse updateRoom(Long id, RoomsRequest roomsRequest);
+
+    void roomChecker(Long id);
 }

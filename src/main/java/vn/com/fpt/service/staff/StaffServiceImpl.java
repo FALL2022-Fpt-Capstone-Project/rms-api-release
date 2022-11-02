@@ -1,6 +1,7 @@
 package vn.com.fpt.service.staff;
 
 import lombok.*;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -116,8 +117,8 @@ public class StaffServiceImpl implements StaffService {
                 params.put("role", "ROLE_" + role.toUpperCase());
             }
         }
-        if (Objects.nonNull(startDate) && Objects.nonNull(endDate)) {
-            if (!checkFormat(startDate) || !checkFormat(endDate))
+        if (StringUtils.isNoneBlank(startDate) && StringUtils.isNoneBlank(endDate)) {
+            if (Boolean.TRUE.equals(!checkFormat(startDate)) || Boolean.TRUE.equals(!checkFormat(endDate)))
                 throw new BusinessException(BAD_REQUEST, "Ngày tìm kiếm không hợp lệ");
 
             whereBuild.append("AND acc.created_at BETWEEN cast(:startDate AS timestamp) AND cast(:endDate AS timestamp) ");

@@ -70,14 +70,14 @@ public class Renters extends BaseEntity {
                 .build();
     }
 
-    private static Renters add(RenterRequest request, Address address, Long operator) {
+    public static Renters add(RenterRequest request, Address address, Long operator) {
         var renter = of(request, address);
         renter.setCreatedBy(operator);
         renter.setCreatedAt(DateUtils.now());
         return renter;
     }
 
-    private static Renters modify(Renters old, RenterRequest neww, Address newAddress, Long operator) {
+    public static Renters modify(Renters old, RenterRequest neww, Address newAddress, Long operator) {
         var renter = of(neww, newAddress);
 
         //fetch

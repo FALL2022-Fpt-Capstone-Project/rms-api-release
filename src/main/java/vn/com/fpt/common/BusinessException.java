@@ -6,14 +6,18 @@ import vn.com.fpt.constants.ErrorStatusConstants;
 @Getter
 public class BusinessException extends RuntimeException {
 
-    private final ErrorStatusConstants errorStatus;
-    private final String msg;
+    private ErrorStatusConstants errorStatus;
+    private String msg;
 
 
     public BusinessException(ErrorStatusConstants errorStatus, String msg) {
         super(msg);
         this.errorStatus = errorStatus;
         this.msg = msg;
+    }
+
+    public BusinessException(String msg){
+        super(msg);
     }
 
     public BusinessException(String message, Throwable cause, ErrorStatusConstants errorStatus, String msg) {

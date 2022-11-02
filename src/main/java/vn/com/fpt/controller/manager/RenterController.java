@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.com.fpt.common.response.AppResponse;
 import vn.com.fpt.common.response.BaseResponse;
+import vn.com.fpt.common.utils.Operator;
 import vn.com.fpt.requests.RenterRequest;
 import vn.com.fpt.responses.RentersResponse;
 import vn.com.fpt.service.renter.RenterService;
@@ -42,21 +43,18 @@ public class RenterController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<BaseResponse<RentersResponse>> addRenter(@RequestBody RenterRequest addRenterRequest) {
-        //TODO:
-        return AppResponse.success(renterService.addRenter(addRenterRequest));
+    public ResponseEntity<BaseResponse<RentersResponse>> addRenter(@RequestBody RenterRequest request) {
+        return AppResponse.success(renterService.addRenter(request, Operator.operator()));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<BaseResponse<RentersResponse>> updateRenter(@RequestBody RenterRequest renterRequest,
+    public ResponseEntity<BaseResponse<RentersResponse>> updateRenter(@RequestBody RenterRequest request,
                                                                       @PathVariable Long id) {
-        //TODO:
-        return null;
+        return AppResponse.success(renterService.updateRenter(id, request, Operator.operator()));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<BaseResponse<RentersResponse>> removerRenter(@PathVariable Long id) {
-        //TODO:
+    public ResponseEntity<BaseResponse<String>> removerRenter(@PathVariable Long id) {
         return null;
     }
 }

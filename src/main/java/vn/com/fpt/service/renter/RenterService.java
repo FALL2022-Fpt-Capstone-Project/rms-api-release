@@ -1,5 +1,6 @@
 package vn.com.fpt.service.renter;
 
+import vn.com.fpt.entity.Renters;
 import vn.com.fpt.requests.RenterRequest;
 import vn.com.fpt.responses.RentersResponse;
 
@@ -10,11 +11,15 @@ public interface RenterService {
 
     RentersResponse renter(Long id);
 
-    RentersResponse addRenter(RenterRequest addRenterRequest);
+    RentersResponse addRenter(RenterRequest addRenterRequest, Long operator);
 
-    RentersResponse updateRenter(Long id, RenterRequest addRenterRequest);
+    RentersResponse updateRenter(Long id, RenterRequest addRenterRequest, Long operator);
 
-    RentersResponse removeRenter(Long id);
+    String deleteRenter(Long id);
+
+    RentersResponse removeFromRoom(Long id);
+
+    Renters findRenter(Long id);
 
 
 
