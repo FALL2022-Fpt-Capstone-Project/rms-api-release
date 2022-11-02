@@ -1,5 +1,6 @@
 package vn.com.fpt.controller.manager;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Getter;
@@ -30,32 +31,38 @@ public class AssetController {
     private final AssetService assetService;
 
     @GetMapping("/type")
+    @Operation(summary = "Danh sách các loại trang thiết bị cơ bản")
     public ResponseEntity<BaseResponse<List<AssetTypes>>> listType() {
         return AppResponse.success(assetService.listAssetType());
     }
 
     @GetMapping("/")
+    @Operation(summary = "Danh sách các trang thiết bị cơ bản, thiết yếu")
     public ResponseEntity<BaseResponse<List<BasicAssets>>> list() {
         return AppResponse.success(assetService.listBasicAsset());
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Lấy thông tin trang thiết bị cơ bản, thiết yếu")
     public ResponseEntity<BaseResponse<BasicAssets>> basicAsset(@PathVariable Long id) {
         return AppResponse.success(assetService.basicAssets(id));
     }
 
     @PostMapping("/add")
+    @Operation(summary = "Thêm trang thiết bị cơ bản, thiết yếu")
     public ResponseEntity<BaseResponse<BasicAssets>> add(@RequestBody BasicAssetsRequest request) {
         return AppResponse.success(assetService.add(request, Operator.operator()));
     }
 
     @PutMapping("/update/{id}")
+    @Operation(summary = "Cập nhập trang thiết bị cơ bản, thiết yếu")
     public ResponseEntity<BaseResponse<BasicAssets>> update(@PathVariable Long id,
                                                             @RequestBody BasicAssetsRequest request) {
         return AppResponse.success(assetService.update(id, request, Operator.operator()));
     }
 
     @DeleteMapping("/delete/{id}")
+    @Operation(summary = "Xóa trang thiết bị cơ bản, thiết yếu")
     public ResponseEntity<BaseResponse<String>> delete(@PathVariable Long id) {
         // TODO
         return null;
