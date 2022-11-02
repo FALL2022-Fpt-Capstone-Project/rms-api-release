@@ -6,11 +6,9 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
-import org.springframework.util.unit.DataUnit;
 import vn.com.fpt.common.utils.DateUtils;
 import vn.com.fpt.configs.AppConfigs;
 import vn.com.fpt.entity.authentication.Account;
-import vn.com.fpt.requests.AddContractRequest;
 import vn.com.fpt.requests.RegisterRequest;
 
 import javax.persistence.*;

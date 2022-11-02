@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class AddGeneralServiceRequest {
+public class GeneralServiceRequest {
     private Long contractId;
 
     private Long serviceId;

@@ -12,7 +12,7 @@ import vn.com.fpt.model.GeneralServiceDTO;
 import vn.com.fpt.repositories.BasicServicesRepository;
 import vn.com.fpt.repositories.GeneralServiceRepository;
 import vn.com.fpt.repositories.ServiceTypesRepository;
-import vn.com.fpt.requests.AddGeneralServiceRequest;
+import vn.com.fpt.requests.GeneralServiceRequest;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -115,13 +115,13 @@ public class ServicesServiceImpl implements ServicesService {
     }
 
     @Override
-    public GeneralService updateGeneralService(Long generalServiceId, AddGeneralServiceRequest request, Long operator) {
+    public GeneralService updateGeneralService(Long generalServiceId, GeneralServiceRequest request, Long operator) {
         var generalService = findGeneralServiceById(generalServiceId);
         return generalServiceRepository.save(GeneralService.modify(request, operator));
     }
 
     @Override
-    public GeneralService addGeneralService(AddGeneralServiceRequest request, Long operator) {
+    public GeneralService addGeneralService(GeneralServiceRequest request, Long operator) {
         return generalServiceRepository.save(GeneralService.add(request, operator));
     }
 

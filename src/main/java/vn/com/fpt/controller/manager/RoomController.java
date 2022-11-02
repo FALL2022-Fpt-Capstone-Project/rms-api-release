@@ -13,7 +13,7 @@ import vn.com.fpt.responses.RoomsResponse;
 import static vn.com.fpt.configs.AppConfigs.*;
 
 @SecurityRequirement(name = "BearerAuth")
-@Tag(name = "Renter Manager", description = "Quản lý khách thuê trong chung cư")
+@Tag(name = "Room Manager", description = "Quản lý phòng ")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(RoomController.PATH)

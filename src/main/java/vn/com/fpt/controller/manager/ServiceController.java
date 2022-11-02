@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import vn.com.fpt.common.response.AppResponse;
 import vn.com.fpt.common.response.BaseResponse;
 import vn.com.fpt.common.utils.Operator;
-import vn.com.fpt.requests.AddGeneralServiceRequest;
+import vn.com.fpt.requests.GeneralServiceRequest;
 import vn.com.fpt.entity.BasicServices;
 import vn.com.fpt.entity.GeneralService;
 import vn.com.fpt.entity.ServiceTypes;
@@ -58,7 +58,7 @@ public class ServiceController {
 
     @Operation(summary = "Thêm mới dịch vụ chung cho tòa")
     @PostMapping("/general/add")
-    public ResponseEntity<BaseResponse<GeneralService>> addGeneralService(@RequestBody AddGeneralServiceRequest request) {
+    public ResponseEntity<BaseResponse<GeneralService>> addGeneralService(@RequestBody GeneralServiceRequest request) {
         return AppResponse.success(servicesService.addGeneralService(request, Operator.operator()));
     }
 
@@ -71,7 +71,7 @@ public class ServiceController {
     @Operation(summary = "Update thông tin của dịch vụ chung theo id")
     @PostMapping("/general/update/{id}")
     public ResponseEntity<BaseResponse<GeneralService>> updateGeneralService(@PathVariable Long id,
-                                                                             @RequestBody AddGeneralServiceRequest request) {
+                                                                             @RequestBody GeneralServiceRequest request) {
         return AppResponse.success(servicesService.updateGeneralService(id, request, Operator.operator()));
     }
 

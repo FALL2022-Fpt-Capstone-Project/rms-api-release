@@ -4,7 +4,7 @@ import vn.com.fpt.entity.BasicServices;
 import vn.com.fpt.entity.GeneralService;
 import vn.com.fpt.entity.ServiceTypes;
 import vn.com.fpt.model.GeneralServiceDTO;
-import vn.com.fpt.requests.AddGeneralServiceRequest;
+import vn.com.fpt.requests.GeneralServiceRequest;
 
 import java.util.List;
 
@@ -17,9 +17,9 @@ public interface ServicesService {
 
     List<ServiceTypes> serviceTypes();
 
-    GeneralService updateGeneralService(Long generalServiceId, AddGeneralServiceRequest request, Long operator);
+    GeneralService updateGeneralService(Long generalServiceId, GeneralServiceRequest request, Long operator);
 
-    GeneralService addGeneralService(AddGeneralServiceRequest request, Long operator);
+    GeneralService addGeneralService(GeneralServiceRequest request, Long operator);
 
     List<GeneralService> quickAddGeneralService(Long contractId, Long operator);
 

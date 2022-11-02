@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import vn.com.fpt.common.response.AppResponse;
 import vn.com.fpt.common.response.BaseResponse;
 import vn.com.fpt.common.utils.Operator;
-import vn.com.fpt.requests.AddContractRequest;
+import vn.com.fpt.requests.ContractRequest;
 import vn.com.fpt.service.contract.ContractService;
 
 import static vn.com.fpt.configs.AppConfigs.*;
@@ -30,7 +30,7 @@ public class ContractController {
 
     @Operation(summary = "Thêm mới hợp đồng")
     @PostMapping("/add")
-    public ResponseEntity<BaseResponse<AddContractRequest>> addContract(@RequestBody AddContractRequest request) {
+    public ResponseEntity<BaseResponse<ContractRequest>> addContract(@RequestBody ContractRequest request) {
         return AppResponse.success(contractService.addContract(request,  Operator.operator()));
     }
 

@@ -6,7 +6,7 @@ import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 import vn.com.fpt.common.utils.DateUtils;
 import vn.com.fpt.configs.AppConfigs;
-import vn.com.fpt.requests.AddGeneralServiceRequest;
+import vn.com.fpt.requests.GeneralServiceRequest;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
@@ -49,7 +49,7 @@ public class GeneralService extends BaseEntity {
         this.servicePrice = servicePrice;
     }
 
-    public static GeneralService of(AddGeneralServiceRequest request) {
+    public static GeneralService of(GeneralServiceRequest request) {
         return GeneralService.builder()
                 .serviceId(request.getServiceId())
                 .contractId(request.getContractId())
@@ -58,14 +58,14 @@ public class GeneralService extends BaseEntity {
                 .note(request.getNote()).build();
     }
 
-    public static GeneralService add(AddGeneralServiceRequest request, Long operator) {
+    public static GeneralService add(GeneralServiceRequest request, Long operator) {
         var generalService = of(request);
         generalService.setCreatedBy(operator);
         generalService.setCreatedAt(DateUtils.now());
         return generalService;
     }
 
-    public static GeneralService modify(AddGeneralServiceRequest request, Long operator) {
+    public static GeneralService modify(GeneralServiceRequest request, Long operator) {
         var generalService = of(request);
         generalService.setId(request.getServiceId());
         generalService.setModifiedBy(operator);

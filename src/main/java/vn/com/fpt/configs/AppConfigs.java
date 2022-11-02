@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
 @Getter
 @Setter

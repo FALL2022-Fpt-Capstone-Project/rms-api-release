@@ -2,6 +2,7 @@ package vn.com.fpt.controller;
 
 import io.sentry.Sentry;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -9,6 +10,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.common.response.AppResponse;
@@ -27,6 +29,7 @@ import static vn.com.fpt.constants.ErrorStatusConstants.*;
 public class ApiExceptionHandler {
 
     @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<BaseResponse<Object>> handleException(Exception e) {
         Sentry.captureException(e);
         e.printStackTrace();
@@ -35,6 +38,7 @@ public class ApiExceptionHandler {
     }
 
     @ExceptionHandler(BusinessException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<BaseResponse<Object>> handleBusinessException(BusinessException e) {
         Sentry.captureException(e);
         log.error("Đã có lỗi xảy ra, chi tiết: {}", e.getErrorStatus().getMessage());
@@ -43,6 +47,7 @@ public class ApiExceptionHandler {
 
 
     @ExceptionHandler(BindException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<BaseResponse<Map<String, String>>> handleBindException(BindException e) {
         Map<String, String> errors = e
                 .getBindingResult()
@@ -53,6 +58,7 @@ public class ApiExceptionHandler {
     }
 
     @ExceptionHandler(AuthenticationException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ResponseEntity<BaseResponse<Object>> handleAuthenticationException(AuthenticationException e) {
         if (e instanceof BadCredentialsException) {
             Sentry.captureException(e);
