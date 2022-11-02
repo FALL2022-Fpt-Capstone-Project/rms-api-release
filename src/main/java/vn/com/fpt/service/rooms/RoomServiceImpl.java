@@ -19,21 +19,25 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public List<RoomsResponse> listRoom(Long groupId, Long floor, Boolean status, String name) {
+        // TODO
         return null;
     }
 
     @Override
     public RoomsResponse room(Long id) {
+        // TODO
         return null;
     }
 
     @Override
     public RoomsResponse removeRoom(Long id) {
+        // TODO
         return null;
     }
 
     @Override
     public RoomsResponse updateRoom(Long id, RoomsRequest roomsRequest) {
+        // TODO
         return null;
     }
 
