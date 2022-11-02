@@ -51,7 +51,7 @@ public class StaffServiceImpl implements StaffService {
                                        Long modifyBy,
                                        Date modifyAt) {
         var account = accountRepository.findById(id).orElseThrow(() -> new BusinessException(USER_NOT_FOUND, "Không tìm thấy tài khoản: account_id" + id));
-        if (accountRepository.findAccountByUserName(registerRequest.getUserName()).isPresent())
+        if (accountRepository.findAccountByUserNameAndIdNot(registerRequest.getUserName(), id).isPresent())
             throw new BusinessException(EXISTED_ACCOUNT, "Tên tài khoản: " + registerRequest.getUserName());
         var address = addressRepository.findById(account.getId()).orElse(new Address());
         var role = accountService.roleChecker(registerRequest.getRoles());
