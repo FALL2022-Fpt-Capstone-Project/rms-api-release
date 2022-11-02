@@ -2,7 +2,12 @@ package vn.com.fpt.service.assets;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import vn.com.fpt.entity.AssetTypes;
+import vn.com.fpt.entity.BasicAssets;
 import vn.com.fpt.model.HandOverAssetsDTO;
+import vn.com.fpt.repositories.AssetTypesRepository;
+import vn.com.fpt.repositories.BasicAssetRepository;
+import vn.com.fpt.requests.BasicAssetsRequest;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -16,6 +21,10 @@ import static vn.com.fpt.model.HandOverAssetsDTO.SQL_RESULT_SET_MAPPING;
 @RequiredArgsConstructor
 public class AssetServiceImpl implements AssetService {
     private final EntityManager entityManager;
+
+    private final AssetTypesRepository assetTypesRepository;
+
+    private final BasicAssetRepository basicAssetRepository;
 
     @Override
     public List<HandOverAssetsDTO> listHandOverAsset(Long contractId) {
@@ -50,5 +59,36 @@ public class AssetServiceImpl implements AssetService {
         Query query = entityManager.createNativeQuery(queryBuild, SQL_RESULT_SET_MAPPING);
         params.forEach(query::setParameter);
         return query.getResultList();
+    }
+
+    @Override
+    public List<AssetTypes> listAssetType() {
+        return assetTypesRepository.findAll();
+    }
+
+    @Override
+    public List<BasicAssets> listBasicAsset() {
+        return basicAssetRepository.findAll();
+    }
+
+    @Override
+    public BasicAssets basicAssets(Long id) {
+        return basicAssetRepository.findById(id).get();
+    }
+
+    @Override
+    public BasicAssets add(BasicAssetsRequest request, Long operator) {
+        return basicAssetRepository.save(BasicAssets.add(request, operator));
+    }
+
+    @Override
+    public BasicAssets update(Long id, BasicAssetsRequest request, Long operator) {
+        var oldAsset = basicAssetRepository.findById(id).get();
+        return basicAssetRepository.save(BasicAssets.modify(oldAsset, request, operator));
+    }
+
+    @Override
+    public String deleteBasicAsset(Long id) {
+        return null;
     }
 }

@@ -37,9 +37,9 @@ public class GroupController {
         return AppResponse.success(groupService.group(id));
     }
 
-    @GetMapping("/")
+    @GetMapping("")
     @Operation(summary = "Lấy thông tin của tất cả group")
-    public ResponseEntity<BaseResponse<List<GroupResponse>>> list(){
+    public ResponseEntity<BaseResponse<List<GroupResponse>>> list() {
         return AppResponse.success(groupService.list());
     }
 }
