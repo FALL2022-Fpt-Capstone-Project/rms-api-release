@@ -1,10 +1,9 @@
 package vn.com.fpt.service.group;
 
 import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.springframework.stereotype.Service;
 
-import vn.com.fpt.constants.ManagerConstants;
-import vn.com.fpt.entity.Address;
 import vn.com.fpt.repositories.AddressRepository;
 import vn.com.fpt.repositories.ContractRepository;
 import vn.com.fpt.repositories.GroupRepository;

@@ -4,7 +4,10 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
+import vn.com.fpt.common.utils.DateUtils;
 import vn.com.fpt.configs.AppConfigs;
+import vn.com.fpt.requests.RenterRequest;
+
 import javax.persistence.*;
 
 @Entity
@@ -42,6 +45,9 @@ public class Renters extends BaseEntity {
     @Column(name = "represent")
     private Boolean represent;
 
+    @Column(name = "license_plates")
+    private String licensePlates;
+
     @JoinColumn(name = "identity_id")
     @OneToOne(cascade = CascadeType.ALL)
     private Identity renterIdentity;
@@ -49,5 +55,39 @@ public class Renters extends BaseEntity {
     @JoinColumn(name = "address_id")
     @OneToOne(cascade = CascadeType.ALL)
     private Address address;
+
+    public static Renters of(RenterRequest renter, Address address) {
+        return Renters.builder()
+                .renterFullName(renter.getName())
+                .gender(renter.getGender())
+                .phoneNumber(renter.getPhoneNumber())
+                .email(renter.getEmail())
+                .roomId(renter.getRoomId())
+                .licensePlates(renter.getLicensePlates())
+                .identityNumber(renter.getIdentityCard())
+                .address(address)
+                .renterIdentity(new Identity())
+                .build();
+    }
+
+    private static Renters add(RenterRequest request, Address address, Long operator) {
+        var renter = of(request, address);
+        renter.setCreatedBy(operator);
+        renter.setCreatedAt(DateUtils.now());
+        return renter;
+    }
+
+    private static Renters modify(Renters old, RenterRequest neww, Address newAddress, Long operator) {
+        var renter = of(neww, newAddress);
+
+        //fetch
+        renter.setCreatedAt(old.getCreatedAt());
+        renter.setCreatedBy(old.getCreatedBy());
+
+        renter.setModifiedAt(DateUtils.now());
+        renter.setModifiedBy(operator);
+
+        return renter;
+    }
 
 }

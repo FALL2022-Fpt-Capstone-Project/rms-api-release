@@ -56,59 +56,9 @@ public class AddContractRequest {
 
     private List<HandOverAssetsRequest> listHandOverAssets;
 
-    private List<HandOverGeneralService> listGeneralService;
+    private List<HandOverGeneralServiceRequest> listGeneralService;
 
-    private List<Renter> listRenter;
+    private List<RenterRequest> listRenter;
 
-    @Builder
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Getter
-    @Setter
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class HandOverAssetsRequest {
-        private Long handOverAssetId;
 
-        private Long assetsId;
-
-        private String assetsAdditionalName;
-
-        private Long assetsAdditionalType;
-
-        private int handOverAssetQuantity;
-
-        private Boolean handOverAssetStatus;
-    }
-
-    @Builder
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Getter
-    @Setter
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class HandOverGeneralService {
-        private Long generalServiceId;
-
-        private Integer handOverServiceIndex;
-    }
-
-    @Builder
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Getter
-    @Setter
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class Renter {
-        private String name;
-
-        private Boolean gender;
-
-        private String phoneNumber;
-
-        private String identityCard;
-
-        private String licensePlates;
-
-        private String address;
-    }
 }

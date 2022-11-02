@@ -40,7 +40,6 @@ public class GroupController {
     @GetMapping("/")
     @Operation(summary = "Lấy thông tin của tất cả group")
     public ResponseEntity<BaseResponse<List<GroupResponse>>> list(){
-        // TODO:
         return AppResponse.success(groupService.list());
     }
 }

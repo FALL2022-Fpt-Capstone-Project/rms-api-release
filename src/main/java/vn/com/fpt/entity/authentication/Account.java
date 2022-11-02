@@ -95,18 +95,29 @@ public class Account extends BaseEntity {
                 .fullName(registerRequest.getFullName())
                 .gender(registerRequest.getGender())
                 .phoneNumber(registerRequest.getPhoneNumber())
+                .isDeactivate(registerRequest.getDeactivate())
                 .address(address)
                 .roles(roles)
                 .build();
     }
 
-    public static Account modify(Long id, RegisterRequest registerRequest, Address address, Set<Role> roles, Long operator, Date time) {
+    public static Account modify(Account old,
+                                 RegisterRequest registerRequest,
+                                 Address address,
+                                 Set<Role> roles,
+                                 Long operator,
+                                 Date time) {
+        if (registerRequest.getDeactivate() == null) registerRequest.setDeactivate(false);
         var account = of(registerRequest, address, roles);
         var addressToUpdate = Address.of(registerRequest);
         addressToUpdate.setId(address.getId());
 
         //find account to modify
-        account.setId(id);
+        account.setId(old.getId());
+
+        //fetch
+        account.setCreatedAt(old.getCreatedAt());
+        account.setCreatedBy(old.getCreatedBy());
 
         account.setModifiedAt(time);
         account.setModifiedBy(operator);

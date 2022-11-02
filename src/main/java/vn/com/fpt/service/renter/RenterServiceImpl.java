@@ -1,10 +1,10 @@
 package vn.com.fpt.service.renter;
 
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.springframework.stereotype.Service;
 import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.repositories.RenterRepository;
-import vn.com.fpt.requests.AddRenterRequest;
+import vn.com.fpt.requests.RenterRequest;
 import vn.com.fpt.responses.RentersResponse;
 
 import java.util.List;
@@ -30,12 +30,12 @@ public class RenterServiceImpl implements RenterService {
     }
 
     @Override
-    public RentersResponse addRenter(AddRenterRequest addRenterRequest) {
+    public RentersResponse addRenter(RenterRequest addRenterRequest) {
         return null;
     }
 
     @Override
-    public RentersResponse updateRenter(Long id, AddRenterRequest addRenterRequest) {
+    public RentersResponse updateRenter(Long id, RenterRequest addRenterRequest) {
         return null;
     }
 

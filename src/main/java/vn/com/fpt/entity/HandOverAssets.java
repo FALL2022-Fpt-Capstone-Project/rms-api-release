@@ -6,7 +6,7 @@ import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 import vn.com.fpt.common.utils.DateUtils;
 import vn.com.fpt.configs.AppConfigs;
-import vn.com.fpt.requests.AddContractRequest;
+import vn.com.fpt.requests.HandOverAssetsRequest;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
@@ -43,7 +43,7 @@ public class HandOverAssets extends BaseEntity {
     @Column(name = "hand_over_asset_date_delivery")
     private Date handOverDateDelivery;
 
-    public static HandOverAssets of(AddContractRequest.HandOverAssetsRequest request, Long contractId, String dateDelivery) {
+    public static HandOverAssets of(HandOverAssetsRequest request, Long contractId, String dateDelivery) {
         return HandOverAssets.builder()
                 .contractId(contractId)
                 .assetId(request.getAssetsId())
@@ -53,7 +53,7 @@ public class HandOverAssets extends BaseEntity {
                 .build();
     }
 
-    public static HandOverAssets add(AddContractRequest.HandOverAssetsRequest request, Long contractId, String dateDelivery, Long operator) {
+    public static HandOverAssets add(HandOverAssetsRequest request, Long contractId, String dateDelivery, Long operator) {
         var handOverAsset = of(request, contractId, dateDelivery);
         handOverAsset.setCreatedBy(operator);
         handOverAsset.setCreatedAt(DateUtils.now());
@@ -61,7 +61,7 @@ public class HandOverAssets extends BaseEntity {
         return handOverAsset;
     }
 
-    public static HandOverAssets modify(AddContractRequest.HandOverAssetsRequest request, Long contractId, String dateDelivery, Long operator) {
+    public static HandOverAssets modify(HandOverAssetsRequest request, Long contractId, String dateDelivery, Long operator) {
         var handOverAsset = of(request, contractId, dateDelivery);
         handOverAsset.setAssetId(request.getHandOverAssetId());
         handOverAsset.setModifiedBy(operator);

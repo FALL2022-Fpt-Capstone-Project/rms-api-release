@@ -51,6 +51,12 @@ public class StaffController {
         return AppResponse.success(staffService.staff(id));
     }
 
+    @GetMapping("/roles")
+    @Operation(summary = "Danh sách các quyền của nhân viên")
+    public ResponseEntity<BaseResponse<List<String>>> roles() {
+        return AppResponse.success(staffService.roles());
+    }
+
 
     @PostMapping("/add")
     @Operation(summary = "Thêm tài khoản cho nhân viên")

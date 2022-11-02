@@ -1,10 +1,9 @@
 package vn.com.fpt.service.services;
 
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.springframework.stereotype.Service;
 import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.common.utils.DateUtils;
-import vn.com.fpt.constants.ErrorStatusConstants;
 import vn.com.fpt.constants.ManagerConstants;
 import vn.com.fpt.entity.BasicServices;
 import vn.com.fpt.entity.GeneralService;
@@ -22,8 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static vn.com.fpt.constants.ErrorStatusConstants.GENERAL_SERVICE_EXISTED;
-import static vn.com.fpt.constants.ErrorStatusConstants.GENERAL_SERVICE_NOT_FOUND;
+import static vn.com.fpt.constants.ErrorStatusConstants.*;
 import static vn.com.fpt.model.GeneralServiceDTO.SQL_RESULT_SET_MAPPING;
 
 @Service

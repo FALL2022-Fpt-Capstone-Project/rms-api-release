@@ -1,6 +1,6 @@
 package vn.com.fpt.service.staff;
 
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,6 +10,7 @@ import vn.com.fpt.entity.authentication.Account;
 import vn.com.fpt.model.AccountDTO;
 import vn.com.fpt.repositories.AccountRepository;
 import vn.com.fpt.repositories.AddressRepository;
+import vn.com.fpt.repositories.RoleRepository;
 import vn.com.fpt.requests.RegisterRequest;
 import vn.com.fpt.responses.AccountResponse;
 import vn.com.fpt.service.authentication.AuthenticationService;
@@ -37,13 +38,18 @@ public class StaffServiceImpl implements StaffService {
 
     private final EntityManager entityManager;
 
+    private final RoleRepository roleRepository;
+
     @Override
     public AccountResponse addStaff(RegisterRequest registerRequest, Long operator) {
         return accountService.register(registerRequest, operator);
     }
 
     @Transactional
-    public AccountResponse updateStaff(Long id, RegisterRequest registerRequest, Long modifyBy, Date modifyAt) {
+    public AccountResponse updateStaff(Long id,
+                                       RegisterRequest registerRequest,
+                                       Long modifyBy,
+                                       Date modifyAt) {
         var account = accountRepository.findById(id).orElseThrow(() -> new BusinessException(USER_NOT_FOUND, "Không tìm thấy tài khoản: account_id" + id));
         var address = addressRepository.findById(account.getId()).orElse(new Address());
         var role = accountService.roleChecker(registerRequest.getRoles());
@@ -54,11 +60,25 @@ public class StaffServiceImpl implements StaffService {
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
             registerRequest.setPassword(encoder.encode(registerRequest.getPassword()));
         }
-        return AccountResponse.of(accountRepository.save(Account.modify(id, registerRequest, address, role, modifyBy, modifyAt)));
+        return AccountResponse.of(accountRepository.save(
+                Account.modify(
+                        account,
+                        registerRequest,
+                        address,
+                        role,
+                        modifyBy,
+                        modifyAt)
+        ));
     }
 
     @Override
-    public List<AccountResponse> listStaff(String role, String order, String startDate, String endDate, Boolean deactivate, String name, String userName) {
+    public List<AccountResponse> listStaff(String role,
+                                           String order,
+                                           String startDate,
+                                           String endDate,
+                                           Boolean deactivate,
+                                           String name,
+                                           String userName) {
         Boolean onlyStaff = Boolean.FALSE;
 
         StringBuilder selectBuild = new StringBuilder("SELECT ");
@@ -186,5 +206,15 @@ public class StaffServiceImpl implements StaffService {
         } catch (NoResultException queryResult) {
             throw new BusinessException(USER_NOT_FOUND, "Không tìm thấy tài khoản: account_id :" + id);
         }
+    }
+
+    @Override
+    public List<String> roles() {
+        List<String> rolesName = new ArrayList<>();
+        var roles = roleRepository.getAll();
+        roles.forEach(e -> {
+            rolesName.add(e.getName().name().replace("ROLE_", ""));
+        });
+        return rolesName;
     }
 }

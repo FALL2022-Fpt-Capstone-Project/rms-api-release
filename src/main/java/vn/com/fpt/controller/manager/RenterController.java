@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.com.fpt.common.response.AppResponse;
 import vn.com.fpt.common.response.BaseResponse;
-import vn.com.fpt.requests.AddRenterRequest;
+import vn.com.fpt.requests.RenterRequest;
 import vn.com.fpt.responses.RentersResponse;
 import vn.com.fpt.service.renter.RenterService;
 
@@ -42,13 +42,14 @@ public class RenterController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<BaseResponse<RentersResponse>> addRenter(@RequestBody AddRenterRequest addRenterRequest) {
+    public ResponseEntity<BaseResponse<RentersResponse>> addRenter(@RequestBody RenterRequest addRenterRequest) {
         //TODO:
-        return null;
+        return AppResponse.success(renterService.addRenter(addRenterRequest));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<BaseResponse<RentersResponse>> updateRenter(@PathVariable Long id) {
+    public ResponseEntity<BaseResponse<RentersResponse>> updateRenter(@RequestBody RenterRequest renterRequest,
+                                                                      @PathVariable Long id) {
         //TODO:
         return null;
     }

@@ -81,6 +81,7 @@ public class AccountResponse {
         response.setAddressWards(account.getAddress().getAddressWards());
         response.setAddressMoreDetail(account.getAddress().getAddressMoreDetails());
         response.setIsDeactivate(account.isDeactivate());
+        response.setCreatedAt(DateUtils.format(account.getCreatedAt(), DATETIME_FORMAT_CUSTOM));
 
         return response;
     }

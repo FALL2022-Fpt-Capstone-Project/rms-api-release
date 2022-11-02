@@ -14,4 +14,6 @@ public interface StaffService {
     List<AccountResponse> listStaff(String role, String order, String startDate, String endDate, Boolean deactivate, String name, String userName);
 
     AccountResponse staff(Long id);
+
+    List<String> roles();
 }

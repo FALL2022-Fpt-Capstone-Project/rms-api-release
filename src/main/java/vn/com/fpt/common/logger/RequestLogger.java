@@ -2,6 +2,7 @@ package vn.com.fpt.common.logger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import net.logstash.logback.marker.LogstashMarker;
 import net.logstash.logback.marker.Markers;

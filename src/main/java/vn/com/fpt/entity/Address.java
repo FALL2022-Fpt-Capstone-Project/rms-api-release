@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.util.unit.DataUnit;
+import vn.com.fpt.common.utils.DateUtils;
 import vn.com.fpt.configs.AppConfigs;
 import vn.com.fpt.entity.authentication.Account;
 import vn.com.fpt.requests.AddContractRequest;
@@ -48,17 +50,53 @@ public class Address extends BaseEntity {
     private Renters renters;
 
     public static Address of(RegisterRequest registerRequest) {
-        var address = Address.builder()
+        return Address.builder()
                 .addressCity(registerRequest.getAddressCity())
                 .addressDistrict(registerRequest.getAddressDistrict())
                 .addressWards(registerRequest.getAddressWards())
                 .addressMoreDetails(registerRequest.getAddressMoreDetail())
                 .build();
+    }
+
+    public static Address of(String addressCity,
+                             String addressDistrict,
+                             String addressWards,
+                             String addressMoreDetails) {
+        return Address.builder()
+                .addressCity(addressCity)
+                .addressDistrict(addressDistrict)
+                .addressWards(addressWards)
+                .addressMoreDetails(addressMoreDetails)
+                .build();
+    }
+
+    public static Address add(String newCity,
+                              String newDistrict,
+                              String newWards,
+                              String newMoreDetails,
+                              Long operator) {
+        var address = of(newCity, newDistrict, newWards, newMoreDetails);
+        address.setCreatedAt(DateUtils.now());
+        address.setCreatedBy(operator);
+
         return address;
     }
 
-    public static Address add() {
-        return null;
+    public static Address modify(Address old,
+                                 String newCity,
+                                 String newDistrict,
+                                 String newWards,
+                                 String newMoreDetails,
+                                 Long operator) {
+        var address = of(newCity, newDistrict, newWards, newMoreDetails);
+        address.setId(old.getId());
+        //fetch
+        address.setCreatedBy(old.getCreatedBy());
+        address.setCreatedAt(old.getCreatedAt());
+
+        address.setModifiedAt(DateUtils.now());
+        address.setModifiedBy(operator);
+        return address;
     }
 
 }
