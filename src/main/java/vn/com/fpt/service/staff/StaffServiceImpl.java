@@ -111,13 +111,13 @@ public class StaffServiceImpl implements StaffService {
 
         params.put("isOwner", onlyStaff);
 
-        if (Objects.nonNull(role)) {
-            if (!role.contains("'")) {
+        if (StringUtils.isNotBlank(role)) {
+            if (!role.contains(",")) {
                 whereBuild.append("AND ar.name = :role ");
                 params.put("role", "ROLE_" + role.toUpperCase());
             }
         }
-        if (StringUtils.isNoneBlank(startDate) && StringUtils.isNoneBlank(endDate)) {
+        if (StringUtils.isNotBlank(startDate) && StringUtils.isNotBlank(endDate)) {
             if (Boolean.TRUE.equals(!checkFormat(startDate)) || Boolean.TRUE.equals(!checkFormat(endDate)))
                 throw new BusinessException(BAD_REQUEST, "Ngày tìm kiếm không hợp lệ");
 
@@ -125,11 +125,11 @@ public class StaffServiceImpl implements StaffService {
             params.put("startDate", startDate);
             params.put("endDate", endDate);
         }
-        if (Objects.nonNull(name)) {
+        if (StringUtils.isNotBlank(name)) {
             whereBuild.append("AND acc.full_name LIKE concat('%',:name,'%') ");
             params.put("name", name);
         }
-        if (Objects.nonNull(userName)) {
+        if (StringUtils.isNotBlank(userName)) {
             whereBuild.append("AND acc.user_name LIKE concat('%',:userName,'%') ");
             params.put("userName", userName);
         }
@@ -137,10 +137,14 @@ public class StaffServiceImpl implements StaffService {
             //default: show list active account
             whereBuild.append("AND acc.deactivate = TRUE ");
         } else {
-            whereBuild.append("AND acc.deactivate = FALSE ");
+            if (Boolean.FALSE.equals(deactivate)) {
+                whereBuild.append("AND acc.deactivate = FALSE ");
+            } else {
+                whereBuild.append("AND acc.deactivate = TRUE ");
+            }
         }
 
-        if (Objects.nonNull(order)) {
+        if (StringUtils.isNotBlank(order)) {
             whereBuild.append("ORDER BY acc.created_at ASC ");
         } else {
             //default: show latest list account
