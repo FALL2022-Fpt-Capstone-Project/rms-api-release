@@ -22,8 +22,7 @@ import javax.persistence.Query;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static vn.com.fpt.constants.ErrorStatusConstants.BAD_REQUEST;
-import static vn.com.fpt.constants.ErrorStatusConstants.USER_NOT_FOUND;
+import static vn.com.fpt.constants.ErrorStatusConstants.*;
 import static vn.com.fpt.model.AccountDTO.SQL_RESULT_SET_MAPPING;
 import static vn.com.fpt.common.utils.DateUtils.checkFormat;
 
@@ -52,6 +51,8 @@ public class StaffServiceImpl implements StaffService {
                                        Long modifyBy,
                                        Date modifyAt) {
         var account = accountRepository.findById(id).orElseThrow(() -> new BusinessException(USER_NOT_FOUND, "Không tìm thấy tài khoản: account_id" + id));
+        if (accountRepository.findAccountByUserName(registerRequest.getUserName()).isPresent())
+            throw new BusinessException(EXISTED_ACCOUNT, "Tên tài khoản: " + registerRequest.getUserName());
         var address = addressRepository.findById(account.getId()).orElse(new Address());
         var role = accountService.roleChecker(registerRequest.getRoles());
 

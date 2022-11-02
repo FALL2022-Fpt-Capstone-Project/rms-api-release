@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.com.fpt.entity.Contracts;
 import vn.com.fpt.repositories.*;
-import vn.com.fpt.requests.ContractRequest;
+import vn.com.fpt.requests.RoomContractRequest;
 import vn.com.fpt.service.services.ServicesService;
 
 @Service
@@ -27,7 +27,7 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     @Transactional
-    public ContractRequest addContract(ContractRequest request, Long operator) {
+    public RoomContractRequest addContract(RoomContractRequest request, Long operator) {
         Contracts contractsInformation = Contracts.addForRenter(request, operator);
         if (request.getRenterOldId() != null) {
             

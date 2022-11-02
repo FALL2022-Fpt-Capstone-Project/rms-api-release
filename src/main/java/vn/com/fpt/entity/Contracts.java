@@ -7,7 +7,7 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicUpdate;
 import vn.com.fpt.common.utils.DateUtils;
 import vn.com.fpt.configs.AppConfigs;
-import vn.com.fpt.requests.ContractRequest;
+import vn.com.fpt.requests.RoomContractRequest;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -72,7 +72,7 @@ public class Contracts extends BaseEntity {
     @Column(name = "contract_type")
     private Integer contractType;
 
-    public static Contracts of(ContractRequest request) {
+    public static Contracts of(RoomContractRequest request) {
         return Contracts.builder()
                 .contractName(request.getContractName())
                 .contractPrice(request.getContractPrice())
@@ -87,7 +87,7 @@ public class Contracts extends BaseEntity {
                 .groupId(request.getGroupId()).build();
     }
 
-    public static Contracts addForRenter(ContractRequest request, Long operator) {
+    public static Contracts addForRenter(RoomContractRequest request, Long operator) {
         var renterContract = of(request);
         renterContract.setContractType(SUBLEASE_CONTRACT);
         renterContract.setCreatedBy(operator);

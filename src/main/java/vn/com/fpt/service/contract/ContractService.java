@@ -1,7 +1,7 @@
 package vn.com.fpt.service.contract;
 
-import vn.com.fpt.requests.ContractRequest;
+import vn.com.fpt.requests.RoomContractRequest;
 
 public interface ContractService {
-    ContractRequest addContract(ContractRequest request, Long operator);
+    RoomContractRequest addContract(RoomContractRequest request, Long operator);
 }

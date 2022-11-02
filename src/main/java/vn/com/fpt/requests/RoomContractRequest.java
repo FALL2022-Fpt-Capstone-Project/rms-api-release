@@ -10,7 +10,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class ContractRequest {
+public class RoomContractRequest {
     private String contractName;
 
     private Double contractPrice;
