@@ -42,10 +42,44 @@ public class BasicAssets extends BaseEntity {
                 .build();
     }
 
-    public static BasicAssets add(BasicAssetsRequest request, Long operator) {
+    public static BasicAssets of(BasicAssets request) {
+        return BasicAssets.builder()
+                .assetName(request.getAssetName())
+                .assetTypeId(request.getAssetTypeId())
+                .build();
+    }
+
+    public static BasicAssets of(String assetName, Long assetTypeId) {
+        return BasicAssets.builder()
+                .assetName(assetName)
+                .assetTypeId(assetTypeId)
+                .build();
+    }
+
+    public static BasicAssets add(BasicAssetsRequest request) {
         var asset = of(request);
-        asset.setCreatedAt(DateUtils.now());
+
+        asset.setCreatedAt(request.getCreatedAt());
+        asset.setCreatedBy(request.getCreatedBy());
+
+        return asset;
+    }
+
+    public static BasicAssets add(BasicAssets request) {
+        var asset = of(request);
+
+        asset.setCreatedAt(request.getCreatedAt());
+        asset.setCreatedBy(request.getCreatedBy());
+
+        return asset;
+    }
+
+    public static BasicAssets add(String assetName, Long assetTypeId, Long operator) {
+        var asset = of(assetName, assetTypeId);
+
         asset.setCreatedBy(operator);
+        asset.setCreatedAt(DateUtils.now());
+
         return asset;
     }
 

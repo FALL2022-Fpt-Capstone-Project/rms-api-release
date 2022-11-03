@@ -31,9 +31,15 @@ public enum ErrorStatusConstants {
 
     RENTER_NOT_FOUND(HttpStatus.BAD_REQUEST, 403005, "Không tìm thấy khách thuê, vui lòng kiểm tra lại!!"),
 
+    RENTER_LIMIT(HttpStatus.BAD_REQUEST, 403101, "Số lượng thành viên vượt quá giới hạn thành viên trong phòng, vui lòng kiểm tra lại!!"),
+
     GENERAL_SERVICE_NOT_FOUND(HttpStatus.BAD_REQUEST, 403004, "Không tìm thấy dịch vụ chung, vui kiểm tra lại!!"),
 
     GENERAL_SERVICE_EXISTED(HttpStatus.BAD_REQUEST, 403005, "Dịch vụ chung đã tồn tại, vui lòng kiểm tra lại"),
+
+    ASSET_OUT_OF_STOCK(HttpStatus.BAD_REQUEST, 403006, "Tài sản chung của tòa đã hết số lượng, vui lòng kiểm tra lại"),
+
+    CONTRACT_NOT_FOUND(HttpStatus.BAD_REQUEST, 403007, "Không tìm thấy hợp đồng, vui lòng kiểm tra lại!!"),
 
     ROOM_NOT_AVAILABLE(HttpStatus.BAD_REQUEST, 403006, "Phòng đã có người thuê, vui lòng kiểm tra lại"),
 

@@ -7,13 +7,15 @@ import vn.com.fpt.entity.Address;
 import vn.com.fpt.entity.Identity;
 import vn.com.fpt.entity.Renters;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @RequiredArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class RentersResponse {
+public class RentersResponse implements Serializable {
     private String renterFullName;
 
     private Boolean gender;

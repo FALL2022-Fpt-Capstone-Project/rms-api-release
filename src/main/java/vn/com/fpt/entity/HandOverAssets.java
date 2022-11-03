@@ -43,17 +43,22 @@ public class HandOverAssets extends BaseEntity {
     @Column(name = "hand_over_asset_date_delivery")
     private Date handOverDateDelivery;
 
-    public static HandOverAssets of(HandOverAssetsRequest request, Long contractId, String dateDelivery) {
+    public static HandOverAssets of(HandOverAssetsRequest request,
+                                    Long contractId,
+                                    Date dateDelivery) {
         return HandOverAssets.builder()
                 .contractId(contractId)
                 .assetId(request.getAssetsId())
                 .quantity(request.getHandOverAssetQuantity())
                 .handOverAssetStatus(request.getHandOverAssetStatus())
-                .handOverDateDelivery(DateUtils.parse(dateDelivery, DateUtils.DATE_FORMAT_3))
+                .handOverDateDelivery(dateDelivery)
                 .build();
     }
 
-    public static HandOverAssets add(HandOverAssetsRequest request, Long contractId, String dateDelivery, Long operator) {
+    public static HandOverAssets add(HandOverAssetsRequest request,
+                                     Long contractId,
+                                     Date dateDelivery,
+                                     Long operator) {
         var handOverAsset = of(request, contractId, dateDelivery);
         handOverAsset.setCreatedBy(operator);
         handOverAsset.setCreatedAt(DateUtils.now());
@@ -61,9 +66,17 @@ public class HandOverAssets extends BaseEntity {
         return handOverAsset;
     }
 
-    public static HandOverAssets modify(HandOverAssetsRequest request, Long contractId, String dateDelivery, Long operator) {
-        var handOverAsset = of(request, contractId, dateDelivery);
-        handOverAsset.setAssetId(request.getHandOverAssetId());
+    public static HandOverAssets modify(HandOverAssets old, HandOverAssetsRequest neww,
+                                        Long contractId,
+                                        Date dateDelivery,
+                                        Long operator) {
+        var handOverAsset = of(neww, contractId, dateDelivery);
+
+        //fetch
+        handOverAsset.setId(old.getId());
+        handOverAsset.setCreatedBy(old.getCreatedBy());
+        handOverAsset.setCreatedAt(old.getCreatedAt());
+
         handOverAsset.setModifiedBy(operator);
         handOverAsset.setModifiedAt(DateUtils.now());
 

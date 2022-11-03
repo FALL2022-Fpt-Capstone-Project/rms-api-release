@@ -1,20 +1,27 @@
 package vn.com.fpt.service.assets;
 
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.springframework.stereotype.Service;
+import vn.com.fpt.common.BusinessException;
+import vn.com.fpt.constants.ErrorStatusConstants;
 import vn.com.fpt.entity.AssetTypes;
 import vn.com.fpt.entity.BasicAssets;
+import vn.com.fpt.entity.HandOverAssets;
 import vn.com.fpt.model.HandOverAssetsDTO;
 import vn.com.fpt.repositories.AssetTypesRepository;
 import vn.com.fpt.repositories.BasicAssetRepository;
+import vn.com.fpt.repositories.HandOverAssetsRepository;
 import vn.com.fpt.requests.BasicAssetsRequest;
+import vn.com.fpt.requests.HandOverAssetsRequest;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static vn.com.fpt.constants.ErrorStatusConstants.ASSET_OUT_OF_STOCK;
 import static vn.com.fpt.model.HandOverAssetsDTO.SQL_RESULT_SET_MAPPING;
 
 @Service
@@ -25,6 +32,8 @@ public class AssetServiceImpl implements AssetService {
     private final AssetTypesRepository assetTypesRepository;
 
     private final BasicAssetRepository basicAssetRepository;
+
+    private final HandOverAssetsRepository handOverAssetsRepository;
 
     @Override
     public List<HandOverAssetsDTO> listHandOverAsset(Long contractId) {
@@ -78,7 +87,48 @@ public class AssetServiceImpl implements AssetService {
 
     @Override
     public BasicAssets add(BasicAssetsRequest request, Long operator) {
-        return basicAssetRepository.save(BasicAssets.add(request, operator));
+        return basicAssetRepository.save(BasicAssets.add(request));
+    }
+
+    @Override
+    public BasicAssets add(BasicAssets request) {
+        return basicAssetRepository.save(BasicAssets.add(request));
+    }
+
+    @Override
+    public HandOverAssets addHandOverAsset(HandOverAssetsRequest request,
+                                           Long operator,
+                                           Long contractId,
+                                           Date dateDelivery
+    ) {
+        return handOverAssetsRepository.save(
+                HandOverAssets.add(request, contractId, dateDelivery, operator));
+    }
+
+    @Override
+    public HandOverAssets updateHandOverAsset(HandOverAssets old,
+                                              HandOverAssetsRequest request,
+                                              Long operator,
+                                              Long contractId,
+                                              Date dateDelivery) {
+        return handOverAssetsRepository.save(
+                HandOverAssets.modify(old, request, contractId, dateDelivery, operator));
+    }
+
+    @Override
+    public HandOverAssets addGeneralAsset(HandOverAssetsRequest request, Long operator, Long contractId, Date dateDelivery) {
+        return handOverAssetsRepository.save(
+                HandOverAssets.add(request, contractId, dateDelivery, operator));
+    }
+
+    @Override
+    public HandOverAssets updateGeneralAssetQuantity(Long contractId, Long assetId, Integer quantity) {
+        var toUpdate = handOverAssetsRepository.findByContractIdAndAndAssetId(contractId, assetId);
+        Integer updateQuantity = toUpdate.getQuantity() - quantity;
+        if (updateQuantity < 0)
+            throw new BusinessException(ASSET_OUT_OF_STOCK, "Số lượng trang thiết bị của asset_id: " + assetId + "là: " + toUpdate.getQuantity() + ", số lượng muốn thêm là: " + quantity);
+        toUpdate.setQuantity(updateQuantity);
+        return handOverAssetsRepository.save(toUpdate);
     }
 
     @Override
@@ -90,5 +140,10 @@ public class AssetServiceImpl implements AssetService {
     @Override
     public String deleteBasicAsset(Long id) {
         return null;
+    }
+
+    @Override
+    public HandOverAssets handOverAsset(Long id) {
+        return handOverAssetsRepository.findById(id).get();
     }
 }

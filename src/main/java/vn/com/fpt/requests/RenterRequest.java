@@ -11,6 +11,7 @@ import lombok.*;
 @Setter
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class RenterRequest {
+    private Long id;
 
     private String name;
 
@@ -38,6 +39,7 @@ public class RenterRequest {
 
     private Boolean represent;
 
+    //build RenterRequest form RoomContractRequest
     public static RenterRequest contractOf(RoomContractRequest request){
         return RenterRequest.builder()
                 .name(request.getRenterName())
@@ -48,7 +50,7 @@ public class RenterRequest {
                 // khách thuê đại diện ký
                 .represent(true)
                 .roomId(request.getRoomId())
-
                 .build();
     }
+
 }

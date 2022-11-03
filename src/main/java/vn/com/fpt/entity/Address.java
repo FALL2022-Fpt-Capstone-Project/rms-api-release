@@ -10,6 +10,7 @@ import vn.com.fpt.common.utils.DateUtils;
 import vn.com.fpt.configs.AppConfigs;
 import vn.com.fpt.entity.authentication.Account;
 import vn.com.fpt.requests.RegisterRequest;
+import vn.com.fpt.requests.RenterRequest;
 
 import javax.persistence.*;
 
@@ -56,6 +57,15 @@ public class Address extends BaseEntity {
                 .build();
     }
 
+    public static Address of(RenterRequest request) {
+        return Address.builder()
+                .addressCity(request.getAddressCity())
+                .addressDistrict(request.getAddressDistrict())
+                .addressWards(request.getAddressWards())
+                .addressMoreDetails(request.getAddressMoreDetail())
+                .build();
+    }
+
     public static Address of(String addressCity,
                              String addressDistrict,
                              String addressWards,
@@ -80,6 +90,14 @@ public class Address extends BaseEntity {
         return address;
     }
 
+    public static Address add(RenterRequest renterRequest, Long operator) {
+        var address = of(renterRequest);
+        address.setCreatedAt(DateUtils.now());
+        address.setCreatedBy(operator);
+
+        return address;
+    }
+
     public static Address modify(Address old,
                                  String newCity,
                                  String newDistrict,
@@ -87,6 +105,20 @@ public class Address extends BaseEntity {
                                  String newMoreDetails,
                                  Long operator) {
         var address = of(newCity, newDistrict, newWards, newMoreDetails);
+        address.setId(old.getId());
+        //fetch
+        address.setCreatedBy(old.getCreatedBy());
+        address.setCreatedAt(old.getCreatedAt());
+
+        address.setModifiedAt(DateUtils.now());
+        address.setModifiedBy(operator);
+        return address;
+    }
+
+    public static Address modify(Address old,
+                                 RenterRequest neww,
+                                 Long operator) {
+        var address = of(neww);
         address.setId(old.getId());
         //fetch
         address.setCreatedBy(old.getCreatedBy());

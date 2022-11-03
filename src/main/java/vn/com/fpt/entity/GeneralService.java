@@ -42,7 +42,10 @@ public class GeneralService extends BaseEntity {
     @Column(name = "note")
     private String note;
 
-    public GeneralService(Long serviceId, Long contractId, Long serviceTypeMeter, Double servicePrice) {
+    public GeneralService(Long serviceId,
+                          Long contractId,
+                          Long serviceTypeMeter,
+                          Double servicePrice) {
         this.serviceId = serviceId;
         this.contractId = contractId;
         this.serviceTypeId = serviceTypeMeter;

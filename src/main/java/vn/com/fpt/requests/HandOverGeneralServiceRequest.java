@@ -13,13 +13,10 @@ import java.util.Date;
 @Setter
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class HandOverGeneralServiceRequest {
+    private Long handOverGeneralServiceId;
 
     private Long generalServiceId;
 
     private Integer handOverServiceIndex;
-
-    private Long contractId;
-
-    private Date dateDelivery;
 
 }

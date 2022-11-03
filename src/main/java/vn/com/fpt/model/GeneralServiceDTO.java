@@ -2,9 +2,7 @@ package vn.com.fpt.model;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -13,6 +11,7 @@ import java.math.BigInteger;
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
 @SqlResultSetMapping(name = GeneralServiceDTO.SQL_RESULT_SET_MAPPING,
         classes = @ConstructorResult(
                 targetClass = GeneralServiceDTO.class,

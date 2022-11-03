@@ -15,6 +15,8 @@ import vn.com.fpt.responses.RentersResponse;
 import vn.com.fpt.service.rooms.RoomService;
 import vn.com.fpt.specification.BaseSpecification;
 import vn.com.fpt.specification.SearchCriteria;
+//import vn.com.fpt.specification.BaseSpecification;
+//import vn.com.fpt.specification.SearchCriteria;
 
 import java.util.List;
 
@@ -51,6 +53,11 @@ public class RenterServiceImpl implements RenterService {
     }
 
     @Override
+    public List<RentersResponse> listRenter(Long roomId) {
+        return renterRepository.findAllByRoomId(roomId).stream().map(RentersResponse::of).toList();
+    }
+
+    @Override
     public RentersResponse renter(Long id) {
         return RentersResponse.of(findRenter(id));
     }
@@ -73,6 +80,11 @@ public class RenterServiceImpl implements RenterService {
     }
 
     @Override
+    public Renters addRenter(Renters renters) {
+        return renterRepository.save(renters);
+    }
+
+    @Override
     @Transactional
     public RentersResponse updateRenter(Long id, RenterRequest request, Long operator) {
         var renter = findRenter(id);
@@ -85,8 +97,12 @@ public class RenterServiceImpl implements RenterService {
                 operator);
 
         //update thành viên
-        request.setRepresent(false);
         return RentersResponse.of(renterRepository.save(Renters.modify(renter, request, address, operator)));
+    }
+
+    @Override
+    public RentersResponse updateRenter(Long id, Renters addRenterRequest, Long operator) {
+        return null;
     }
 
     @Override

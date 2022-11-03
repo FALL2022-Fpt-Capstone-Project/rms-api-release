@@ -1,25 +1,35 @@
 package vn.com.fpt.constants;
 
+import java.util.Date;
+
 public class ManagerConstants {
 
     // filter contract condition
-    String ALMOST_EXPIRED_CONTRACT = "almostExpired";
-    String LATEST_CONTRACT = "latest";
-    String EXPIRED_CONTRACT = "expired";
+    public static final String ALMOST_EXPIRED_CONTRACT = "almostExpired";
+    public static final String LATEST_CONTRACT = "latest";
+    public static final String EXPIRED_CONTRACT = "expired";
 
     //filter staff account condition
-    int DEACTIVATE_ACCOUNT = 0;
-    int ACTIVATE_ACCOUNT = 1;
-    int NONE_FILTER_DEACTIVATE = -1;
+    public static final int DEACTIVATE_ACCOUNT = 0;
+    public static final int ACTIVATE_ACCOUNT = 1;
+    public static final int NONE_FILTER_DEACTIVATE = -1;
 
 
     // permission
-    int PERMISSION_MATERIAL = 1;
-    int PERMISSION_MONEY = 2;
-    int PERMISSION_RECEIPT = 3;
-    int PERMISSION_CONTRACT = 4;
+    public static final int PERMISSION_MATERIAL = 1;
+    public static final int PERMISSION_MONEY = 2;
+    public static final int PERMISSION_RECEIPT = 3;
+    public static final int PERMISSION_CONTRACT = 4;
 
-    int[] PERMISSION_ALL = new int[]{PERMISSION_MATERIAL, PERMISSION_MONEY, PERMISSION_RECEIPT, PERMISSION_CONTRACT};
+    public static final int[] PERMISSION_ALL;
+
+    static {
+        PERMISSION_ALL = new int[]{
+                PERMISSION_MATERIAL,
+                PERMISSION_MONEY,
+                PERMISSION_RECEIPT,
+                PERMISSION_CONTRACT};
+    }
 
     //assets type
     public static final Long TYPE_BATH_ROOM = 1L;
@@ -49,5 +59,15 @@ public class ManagerConstants {
 
     public static final Integer SUBLEASE_CONTRACT = 1;
     public static final Integer LEASE_CONTRACT = 0;
+
+    public static Boolean ADDITIONAL_ASSETS(Long id) {
+        return id < 0;
+    }
+
+    public static Boolean VALIDATE_CONTRACT_TERM(Date startDate, Date endDate) {
+        return endDate.compareTo(startDate) < 0;
+    }
+
+
 
 }

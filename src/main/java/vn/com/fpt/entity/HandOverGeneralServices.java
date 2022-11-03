@@ -40,24 +40,47 @@ public class HandOverGeneralServices extends BaseEntity {
     @Column(name = "hand_over_general_service_date_delivery")
     private Date dateDelivery;
 
-    public static HandOverGeneralServices of(Long contractId, Integer handOverGeneralServiceIndex, Date dateDelivery) {
+    public static HandOverGeneralServices of(Long contractId,
+                                             Integer handOverGeneralServiceIndex,
+                                             Long generalServiceId,
+                                             Date dateDelivery) {
         return HandOverGeneralServices.builder()
                 .handOverGeneralServiceIndex(handOverGeneralServiceIndex)
                 .contractId(contractId)
+                .generalServiceId(generalServiceId)
                 .dateDelivery(dateDelivery)
                 .build();
     }
 
-    public static HandOverGeneralServices add(Long contractId, Integer handOverGeneralServiceIndex, Date dateDelivery, Long operator) {
-        var handOverGeneralServices = of(contractId, handOverGeneralServiceIndex, dateDelivery);
+    public static HandOverGeneralServices add(Long contractId,
+                                              Integer handOverGeneralServiceIndex,
+                                              Long generalServiceId,
+                                              Date dateDelivery,
+                                              Long operator) {
+        var handOverGeneralServices = of(
+                contractId,
+                handOverGeneralServiceIndex,
+                generalServiceId,
+                dateDelivery);
+
         handOverGeneralServices.setCreatedAt(DateUtils.now());
         handOverGeneralServices.setCreatedBy(operator);
         return handOverGeneralServices;
     }
 
-    public static HandOverGeneralServices modify(Long id, Long contractId, Integer handOverGeneralServiceIndex, Date dateDelivery, Long operator) {
-        var handOverGeneralServices = of(contractId, handOverGeneralServiceIndex, dateDelivery);
-        handOverGeneralServices.setId(id);
+    public static HandOverGeneralServices modify(HandOverGeneralServices old,
+                                                 Long contractId,
+                                                 Integer handOverGeneralServiceIndex,
+                                                 Long generalServiceId,
+                                                 Date dateDelivery,
+                                                 Long operator) {
+        var handOverGeneralServices = of(
+                contractId,
+                handOverGeneralServiceIndex,
+                generalServiceId,
+                dateDelivery);
+
+        handOverGeneralServices.setId(old.getGeneralServiceId());
         handOverGeneralServices.setModifiedAt(DateUtils.now());
         handOverGeneralServices.setModifiedBy(operator);
         return handOverGeneralServices;

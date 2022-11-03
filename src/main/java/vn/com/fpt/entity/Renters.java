@@ -82,6 +82,7 @@ public class Renters extends BaseEntity {
         var renter = of(neww, newAddress);
 
         //fetch
+        renter.setId(old.getId());
         renter.setCreatedAt(old.getCreatedAt());
         renter.setCreatedBy(old.getCreatedBy());
 
@@ -90,5 +91,7 @@ public class Renters extends BaseEntity {
 
         return renter;
     }
+
+
 
 }

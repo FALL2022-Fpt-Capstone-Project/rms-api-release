@@ -94,4 +94,19 @@ public class Contracts extends BaseEntity {
         renterContract.setCreatedAt(DateUtils.now());
         return renterContract;
     }
+
+    public static Contracts modifyForRenter(Contracts old, RoomContractRequest neww, Long operator) {
+        var renterContract = of(neww);
+
+        renterContract.setId(old.getId());
+
+        renterContract.setCreatedBy(old.getCreatedBy());
+        renterContract.setCreatedAt(old.getCreatedAt());
+
+        //fetch
+        renterContract.setModifiedAt(DateUtils.now());
+        renterContract.setModifiedBy(operator);
+
+        return renterContract;
+    }
 }

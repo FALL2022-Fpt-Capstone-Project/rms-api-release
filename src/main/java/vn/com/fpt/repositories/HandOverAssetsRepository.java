@@ -6,4 +6,5 @@ import vn.com.fpt.entity.HandOverAssets;
 
 @Repository
 public interface HandOverAssetsRepository extends JpaRepository<HandOverAssets, Long> {
+    HandOverAssets findByContractIdAndAndAssetId(Long contractId, Long assetId);
 }

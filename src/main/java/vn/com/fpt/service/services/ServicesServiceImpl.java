@@ -7,22 +7,25 @@ import vn.com.fpt.common.utils.DateUtils;
 import vn.com.fpt.constants.ManagerConstants;
 import vn.com.fpt.entity.BasicServices;
 import vn.com.fpt.entity.GeneralService;
+import vn.com.fpt.entity.HandOverGeneralServices;
 import vn.com.fpt.entity.ServiceTypes;
 import vn.com.fpt.model.GeneralServiceDTO;
+import vn.com.fpt.model.HandOverGeneralServiceDTO;
 import vn.com.fpt.repositories.BasicServicesRepository;
 import vn.com.fpt.repositories.GeneralServiceRepository;
+import vn.com.fpt.repositories.HandOverGeneralServicesRepository;
 import vn.com.fpt.repositories.ServiceTypesRepository;
 import vn.com.fpt.requests.GeneralServiceRequest;
+import vn.com.fpt.requests.HandOverGeneralServiceRequest;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static vn.com.fpt.constants.ErrorStatusConstants.*;
 import static vn.com.fpt.model.GeneralServiceDTO.SQL_RESULT_SET_MAPPING;
+import static vn.com.fpt.model.HandOverGeneralServiceDTO.SQL_RESULT_SETS_MAPPING;
+
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +37,8 @@ public class ServicesServiceImpl implements ServicesService {
     private final ServiceTypesRepository serviceTypesRepository;
 
     private final GeneralServiceRepository generalServiceRepository;
+
+    private final HandOverGeneralServicesRepository handOverGeneralServices;
 
     @Override
     public List<GeneralServiceDTO> listGeneralService(Long contractId) {
@@ -105,6 +110,41 @@ public class ServicesServiceImpl implements ServicesService {
     }
 
     @Override
+    public List<HandOverGeneralServiceDTO> listHandOverGeneralService(Long contractId) {
+        StringBuilder selectBuild = new StringBuilder("SELECT ");
+        selectBuild.append("hogs.hand_over_general_service_id,");
+        selectBuild.append("hogs.general_service_id,");
+        selectBuild.append("hogs.hand_over_general_service_index,");
+        selectBuild.append("hogs.hand_over_general_service_date_delivery,");
+        selectBuild.append("mgs.service_price,");
+        selectBuild.append("mgs.service_id,");
+        selectBuild.append("mbs.service_name,");
+        selectBuild.append("mbs.service_show_name,");
+        selectBuild.append("mgs.service_type_id,");
+        selectBuild.append("mst.service_type_name ");
+
+        StringBuilder fromBuild = new StringBuilder("FROM ");
+        fromBuild.append("manager_hand_over_general_services hogs ");
+        fromBuild.append("JOIN manager_general_services mgs ON hogs.general_service_id = mgs.general_service_id ");
+        fromBuild.append("JOIN manager_basic_services mbs on mgs.service_id = mbs.service_id ");
+        fromBuild.append("JOIN manager_service_types mst on mgs.service_type_id = mst.service_types_id ");
+
+        StringBuilder whereBuild = new StringBuilder("WHERE 1=1 ");
+        whereBuild.append("AND hogs.contract_id = :contractId");
+
+        String queryBuild = new StringBuilder()
+                .append(selectBuild)
+                .append(fromBuild)
+                .append(whereBuild)
+                .toString();
+
+        Query query = entityManager.createNativeQuery(queryBuild, SQL_RESULT_SETS_MAPPING);
+        query.setParameter("contractId", contractId);
+
+        return query.getResultList();
+    }
+
+    @Override
     public List<BasicServices> basicServices() {
         return basicServicesRepository.findAll();
     }
@@ -124,6 +164,29 @@ public class ServicesServiceImpl implements ServicesService {
     public GeneralService addGeneralService(GeneralServiceRequest request, Long operator) {
         return generalServiceRepository.save(GeneralService.add(request, operator));
     }
+
+    @Override
+    public HandOverGeneralServices addHandOverGeneralService(HandOverGeneralServiceRequest request,
+                                                             Long contractId,
+                                                             Date dateDelivery,
+                                                             Long operator) {
+        return handOverGeneralServices.save(HandOverGeneralServices.add(contractId,
+                request.getHandOverServiceIndex(),
+                request.getGeneralServiceId(),
+                dateDelivery,
+                operator));
+    }
+
+    @Override
+    public HandOverGeneralServices updateHandOverGeneralService(Long id,
+                                                                HandOverGeneralServiceRequest request,
+                                                                Long contractId,
+                                                                Date dateDelivery,
+                                                                Long operator) {
+        var general = handOverGeneralServices.findById(id).get();
+        return handOverGeneralServices.save(general);
+    }
+
 
     @Override
     public List<GeneralService> quickAddGeneralService(Long contractId, Long operator) {

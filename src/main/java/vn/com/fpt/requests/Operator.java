@@ -4,20 +4,27 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
+import vn.com.fpt.common.utils.DateUtils;
+
+import java.util.Date;
 
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class BasicAssetsRequest extends Operator {
-    private Long id;
+public class Operator {
 
-    private String assetName;
+    private Long createdBy;
 
-    private Long assetTypeId;
+    private Date createdAt;
 
+    private Long modifyBy;
 
+    private Date modifyAt;
+
+    public Operator() {
+        this.createdAt = DateUtils.now();
+        this.modifyAt = DateUtils.now();
+    }
 }

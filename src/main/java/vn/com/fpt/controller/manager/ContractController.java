@@ -30,11 +30,28 @@ public class ContractController {
 
     private final ContractService contractService;
 
-    @Operation(summary = "Thêm mới hợp đồng")
+
+
+    @Operation(summary = "Thêm mới hợp đồng cho phòng")
     @PostMapping("/room/add")
     public ResponseEntity<BaseResponse<RoomContractRequest>> addContract(@RequestBody RoomContractRequest request) {
         return AppResponse.success(contractService.addContract(request, Operator.operator()));
     }
+
+    @Operation(summary = "Cập nhập hợp đồng cho phòng")
+    @PutMapping("/room/update/{id}")
+    public ResponseEntity<BaseResponse<RoomContractRequest>> updateContract(@PathVariable Long id,
+                                                                            @RequestBody RoomContractRequest request) {
+        return AppResponse.success(contractService.updateContract(id, request, Operator.operator()));
+    }
+
+    @Operation(summary = "Xem hợp đồng của phòng")
+    @GetMapping("/room/{id}")
+    public ResponseEntity<BaseResponse<RoomContractDTO>> roomContract(@PathVariable Long id) {
+
+        return AppResponse.success(contractService.roomContract(id));
+    }
+
 
     @PostMapping("/group/add")
     public ResponseEntity<BaseResponse<GroupContractRequest>> addContract(@RequestBody GroupContractRequest request) {
@@ -60,10 +77,6 @@ public class ContractController {
         return null;
     }
 
-    @GetMapping("/room/{id}")
-    public ResponseEntity<BaseResponse<RoomContractDTO>> roomContract(@PathVariable Long id) {
-        //TODO
-        return null;
-    }
+
 
 }

@@ -1,9 +1,10 @@
 package vn.com.fpt.entity;
 
-    import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
+import vn.com.fpt.common.utils.DateUtils;
 import vn.com.fpt.configs.AppConfigs;
 
 import javax.persistence.AttributeOverride;
@@ -21,7 +22,7 @@ import javax.persistence.Table;
 @Setter
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @AttributeOverride(name = "id", column = @Column(name = "room_id"))
-public class Rooms extends BaseEntity{
+public class Rooms extends BaseEntity {
 
     public static final String TABLE_NAME = AppConfigs.TABLE_MANAGER + "rooms";
 
@@ -48,5 +49,13 @@ public class Rooms extends BaseEntity{
 
     @Column(name = "room_price")
     private Double roomPrice;
+
+    public Rooms modify(Rooms rooms, Long operator) {
+        rooms.setCreatedAt(rooms.getCreatedAt());
+        rooms.setCreatedBy(rooms.getCreatedBy());
+        rooms.setModifiedBy(operator);
+        rooms.setModifiedAt(DateUtils.now());
+        return rooms;
+    }
 
 }

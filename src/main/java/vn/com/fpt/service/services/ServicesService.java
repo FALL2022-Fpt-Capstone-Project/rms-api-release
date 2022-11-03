@@ -2,10 +2,14 @@ package vn.com.fpt.service.services;
 
 import vn.com.fpt.entity.BasicServices;
 import vn.com.fpt.entity.GeneralService;
+import vn.com.fpt.entity.HandOverGeneralServices;
 import vn.com.fpt.entity.ServiceTypes;
 import vn.com.fpt.model.GeneralServiceDTO;
+import vn.com.fpt.model.HandOverGeneralServiceDTO;
 import vn.com.fpt.requests.GeneralServiceRequest;
+import vn.com.fpt.requests.HandOverGeneralServiceRequest;
 
+import java.util.Date;
 import java.util.List;
 
 public interface ServicesService {
@@ -17,9 +21,24 @@ public interface ServicesService {
 
     List<ServiceTypes> serviceTypes();
 
-    GeneralService updateGeneralService(Long generalServiceId, GeneralServiceRequest request, Long operator);
+    GeneralService updateGeneralService(Long generalServiceId,
+                                        GeneralServiceRequest request,
+                                        Long operator);
 
     GeneralService addGeneralService(GeneralServiceRequest request, Long operator);
+
+    HandOverGeneralServices addHandOverGeneralService(HandOverGeneralServiceRequest request,
+                                                      Long contractId,
+                                                      Date dateDelivery,
+                                                      Long operator);
+
+    HandOverGeneralServices updateHandOverGeneralService(Long id,
+                                                         HandOverGeneralServiceRequest request,
+                                                         Long contractId,
+                                                         Date dateDelivery,
+                                                         Long operator);
+
+    List<HandOverGeneralServiceDTO> listHandOverGeneralService(Long contractId);
 
     List<GeneralService> quickAddGeneralService(Long contractId, Long operator);
 
