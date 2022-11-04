@@ -18,7 +18,9 @@ import vn.com.fpt.service.renter.RenterService;
 import vn.com.fpt.service.rooms.RoomService;
 import vn.com.fpt.service.services.ServicesService;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import static vn.com.fpt.common.utils.DateUtils.*;
 import static vn.com.fpt.constants.ErrorStatusConstants.*;
@@ -293,5 +295,18 @@ public class ContractServiceImpl implements ContractService {
                 renterService.listRenter(contract.getRoomId()),
                 assetService.listHandOverAsset(id),
                 servicesService.listHandOverGeneralService(id));
+    }
+
+    @Override
+    public List<RoomContractDTO> listRoomContract(Long groupId) {
+        List<RoomContractDTO> roomContract = new ArrayList<>();
+        var listContract = contractRepository.findAllByGroupIdAndContractType(groupId, SUBLEASE_CONTRACT);
+        listContract.forEach(e->{
+            roomContract.add(RoomContractDTO.of(e,
+                    renterService.listRenter(e.getRoomId()),
+                    assetService.listHandOverAsset(e.getId()),
+                    servicesService.listHandOverGeneralService(e.getId())));
+        });
+        return roomContract;
     }
 }

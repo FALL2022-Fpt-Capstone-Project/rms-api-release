@@ -30,8 +30,6 @@ public class ContractController {
 
     private final ContractService contractService;
 
-
-
     @Operation(summary = "Thêm mới hợp đồng cho phòng")
     @PostMapping("/room/add")
     public ResponseEntity<BaseResponse<RoomContractRequest>> addContract(@RequestBody RoomContractRequest request) {
@@ -50,6 +48,12 @@ public class ContractController {
     public ResponseEntity<BaseResponse<RoomContractDTO>> roomContract(@PathVariable Long id) {
 
         return AppResponse.success(contractService.roomContract(id));
+    }
+
+    @Operation(summary = "Xem tất cả hợp đồng phòng của nhóm phòng")
+    @GetMapping("/")
+    public ResponseEntity<BaseResponse<List<RoomContractDTO>>> listRoomContract(@RequestParam(required = false) Long groupId){
+        return AppResponse.success(contractService.listRoomContract(groupId));
     }
 
 

@@ -127,11 +127,11 @@ public class StaffServiceImpl implements StaffService {
             params.put("endDate", endDate);
         }
         if (StringUtils.isNotBlank(name)) {
-            whereBuild.append("AND acc.full_name LIKE concat('%',:name,'%') ");
+            whereBuild.append("AND acc.full_name ILIKE concat('%',:name,'%') ");
             params.put("name", name);
         }
         if (StringUtils.isNotBlank(userName)) {
-            whereBuild.append("AND acc.user_name LIKE concat('%',:userName,'%') ");
+            whereBuild.append("AND acc.user_name ILIKE concat('%',:userName,'%') ");
             params.put("userName", userName);
         }
         if (Objects.isNull(deactivate)) {
