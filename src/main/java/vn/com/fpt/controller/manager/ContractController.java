@@ -51,7 +51,7 @@ public class ContractController {
     }
 
     @Operation(summary = "Xem tất cả hợp đồng phòng của nhóm phòng")
-    @GetMapping("/")
+    @GetMapping("")
     public ResponseEntity<BaseResponse<List<RoomContractDTO>>> listRoomContract(@RequestParam(required = false) Long groupId){
         return AppResponse.success(contractService.listRoomContract(groupId));
     }

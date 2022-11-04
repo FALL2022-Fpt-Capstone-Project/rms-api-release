@@ -301,6 +301,7 @@ public class ContractServiceImpl implements ContractService {
     public List<RoomContractDTO> listRoomContract(Long groupId) {
         List<RoomContractDTO> roomContract = new ArrayList<>();
         var listContract = contractRepository.findAllByGroupIdAndContractType(groupId, SUBLEASE_CONTRACT);
+        if(listContract.isEmpty()) return null;
         listContract.forEach(e->{
             roomContract.add(RoomContractDTO.of(e,
                     renterService.listRenter(e.getRoomId()),
