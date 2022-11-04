@@ -77,10 +77,9 @@ public class Account extends BaseEntity {
     private Address address;
 
     public static Account add(RegisterRequest registerRequest, Address address, Set<Role> roles, Long operator) {
-        var account = of(registerRequest, address, roles);
-
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         registerRequest.setDeactivate(false);
+        var account = of(registerRequest, address, roles);
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         account.setPassword(encoder.encode(registerRequest.getPassword()));
         account.setAddress(Address.of(registerRequest));
         account.setCreatedAt(DateUtils.now());
@@ -108,12 +107,11 @@ public class Account extends BaseEntity {
                                  Set<Role> roles,
                                  Long operator,
                                  Date time) {
+        if (registerRequest.getDeactivate() == null) registerRequest.setDeactivate(false);
+        else registerRequest.setDeactivate(true);
         var account = of(registerRequest, address, roles);
         var addressToUpdate = Address.of(registerRequest);
         addressToUpdate.setId(address.getId());
-        if (registerRequest.getDeactivate() == null) registerRequest.setDeactivate(false);
-        else registerRequest.setDeactivate(true);
-
         //find account to modify
         account.setId(old.getId());
 
