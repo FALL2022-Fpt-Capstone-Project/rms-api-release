@@ -32,6 +32,7 @@ public class ApiExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<BaseResponse<Object>> handleException(Exception e) {
         Sentry.captureException(e);
+        Sentry.addBreadcrumb(e.getMessage());
         e.printStackTrace();
         log.error("Đã có lỗi xảy ra, chi tiết: {}", e.getMessage());
         return AppResponse.error(ErrorStatusConstants.INTERNAL_ERROR, e.getMessage());
@@ -41,6 +42,7 @@ public class ApiExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<BaseResponse<Object>> handleBusinessException(BusinessException e) {
         Sentry.captureException(e);
+        Sentry.addBreadcrumb(e.getErrorStatus().getMessage());
         log.error("Đã có lỗi xảy ra, chi tiết: {}", e.getErrorStatus().getMessage());
         return AppResponse.error(e.getErrorStatus(), e.getMessage());
     }
@@ -54,12 +56,14 @@ public class ApiExceptionHandler {
                 .getFieldErrors()
                 .stream()
                 .collect(Collectors.toMap(FieldError::getField, Objects.requireNonNull(FieldError::getDefaultMessage)));
+        errors.values().forEach(Sentry::addBreadcrumb);
         return AppResponse.error(BAD_REQUEST, errors);
     }
 
     @ExceptionHandler(AuthenticationException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ResponseEntity<BaseResponse<Object>> handleAuthenticationException(AuthenticationException e) {
+        Sentry.addBreadcrumb(e.getMessage());
         if (e instanceof BadCredentialsException) {
             Sentry.captureException(e);
             return AppResponse.error(WRONG_LOGIN_INFORMATION);
