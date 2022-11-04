@@ -8,7 +8,7 @@ import java.util.List;
 
 @Repository
 public interface ContractRepository extends JpaRepository<Contracts, Long> {
-    Contracts findAllByGroupIdAndContractType(Long groupId, Integer contractType);
+    List<Contracts> findAllByGroupIdAndContractType(Long groupId, Integer contractType);
 
     Contracts findByGroupIdAndContractType(Long groupId, Integer contractType);
 

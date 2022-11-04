@@ -1,22 +1,24 @@
 package vn.com.fpt.service.rooms;
 
 import lombok.*;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
 import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.common.utils.DateUtils;
-import vn.com.fpt.common.utils.Operator;
-import vn.com.fpt.constants.ErrorStatusConstants;
 import vn.com.fpt.entity.Rooms;
 import vn.com.fpt.repositories.RoomsRepository;
 import vn.com.fpt.requests.RoomsRequest;
 import vn.com.fpt.responses.RoomsResponse;
+import vn.com.fpt.specification.BaseSpecification;
+import vn.com.fpt.specification.SearchCriteria;
 
 import java.util.List;
 import java.util.Objects;
 
 import static vn.com.fpt.constants.ErrorStatusConstants.ROOM_NOT_AVAILABLE;
 import static vn.com.fpt.constants.ErrorStatusConstants.ROOM_NOT_FOUND;
+import static vn.com.fpt.constants.SearchOperation.*;
 
 @Service
 @RequiredArgsConstructor
@@ -25,8 +27,25 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public List<RoomsResponse> listRoom(Long groupId, Long floor, Boolean status, String name) {
-        // TODO
-        return null;
+        BaseSpecification<Rooms> specification = new BaseSpecification<>();
+        if (ObjectUtils.allNotNull(groupId)) {
+            specification.add(new SearchCriteria("groupId", groupId, EQUAL));
+        }
+        if (ObjectUtils.isNotEmpty(floor)) {
+            specification.add(new SearchCriteria("roomFloor", floor, EQUAL));
+        }
+        if (ObjectUtils.allNotNull(status)) {
+            if(status){
+                specification.add(new SearchCriteria("contractId", null, EQUAL));
+            }
+            else {
+                specification.add(new SearchCriteria("contractId", null, NOT_EQUAL));
+            }
+        }
+        if (StringUtils.isNoneBlank(name)) {
+            specification.add(new SearchCriteria("roomName", name, MATCH));
+        }
+        return roomsRepository.findAll(specification).stream().map(RoomsResponse::of).toList();
     }
 
     @Override

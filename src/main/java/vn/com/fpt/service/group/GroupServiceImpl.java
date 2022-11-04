@@ -36,7 +36,7 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public GroupResponse group(Long groupId) {
-        var contract = contractRepository.findAllByGroupIdAndContractType(groupId, LEASE_CONTRACT);
+        var contract = contractRepository.findByGroupIdAndContractType(groupId, LEASE_CONTRACT);
         var group = groupRepository.findById(contract.getRoomId()).get();
         var rooms = roomsRepository.findAllByGroupId(groupId)
                 .stream()
@@ -63,7 +63,7 @@ public class GroupServiceImpl implements GroupService {
         List<GroupResponse> groupResponse = new ArrayList<>();
         groupRepository.findAll()
                 .forEach(group -> {
-                    var contract = contractRepository.findAllByGroupIdAndContractType(group.getId(), LEASE_CONTRACT);
+                    var contract = contractRepository.findByGroupIdAndContractType(group.getId(), LEASE_CONTRACT);
                     groupResponse.add(GroupResponse.of(
                             group,
                             addressRepository.findById(group.getAddress()).get(),
