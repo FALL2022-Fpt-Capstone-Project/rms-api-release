@@ -16,6 +16,8 @@ import java.io.Serializable;
 @RequiredArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class RentersResponse implements Serializable {
+    private Long renterId;
+
     private String renterFullName;
 
     private Boolean gender;
@@ -36,6 +38,7 @@ public class RentersResponse implements Serializable {
 
     public static RentersResponse of(Renters renters) {
         return RentersResponse.builder()
+                .renterId(renters.getId())
                 .renterFullName(renters.getRenterFullName())
                 .gender(renters.getGender())
                 .phoneNumber(renters.getPhoneNumber())

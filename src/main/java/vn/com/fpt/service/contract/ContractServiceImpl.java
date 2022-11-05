@@ -1,7 +1,6 @@
 package vn.com.fpt.service.contract;
 
 import lombok.*;
-import org.apache.logging.log4j.spi.DefaultThreadContextMap;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
@@ -107,7 +106,7 @@ public class ContractServiceImpl implements ContractService {
         if (!request.getListHandOverAssets().isEmpty()) {
             request.getListHandOverAssets().forEach(handOverAsset -> {
                 //kiểm tra những trang thiết bị không thuộc tòa (những tài sản không thuộc tòa thì id sẽ < 0)
-                if (ADDITIONAL_ASSETS(handOverAsset.getAssetsId())) {
+                if (ADDITIONAL_ASSETS(handOverAsset.getAssetId())) {
                     //thêm tài sản cơ bản, thiết yếu
                     assetService.add(
                             BasicAssets.add(handOverAsset.getAssetsAdditionalName(),
@@ -116,14 +115,14 @@ public class ContractServiceImpl implements ContractService {
                     //thêm tài sản chung cho tòa
                     assetService.addGeneralAsset(
                             handOverAsset,
-                            operator,
+                            handOverAsset.getAssetId(),
                             groupContractId,
                             startDate);
 
                     //thêm tài sản bàn giao cho phòng
                     var handOverAssets = assetService.addHandOverAsset(
                             handOverAsset,
-                            operator,
+                            handOverAsset.getAssetId(),
                             contractId,
                             startDate);
 
@@ -144,7 +143,7 @@ public class ContractServiceImpl implements ContractService {
                     //cập nhập số lượng tài sản của tòa
                     assetService.updateGeneralAssetQuantity(
                             groupContractId,
-                            handOverAsset.getAssetsId(),
+                            handOverAsset.getAssetId(),
                             handOverAsset.getHandOverAssetQuantity());
                 }
             });
@@ -222,7 +221,7 @@ public class ContractServiceImpl implements ContractService {
         if (!request.getListHandOverAssets().isEmpty()) {
             request.getListHandOverAssets().forEach(handOverAsset -> {
                 //kiểm tra những trang thiết bị không thuộc tòa (những tài sản không thuộc tòa thì id sẽ < 0)
-                if (ADDITIONAL_ASSETS(handOverAsset.getAssetsId())) {
+                if (ADDITIONAL_ASSETS(handOverAsset.getAssetId())) {
                     //thêm tài sản cơ bản, thiết yếu
                     assetService.add(
                             BasicAssets.add(handOverAsset.getAssetsAdditionalName(),
@@ -245,7 +244,7 @@ public class ContractServiceImpl implements ContractService {
                     //cập nhập số lượng tài sản của tòa
                     assetService.updateGeneralAssetQuantity(
                             groupContractId,
-                            handOverAsset.getAssetsId(),
+                            handOverAsset.getAssetId(),
                             handOverAsset.getHandOverAssetQuantity());
                 }
                 // nếu không có tài sản mới thì sẽ chỉ thêm tài sản bàn giao cho phòng
@@ -261,7 +260,7 @@ public class ContractServiceImpl implements ContractService {
                     //cập nhập số lượng tài sản của tòa
                     assetService.updateGeneralAssetQuantity(
                             groupContractId,
-                            handOverAsset.getAssetsId(),
+                            handOverAsset.getAssetId(),
                             handOverAsset.getHandOverAssetQuantity() - oldHandOverAsset.getQuantity());
                 }
             });

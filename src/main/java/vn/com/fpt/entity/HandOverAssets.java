@@ -48,7 +48,7 @@ public class HandOverAssets extends BaseEntity {
                                     Date dateDelivery) {
         return HandOverAssets.builder()
                 .contractId(contractId)
-                .assetId(request.getAssetsId())
+                .assetId(request.getAssetId())
                 .quantity(request.getHandOverAssetQuantity())
                 .handOverAssetStatus(request.getHandOverAssetStatus())
                 .handOverDateDelivery(dateDelivery)
