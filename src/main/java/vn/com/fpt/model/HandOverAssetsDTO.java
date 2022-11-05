@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import vn.com.fpt.common.utils.DateUtils;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -41,7 +42,7 @@ public class HandOverAssetsDTO implements Serializable {
 
     private Boolean handOverAssetStatus;
 
-    private Date handOverDateDelivery;
+    private String handOverDateDelivery;
 
     private BigInteger assetId;
 
@@ -57,7 +58,7 @@ public class HandOverAssetsDTO implements Serializable {
         this.handOverAssetId = handOverAssetId;
         this.handOverAssetQuantity = quantity;
         this.handOverAssetStatus = handOverAssetStatus;
-        this.handOverDateDelivery = handOverDateDelivery;
+        this.handOverDateDelivery = DateUtils.format(handOverDateDelivery, DateUtils.DATE_FORMAT_1);
         this.assetId = assetId;
         this.assetName = assetName;
         this.assetTypeId = assetTypeId;

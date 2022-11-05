@@ -107,7 +107,6 @@ public class ContractServiceImpl implements ContractService {
         if (!request.getListHandOverAssets().isEmpty()) {
             request.getListHandOverAssets().forEach(handOverAsset -> {
                 //kiểm tra những trang thiết bị không thuộc tòa (những tài sản không thuộc tòa thì id sẽ < 0)
-
                 if (ADDITIONAL_ASSETS(handOverAsset.getAssetsId())) {
                     //thêm tài sản cơ bản, thiết yếu
                     assetService.add(
@@ -122,7 +121,7 @@ public class ContractServiceImpl implements ContractService {
                             startDate);
 
                     //thêm tài sản bàn giao cho phòng
-                    assetService.addHandOverAsset(
+                    var handOverAssets = assetService.addHandOverAsset(
                             handOverAsset,
                             operator,
                             contractId,
@@ -131,7 +130,7 @@ public class ContractServiceImpl implements ContractService {
                     //cập nhập số lượng tài sản của tòa
                     assetService.updateGeneralAssetQuantity(
                             groupContractId,
-                            handOverAsset.getAssetsId(),
+                            handOverAssets.getAssetId(),
                             handOverAsset.getHandOverAssetQuantity());
                 }
                 // nếu không có tài sản mới thì sẽ chỉ thêm tài sản bàn giao cho phòng
