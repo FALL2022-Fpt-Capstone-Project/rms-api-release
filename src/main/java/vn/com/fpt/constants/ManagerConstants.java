@@ -1,6 +1,7 @@
 package vn.com.fpt.constants;
 
 import java.util.Date;
+import java.util.Objects;
 
 public class ManagerConstants {
 
@@ -61,13 +62,11 @@ public class ManagerConstants {
     public static final Integer LEASE_CONTRACT = 0;
 
     public static Boolean ADDITIONAL_ASSETS(Long id) {
+        if (Objects.isNull(id)) return false;
         return id < 0;
     }
 
     public static Boolean VALIDATE_CONTRACT_TERM(Date startDate, Date endDate) {
         return endDate.compareTo(startDate) < 0;
     }
-
-
-
 }

@@ -107,6 +107,7 @@ public class ContractServiceImpl implements ContractService {
         if (!request.getListHandOverAssets().isEmpty()) {
             request.getListHandOverAssets().forEach(handOverAsset -> {
                 //kiểm tra những trang thiết bị không thuộc tòa (những tài sản không thuộc tòa thì id sẽ < 0)
+
                 if (ADDITIONAL_ASSETS(handOverAsset.getAssetsId())) {
                     //thêm tài sản cơ bản, thiết yếu
                     assetService.add(
