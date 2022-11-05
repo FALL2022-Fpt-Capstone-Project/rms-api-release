@@ -49,8 +49,8 @@ public class ContractServiceImpl implements ContractService {
         var room = roomService.emptyRoom(roomId);
 
         //parse string to date
-        Date startDate = parse(request.getContractStartDate(), DATETIME_FORMAT_CUSTOM);
-        Date endDate = parse(request.getContractEndDate(), DATETIME_FORMAT_CUSTOM);
+        Date startDate = parse(request.getContractStartDate(), DATE_FORMAT_3);
+        Date endDate = parse(request.getContractEndDate(), DATE_FORMAT_3);
 
         assert endDate != null;
         assert startDate != null;
@@ -166,8 +166,8 @@ public class ContractServiceImpl implements ContractService {
         var room = roomService.emptyRoom(roomId);
 
         //parse string to date
-        Date startDate = parse(request.getContractStartDate(), DATETIME_FORMAT_CUSTOM);
-        Date endDate = parse(request.getContractEndDate(), DATETIME_FORMAT_CUSTOM);
+        Date startDate = parse(request.getContractStartDate(), DATE_FORMAT_3);
+        Date endDate = parse(request.getContractEndDate(), DATE_FORMAT_3);
 
         assert endDate != null;
         assert startDate != null;
@@ -199,7 +199,6 @@ public class ContractServiceImpl implements ContractService {
         contractRepository.save(contractsInformation);
 
         // cập nhập trạng thái phòng trống -> đã thuê D:
-
         // cập nhập thành viên vào phòng
         if (!request.getListRenter().isEmpty()) {
             if (request.getListRenter().size() + 1 > room.getRoomLimitPeople())
@@ -290,7 +289,7 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     public RoomContractDTO roomContract(Long id) {
-        var contract = contractRepository.findById(id).get();
+        var contract = contract(id);
         return RoomContractDTO.of(contract,
                 renterService.listRenter(contract.getRoomId()),
                 assetService.listHandOverAsset(id),
@@ -301,8 +300,8 @@ public class ContractServiceImpl implements ContractService {
     public List<RoomContractDTO> listRoomContract(Long groupId) {
         List<RoomContractDTO> roomContract = new ArrayList<>();
         var listContract = contractRepository.findAllByGroupIdAndContractType(groupId, SUBLEASE_CONTRACT);
-        if(listContract.isEmpty()) return null;
-        listContract.forEach(e->{
+        if (listContract.isEmpty()) return null;
+        listContract.forEach(e -> {
             roomContract.add(RoomContractDTO.of(e,
                     renterService.listRenter(e.getRoomId()),
                     assetService.listHandOverAsset(e.getId()),
