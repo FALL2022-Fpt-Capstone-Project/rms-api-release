@@ -17,6 +17,8 @@ public class RoomContractDTO implements Serializable {
 
     private String contractName;
 
+    private String groupName;
+
     private Double contractPrice;
 
     private Double contractDeposit;

@@ -9,6 +9,7 @@ import org.springframework.util.StringUtils;
 import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.common.utils.DateUtils;
 import vn.com.fpt.entity.*;
+import vn.com.fpt.model.GroupContractDTO;
 import vn.com.fpt.model.RoomContractDTO;
 import vn.com.fpt.repositories.*;
 import vn.com.fpt.requests.GeneralServiceRequest;
@@ -16,6 +17,7 @@ import vn.com.fpt.requests.GroupContractRequest;
 import vn.com.fpt.requests.RenterRequest;
 import vn.com.fpt.requests.RoomContractRequest;
 import vn.com.fpt.service.assets.AssetService;
+import vn.com.fpt.service.group.GroupService;
 import vn.com.fpt.service.renter.RenterService;
 import vn.com.fpt.service.rooms.RoomService;
 import vn.com.fpt.service.services.ServicesService;
@@ -34,14 +36,12 @@ import static vn.com.fpt.constants.ManagerConstants.*;
 public class ContractServiceImpl implements ContractService {
     private final ContractRepository contractRepository;
     private final AssetService assetService;
-
     private final RoomService roomService;
-
     private final RenterService renterService;
-
     private final ServicesService servicesService;
-
     private final AddressRepository addressRepository;
+    private final GroupService groupService;
+
 
 
     @Override
@@ -358,7 +358,7 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     public List<RoomContractDTO> listRoomContract(Long groupId) {
-        List<RoomContractDTO> roomContract = new ArrayList<>();
+        List<RoomContractDTO> roomContracts = new ArrayList<>();
         List<Contracts> listContract = null;
         if (Objects.isNull(groupId)) {
             listContract = contractRepository.findAllByContractType(SUBLEASE_CONTRACT);
@@ -367,11 +367,28 @@ public class ContractServiceImpl implements ContractService {
         }
         if (listContract.isEmpty()) return null;
         listContract.forEach(e -> {
-            roomContract.add(RoomContractDTO.of(e,
+            var group = groupService.group(e.getGroupId());
+            var roomContract = RoomContractDTO.of(e,
                     renterService.listRenter(e.getRoomId()),
                     assetService.listHandOverAsset(e.getId()),
-                    servicesService.listHandOverGeneralService(e.getId())));
+                    servicesService.listHandOverGeneralService(e.getId()));
+            roomContract.setGroupName(group.getGroupName());
+
+            roomContracts.add(roomContract);
         });
-        return roomContract;
+        return roomContracts;
+    }
+
+    @Override
+    public List<GroupContractDTO> listGroupContract() {
+        List<GroupContractDTO> listGroupContract = new ArrayList<>();
+        var groupContracts = contractRepository.findAllByContractType(LEASE_CONTRACT);
+        if (groupContracts.isEmpty()) return null;
+        groupContracts.forEach(e -> {
+            listGroupContract.add(GroupContractDTO.of(e,
+                                                      assetService.listHandOverAsset(e.getId()),
+                                                      servicesService.listGeneralService(e.getId())));
+        });
+        return listGroupContract;
     }
 }

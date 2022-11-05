@@ -1,5 +1,6 @@
 package vn.com.fpt.controller.manager;
 
+import io.sentry.protocol.App;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import vn.com.fpt.common.response.AppResponse;
 import vn.com.fpt.common.response.BaseResponse;
 import vn.com.fpt.common.utils.Operator;
+import vn.com.fpt.entity.Contracts;
 import vn.com.fpt.model.GroupContractDTO;
 import vn.com.fpt.model.RoomContractDTO;
 import vn.com.fpt.requests.GroupContractRequest;
@@ -36,50 +38,43 @@ public class ContractController {
         return AppResponse.success(contractService.addContract(request, Operator.operator()));
     }
 
-    @Operation(summary = "Cập nhập hợp đồng cho phòng")
+    @Operation(summary = "Cập nhập hợp đồng cho phòng", tags = "Room")
     @PutMapping("/room/update/{id}")
     public ResponseEntity<BaseResponse<RoomContractRequest>> updateContract(@PathVariable Long id,
                                                                             @RequestBody RoomContractRequest request) {
         return AppResponse.success(contractService.updateContract(id, request, Operator.operator()));
     }
 
-    @Operation(summary = "Xem hợp đồng của phòng")
+    @Operation(summary = "Xem hợp đồng của phòng", tags = "Room")
     @GetMapping("/room/{id}")
     public ResponseEntity<BaseResponse<RoomContractDTO>> roomContract(@PathVariable Long id) {
 
         return AppResponse.success(contractService.roomContract(id));
     }
 
-    @Operation(summary = "Xem tất cả hợp đồng phòng của nhóm phòng")
+    @Operation(summary = "Xem tất cả hợp đồng phòng trong nhóm phòng", tags = "Room")
     @GetMapping("")
     public ResponseEntity<BaseResponse<List<RoomContractDTO>>> listRoomContract(@RequestParam(required = false) Long groupId){
         return AppResponse.success(contractService.listRoomContract(groupId));
     }
 
 
+    @Operation(summary = "Thêm mới một hợp đồng cho nhóm phòng", tags = "Group")
     @PostMapping("/group/add")
     public ResponseEntity<BaseResponse<GroupContractRequest>> addContract(@RequestBody GroupContractRequest request) {
         return AppResponse.success(contractService.addContract(request, Operator.operator()));
     }
 
+    @Operation(summary = "Danh sách tất cả hợp đồng của nhóm phòng", tags = "Group")
     @GetMapping("/group")
-    public ResponseEntity<BaseResponse<GroupContractDTO>> listGroupContract() {
-        // TODO
-        return null;
+    public ResponseEntity<BaseResponse<List<GroupContractDTO>>> listGroupContract() {
+        return AppResponse.success(contractService.listGroupContract());
     }
 
+    @Operation(summary = "Thông tin hợp đồng của nhóm phòng", tags = "Group")
     @GetMapping("/group/{id}")
-    public ResponseEntity<BaseResponse<GroupContractDTO>> groupContract(@PathVariable Long id) {
-        // TODO
-        return null;
+    public ResponseEntity<BaseResponse<Contracts>> groupContract(@PathVariable Long id) {
+        return AppResponse.success(contractService.groupContract(id));
     }
-
-    @GetMapping("/room")
-    public ResponseEntity<BaseResponse<List<RoomContractDTO>>> listRoomContract() {
-        // TODO
-        return null;
-    }
-
-
 
 }

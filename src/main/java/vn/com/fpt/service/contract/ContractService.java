@@ -1,6 +1,7 @@
 package vn.com.fpt.service.contract;
 
 import vn.com.fpt.entity.Contracts;
+import vn.com.fpt.model.GroupContractDTO;
 import vn.com.fpt.model.RoomContractDTO;
 import vn.com.fpt.requests.GroupContractRequest;
 import vn.com.fpt.requests.RoomContractRequest;
@@ -21,4 +22,6 @@ public interface ContractService {
     RoomContractDTO roomContract(Long id);
 
     List<RoomContractDTO> listRoomContract(Long groupId);
+
+    List<GroupContractDTO> listGroupContract();
 }
