@@ -88,7 +88,7 @@ public class ContractServiceImpl implements ContractService {
         // lưu thành viên vào phòng
         if (!request.getListRenter().isEmpty()) {
             if (request.getListRenter().size() + 1 > room.getRoomLimitPeople())
-                throw new BusinessException(RENTER_LIMIT, "Giới hạn thành viên trong phòng " + room.getRoomLimitPeople() + " số lượng thành viên hiện tại:" + request.getListRenter().size() + 1);
+                throw new BusinessException(RENTER_LIMIT, "Giới hạn thành viên trong phòng " + room.getRoomLimitPeople() + " số lượng thành viên hiện tại:" + (request.getListRenter().size() + 1));
             request.getListRenter().forEach(e -> {
                 e.setRepresent(false);
                 e.setRoomId(roomId);

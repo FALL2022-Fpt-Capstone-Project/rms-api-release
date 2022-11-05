@@ -122,7 +122,7 @@ public class StaffServiceImpl implements StaffService {
             if (Boolean.TRUE.equals(!checkFormat(startDate)) || Boolean.TRUE.equals(!checkFormat(endDate)))
                 throw new BusinessException(BAD_REQUEST, "Ngày tìm kiếm không hợp lệ");
 
-            whereBuild.append("AND acc.created_at BETWEEN cast(:startDate AS timestamp) AND (cast(:endDate AS timestamp) + '1 day'::interval) ");
+            whereBuild.append("AND acc.created_at BETWEEN cast(:startDate AS timestamp) AND (cast(:endDate AS timestamp) + cast('1 day' AS interval)) ");
             params.put("startDate", startDate);
             params.put("endDate", endDate);
         }
