@@ -1,6 +1,7 @@
 package vn.com.fpt.service.contract;
 
 import lombok.*;
+import org.apache.logging.log4j.spi.DefaultThreadContextMap;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
@@ -21,6 +22,7 @@ import vn.com.fpt.service.services.ServicesService;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import static vn.com.fpt.common.utils.DateUtils.*;
 import static vn.com.fpt.constants.ErrorStatusConstants.*;
@@ -299,7 +301,12 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public List<RoomContractDTO> listRoomContract(Long groupId) {
         List<RoomContractDTO> roomContract = new ArrayList<>();
-        var listContract = contractRepository.findAllByGroupIdAndContractType(groupId, SUBLEASE_CONTRACT);
+        List<Contracts> listContract = null;
+        if (Objects.isNull(groupId)) {
+            listContract = contractRepository.findAllByContractType(SUBLEASE_CONTRACT);
+        } else {
+            listContract = contractRepository.findAllByGroupIdAndContractType(groupId, SUBLEASE_CONTRACT);
+        }
         if (listContract.isEmpty()) return null;
         listContract.forEach(e -> {
             roomContract.add(RoomContractDTO.of(e,
