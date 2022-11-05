@@ -7,11 +7,13 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicUpdate;
 import vn.com.fpt.common.utils.DateUtils;
 import vn.com.fpt.configs.AppConfigs;
+import vn.com.fpt.requests.GroupContractRequest;
 import vn.com.fpt.requests.RoomContractRequest;
 
 import javax.persistence.*;
 import java.util.Date;
 
+import static vn.com.fpt.constants.ManagerConstants.LEASE_CONTRACT;
 import static vn.com.fpt.constants.ManagerConstants.SUBLEASE_CONTRACT;
 
 
@@ -86,6 +88,44 @@ public class Contracts extends BaseEntity {
                 .roomId(request.getRoomId())
                 .groupId(request.getGroupId()).build();
     }
+
+    public static Contracts of(GroupContractRequest request, Long groupId) {
+        return Contracts.builder()
+                .contractName(request.getContractName())
+                .contractPrice(request.getContractPrice())
+                .contractDeposit(request.getContractDeposit())
+                .contractBillCycle(request.getContractBillCycle())
+                .contractPaymentCycle(request.getContractPaymentCycle())
+                .contractStartDate(DateUtils.parse(request.getContractStartDate(), DateUtils.DATE_FORMAT_3))
+                .contractEndDate(DateUtils.parse(request.getContractEndDate(), DateUtils.DATE_FORMAT_3))
+                .note(request.getContractNote())
+                .contractTerm(request.getContractTerm())
+                .groupId(groupId).build();
+    }
+
+    public static Contracts addForGroup(GroupContractRequest request, Long groupId, Long operator) {
+        var renterContract = of(request, groupId);
+        renterContract.setContractType(LEASE_CONTRACT);
+        renterContract.setCreatedBy(operator);
+        renterContract.setCreatedAt(DateUtils.now());
+        return renterContract;
+    }
+
+    public static Contracts modifyForRenter(Contracts old, GroupContractRequest neww, Long operator) {
+        var groupContract = of(neww, old.getGroupId());
+        groupContract.setId(old.getId());
+
+        //fetch
+        groupContract.setCreatedBy(old.getCreatedBy());
+        groupContract.setCreatedAt(old.getCreatedAt());
+
+
+        groupContract.setModifiedAt(DateUtils.now());
+        groupContract.setModifiedBy(operator);
+
+        return groupContract;
+    }
+
 
     public static Contracts addForRenter(RoomContractRequest request, Long operator) {
         var renterContract = of(request);

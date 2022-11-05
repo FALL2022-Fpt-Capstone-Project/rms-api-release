@@ -1,16 +1,18 @@
 package vn.com.fpt.service.contract;
 
 import lombok.*;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 import vn.com.fpt.common.BusinessException;
-import vn.com.fpt.entity.Address;
-import vn.com.fpt.entity.BasicAssets;
-import vn.com.fpt.entity.Contracts;
-import vn.com.fpt.entity.Renters;
+import vn.com.fpt.common.utils.DateUtils;
+import vn.com.fpt.entity.*;
 import vn.com.fpt.model.RoomContractDTO;
 import vn.com.fpt.repositories.*;
+import vn.com.fpt.requests.GeneralServiceRequest;
+import vn.com.fpt.requests.GroupContractRequest;
 import vn.com.fpt.requests.RenterRequest;
 import vn.com.fpt.requests.RoomContractRequest;
 import vn.com.fpt.service.assets.AssetService;
@@ -38,6 +40,8 @@ public class ContractServiceImpl implements ContractService {
     private final RenterService renterService;
 
     private final ServicesService servicesService;
+
+    private final AddressRepository addressRepository;
 
 
     @Override
@@ -153,6 +157,61 @@ public class ContractServiceImpl implements ContractService {
         if (!request.getListGeneralService().isEmpty()) {
             request.getListGeneralService().forEach(service -> servicesService.addHandOverGeneralService(service, contractId, startDate, operator));
         }
+        return request;
+    }
+
+    @Override
+    @Transactional
+    public GroupContractRequest addContract(GroupContractRequest request, Long operator) {
+
+        var address = Address.add(request.getAddressCity(),
+                                          request.getAddressDistrict(),
+                                          request.getAddressWards(),
+                                          request.getAddressMoreDetails(),
+                                          operator);
+
+        // tạo mới 1 nhóm phòng
+        var group = RoomGroups.add(request.getGroupName(),
+                                               addressRepository.save(address).getId(),
+                                               operator);
+
+        // tạo mới 1 hợp đồng cho nhóm phòng đấy
+        var contract = contractRepository.save(Contracts.addForGroup(request,
+                group.getId(),
+                operator));
+
+
+        if (!request.getListFloorAndRoom().isEmpty()) {
+            List<Rooms> generateRoom = new ArrayList<>();
+
+            // tự động gen phòng theo tầng
+            request.getListFloorAndRoom().forEach(e -> {
+                for (int i = 1; i <= e.getRoom(); i++) {
+                    String roomName = e.getFloor() + String.format("%02d", i);
+                    var room = Rooms.add(roomName,
+                            e.getFloor(),
+                            request.getGeneralLimitPeople(),
+                            group.getId(),
+                            request.getGeneralPrice(),
+                            request.getGeneralArea(),
+                            operator);
+                    generateRoom.add(room);
+                }
+            });
+            roomService.add(generateRoom);
+        }
+
+        //thêm tài sản bàn giao
+        if (!request.getListHandOverAsset().isEmpty()){
+            request.getListHandOverAsset().forEach(e-> assetService.addHandOverAsset(e,
+                                                       operator,
+                                                       contract.getId(),
+                                                       DateUtils.parse(e.getHandOverDateDelivery(), DATE_FORMAT_3)));
+
+        }
+
+        servicesService.addGeneralService(request.getListGeneralService(), operator);
+
         return request;
     }
 

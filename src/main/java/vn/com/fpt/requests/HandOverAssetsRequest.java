@@ -23,4 +23,6 @@ public class HandOverAssetsRequest {
     private int handOverAssetQuantity;
 
     private Boolean handOverAssetStatus;
+
+    private String handOverDateDelivery;
 }

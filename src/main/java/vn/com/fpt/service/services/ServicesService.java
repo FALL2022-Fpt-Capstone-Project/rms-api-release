@@ -27,6 +27,7 @@ public interface ServicesService {
 
     GeneralService addGeneralService(GeneralServiceRequest request, Long operator);
 
+    List<GeneralService> addGeneralService(List<GeneralServiceRequest> request, Long operator);
     HandOverGeneralServices addHandOverGeneralService(HandOverGeneralServiceRequest request,
                                                       Long contractId,
                                                       Date dateDelivery,

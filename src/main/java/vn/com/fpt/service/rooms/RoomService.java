@@ -11,6 +11,10 @@ public interface RoomService {
 
     RoomsResponse room (Long id);
 
+    List<Rooms> add(List<Rooms> rooms);
+
+    Rooms add(Rooms rooms);
+
     RoomsResponse removeRoom(Long id);
 
     Rooms updateRoom(Long id, RoomsRequest roomsRequest);

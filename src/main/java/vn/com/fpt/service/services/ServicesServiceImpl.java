@@ -166,6 +166,12 @@ public class ServicesServiceImpl implements ServicesService {
     }
 
     @Override
+    public List<GeneralService> addGeneralService(List<GeneralServiceRequest> request, Long operator) {
+        return generalServiceRepository.saveAll(request.stream().map(GeneralService::of).toList());
+    }
+
+
+    @Override
     public HandOverGeneralServices addHandOverGeneralService(HandOverGeneralServiceRequest request,
                                                              Long contractId,
                                                              Date dateDelivery,

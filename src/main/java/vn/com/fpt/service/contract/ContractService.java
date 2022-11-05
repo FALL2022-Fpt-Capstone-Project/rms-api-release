@@ -2,12 +2,15 @@ package vn.com.fpt.service.contract;
 
 import vn.com.fpt.entity.Contracts;
 import vn.com.fpt.model.RoomContractDTO;
+import vn.com.fpt.requests.GroupContractRequest;
 import vn.com.fpt.requests.RoomContractRequest;
 
 import java.util.List;
 
 public interface ContractService {
     RoomContractRequest addContract(RoomContractRequest request, Long operator);
+
+    GroupContractRequest addContract(GroupContractRequest request, Long operator);
 
     RoomContractRequest updateContract(Long id, RoomContractRequest request, Long operator);
 

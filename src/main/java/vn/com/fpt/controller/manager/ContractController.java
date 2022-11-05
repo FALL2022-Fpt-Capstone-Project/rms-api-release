@@ -59,8 +59,7 @@ public class ContractController {
 
     @PostMapping("/group/add")
     public ResponseEntity<BaseResponse<GroupContractRequest>> addContract(@RequestBody GroupContractRequest request) {
-        // TODO
-        return null;
+        return AppResponse.success(contractService.addContract(request, Operator.operator()));
     }
 
     @GetMapping("/group")

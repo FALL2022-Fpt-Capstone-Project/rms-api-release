@@ -55,6 +55,16 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
+    public List<Rooms> add(List<Rooms> rooms) {
+        return roomsRepository.saveAll(rooms);
+    }
+
+    @Override
+    public Rooms add(Rooms rooms) {
+        return roomsRepository.save(rooms);
+    }
+
+    @Override
     public RoomsResponse removeRoom(Long id) {
         // TODO
         return null;
