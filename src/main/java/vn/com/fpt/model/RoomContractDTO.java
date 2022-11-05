@@ -1,5 +1,7 @@
 package vn.com.fpt.model;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
 import vn.com.fpt.common.utils.DateUtils;
 import vn.com.fpt.entity.Contracts;
@@ -13,6 +15,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @RequiredArgsConstructor
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class RoomContractDTO implements Serializable {
 
     private String contractName;

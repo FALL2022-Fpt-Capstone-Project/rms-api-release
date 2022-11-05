@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.*;
 import org.springframework.stereotype.Service;
 
+import vn.com.fpt.entity.RoomGroups;
 import vn.com.fpt.repositories.AddressRepository;
 import vn.com.fpt.repositories.ContractRepository;
 import vn.com.fpt.repositories.GroupRepository;
@@ -37,7 +38,7 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public GroupResponse group(Long groupId) {
         var contract = contractRepository.findByGroupIdAndContractType(groupId, LEASE_CONTRACT);
-        var group = groupRepository.findById(contract.getRoomId()).get();
+        var group = groupRepository.findById(contract.getGroupId()).get();
         var rooms = roomsRepository.findAllByGroupId(groupId)
                 .stream()
                 .map(RoomsResponse::of)
