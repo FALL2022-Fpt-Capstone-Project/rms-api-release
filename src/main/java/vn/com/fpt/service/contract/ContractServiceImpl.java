@@ -1,11 +1,11 @@
 package vn.com.fpt.service.contract;
 
 import lombok.*;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
 import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.common.utils.DateUtils;
 import vn.com.fpt.entity.*;
@@ -21,6 +21,8 @@ import vn.com.fpt.service.group.GroupService;
 import vn.com.fpt.service.renter.RenterService;
 import vn.com.fpt.service.rooms.RoomService;
 import vn.com.fpt.service.services.ServicesService;
+import vn.com.fpt.specification.BaseSpecification;
+import vn.com.fpt.specification.SearchCriteria;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -30,6 +32,8 @@ import java.util.Objects;
 import static vn.com.fpt.common.utils.DateUtils.*;
 import static vn.com.fpt.constants.ErrorStatusConstants.*;
 import static vn.com.fpt.constants.ManagerConstants.*;
+import static vn.com.fpt.constants.SearchOperation.EQUAL;
+import static vn.com.fpt.constants.SearchOperation.MATCH;
 
 @Service
 @RequiredArgsConstructor
@@ -358,7 +362,12 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public List<RoomContractDTO> listRoomContract(Long groupId) {
+    public List<RoomContractDTO> listRoomContract(Long groupId,
+                                                  String phoneNumber,
+                                                  String identity,
+                                                  String renterName,
+                                                  String startDate,
+                                                  String endDate) {
         List<RoomContractDTO> roomContracts = new ArrayList<>();
         List<Contracts> listContract = null;
         if (Objects.isNull(groupId)) {
@@ -374,7 +383,7 @@ public class ContractServiceImpl implements ContractService {
                     assetService.listHandOverAsset(e.getId()),
                     servicesService.listHandOverGeneralService(e.getId()));
             roomContract.setGroupName(group.getGroupName());
-
+            roomContract.setRoomName(roomService.getRoom(e.getRoomId()).getRoomName());
             roomContracts.add(roomContract);
         });
         return roomContracts;
