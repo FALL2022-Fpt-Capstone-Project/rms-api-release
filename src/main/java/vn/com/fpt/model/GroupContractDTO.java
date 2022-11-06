@@ -15,6 +15,8 @@ import java.util.List;
 @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class GroupContractDTO implements Serializable {
+    private Long contractId;
+
     private String contractName;
 
     private Double contractPrice;
@@ -51,6 +53,7 @@ public class GroupContractDTO implements Serializable {
                                       List<HandOverAssetsDTO> handOverAssets,
                                       List<GeneralServiceDTO> generalServices) {
         var response = GroupContractDTO.builder()
+                .contractId(contract.getId())
                 .contractName(contract.getContractName())
                 .contractPrice(contract.getContractPrice())
                 .contractDeposit(contract.getContractDeposit())
