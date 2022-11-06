@@ -130,6 +130,7 @@ public class Contracts extends BaseEntity {
     public static Contracts addForRenter(RoomContractRequest request, Long operator) {
         var renterContract = of(request);
         renterContract.setContractType(SUBLEASE_CONTRACT);
+        renterContract.setContractIsDisable(false);
         renterContract.setCreatedBy(operator);
         renterContract.setCreatedAt(DateUtils.now());
         return renterContract;
