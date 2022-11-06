@@ -2,7 +2,6 @@ package vn.com.fpt.service.contract;
 
 import lombok.*;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
@@ -12,7 +11,6 @@ import vn.com.fpt.entity.*;
 import vn.com.fpt.model.GroupContractDTO;
 import vn.com.fpt.model.RoomContractDTO;
 import vn.com.fpt.repositories.*;
-import vn.com.fpt.requests.GeneralServiceRequest;
 import vn.com.fpt.requests.GroupContractRequest;
 import vn.com.fpt.requests.RenterRequest;
 import vn.com.fpt.requests.RoomContractRequest;
@@ -32,8 +30,7 @@ import java.util.Objects;
 import static vn.com.fpt.common.utils.DateUtils.*;
 import static vn.com.fpt.constants.ErrorStatusConstants.*;
 import static vn.com.fpt.constants.ManagerConstants.*;
-import static vn.com.fpt.constants.SearchOperation.EQUAL;
-import static vn.com.fpt.constants.SearchOperation.MATCH;
+import static vn.com.fpt.constants.SearchOperation.*;
 
 @Service
 @RequiredArgsConstructor
@@ -46,6 +43,7 @@ public class ContractServiceImpl implements ContractService {
     private final AddressRepository addressRepository;
     private final GroupService groupService;
 
+    private final RenterRepository renterRepository;
 
     @Override
     @Transactional
@@ -369,25 +367,37 @@ public class ContractServiceImpl implements ContractService {
                                                   String startDate,
                                                   String endDate) {
         List<RoomContractDTO> roomContracts = new ArrayList<>();
-        List<Contracts> listContract = null;
 
-        BaseSpecification<Renters> specification = new BaseSpecification<>();
+        BaseSpecification<Renters> renterSpec = new BaseSpecification<>();
 
         if (StringUtils.isNoneBlank(phoneNumber)) {
-            specification.add(new SearchCriteria("phoneNumber", phoneNumber, MATCH));
+            renterSpec.add(new SearchCriteria("phoneNumber", phoneNumber, MATCH));
         }
         if (StringUtils.isNoneBlank(identity)) {
-            specification.add(new SearchCriteria("renterFullName", identity, MATCH));
+            renterSpec.add(new SearchCriteria("identity", identity, MATCH));
         }
         if (StringUtils.isNoneBlank(renterName)) {
-            specification.add(new SearchCriteria("renterFullName", renterName, MATCH));
+            renterSpec.add(new SearchCriteria("renterFullName", renterName, MATCH));
         }
 
-        if (Objects.isNull(groupId)) {
-            listContract = contractRepository.findAllByContractType(SUBLEASE_CONTRACT);
-        } else {
-            listContract = contractRepository.findAllByGroupIdAndContractType(groupId, SUBLEASE_CONTRACT);
+        List<Long> searchRenter = renterRepository.findAll(renterSpec).stream().map(Renters::getId).toList();
+
+        BaseSpecification<Contracts> contractSpec = new BaseSpecification<>();
+        contractSpec.add(new SearchCriteria("contractType", SUBLEASE_CONTRACT, EQUAL));
+
+        if (StringUtils.isNotBlank(startDate) && StringUtils.isNotBlank(endDate)) {
+            contractSpec.add(new SearchCriteria("groupId", groupId, EQUAL));
         }
+        if (org.apache.commons.lang3.ObjectUtils.isNotEmpty(groupId)) {
+            contractSpec.add(new SearchCriteria("startDate", DateUtils.parse(startDate, DATE_FORMAT_3), GREATER_THAN_EQUAL));
+            contractSpec.add(new SearchCriteria("endDate", DateUtils.parse(endDate, DATE_FORMAT_3), LESS_THAN_EQUAL));
+        }
+        if (!searchRenter.isEmpty()){
+            contractSpec.add(new SearchCriteria("renters", searchRenter, IN));
+        }
+
+        var listContract = contractRepository.findAll(contractSpec);
+
         if (listContract.isEmpty()) return null;
         listContract.forEach(e -> {
             var group = groupService.group(e.getGroupId());
