@@ -11,7 +11,13 @@ public interface StaffService {
 
     AccountResponse updateStaff(Long id, RegisterRequest registerRequest, Long modifyBy, Date modifyAt);
 
-    List<AccountResponse> listStaff(String role, String order, String startDate, String endDate, Boolean deactivate, String name, String userName);
+    List<AccountResponse> listStaff(String role,
+                                    String order,
+                                    String startDate,
+                                    String endDate,
+                                    Boolean deactivate,
+                                    String name,
+                                    String userName);
 
     AccountResponse staff(Long id);
 

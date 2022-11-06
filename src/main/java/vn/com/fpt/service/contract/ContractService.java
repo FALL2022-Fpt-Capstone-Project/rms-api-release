@@ -21,7 +21,12 @@ public interface ContractService {
 
     RoomContractDTO roomContract(Long id);
 
-    List<RoomContractDTO> listRoomContract(Long groupId);
+    List<RoomContractDTO> listRoomContract(Long groupId,
+                                           String phoneNumber,
+                                           String identity,
+                                           String renterName,
+                                           String startDate,
+                                           String endDate);
 
     List<GroupContractDTO> listGroupContract();
 }

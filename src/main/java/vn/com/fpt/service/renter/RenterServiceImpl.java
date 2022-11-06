@@ -15,8 +15,6 @@ import vn.com.fpt.responses.RentersResponse;
 import vn.com.fpt.service.rooms.RoomService;
 import vn.com.fpt.specification.BaseSpecification;
 import vn.com.fpt.specification.SearchCriteria;
-//import vn.com.fpt.specification.BaseSpecification;
-//import vn.com.fpt.specification.SearchCriteria;
 
 import java.util.List;
 
@@ -33,6 +31,7 @@ public class RenterServiceImpl implements RenterService {
     @Override
     public List<RentersResponse> listRenter(Long groupId, Boolean gender, String name, String phone, Long room) {
         BaseSpecification<Renters> specification = new BaseSpecification<>();
+
         if (ObjectUtils.allNotNull(groupId)) {
             specification.add(new SearchCriteria("groupId", groupId, EQUAL));
         }

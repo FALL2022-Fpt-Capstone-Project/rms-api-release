@@ -54,8 +54,18 @@ public class ContractController {
 
     @Operation(summary = "Xem tất cả hợp đồng phòng trong nhóm phòng", tags = "Room")
     @GetMapping("")
-    public ResponseEntity<BaseResponse<List<RoomContractDTO>>> listRoomContract(@RequestParam(required = false) Long groupId){
-        return AppResponse.success(contractService.listRoomContract(groupId));
+    public ResponseEntity<BaseResponse<List<RoomContractDTO>>> listRoomContract(@RequestParam(required = false) Long groupId,
+                                                                                @RequestParam(required = false) String phoneNumber,
+                                                                                @RequestParam(required = false) String identity,
+                                                                                @RequestParam(required = false) String renterName,
+                                                                                @RequestParam(required = false) String startDate,
+                                                                                @RequestParam(required = false) String endDate) {
+        return AppResponse.success(contractService.listRoomContract(groupId,
+                                                                    phoneNumber,
+                                                                    identity,
+                                                                    renterName,
+                                                                    startDate,
+                                                                    endDate));
     }
 
 

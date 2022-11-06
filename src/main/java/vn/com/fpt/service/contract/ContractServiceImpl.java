@@ -370,6 +370,19 @@ public class ContractServiceImpl implements ContractService {
                                                   String endDate) {
         List<RoomContractDTO> roomContracts = new ArrayList<>();
         List<Contracts> listContract = null;
+
+        BaseSpecification<Renters> specification = new BaseSpecification<>();
+
+        if (StringUtils.isNoneBlank(phoneNumber)) {
+            specification.add(new SearchCriteria("phoneNumber", phoneNumber, MATCH));
+        }
+        if (StringUtils.isNoneBlank(identity)) {
+            specification.add(new SearchCriteria("renterFullName", identity, MATCH));
+        }
+        if (StringUtils.isNoneBlank(renterName)) {
+            specification.add(new SearchCriteria("renterFullName", renterName, MATCH));
+        }
+
         if (Objects.isNull(groupId)) {
             listContract = contractRepository.findAllByContractType(SUBLEASE_CONTRACT);
         } else {
