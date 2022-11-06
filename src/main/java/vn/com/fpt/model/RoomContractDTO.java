@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
 import vn.com.fpt.common.utils.DateUtils;
 import vn.com.fpt.entity.Contracts;
+import vn.com.fpt.entity.Rooms;
 import vn.com.fpt.responses.RentersResponse;
 import vn.com.fpt.responses.RoomsResponse;
 
@@ -23,7 +24,9 @@ public class RoomContractDTO implements Serializable {
 
     private String contractName;
 
-    private RoomsResponse roomsResponse;
+    private String groupName;
+
+    private Rooms room;
 
     private Double contractPrice;
 

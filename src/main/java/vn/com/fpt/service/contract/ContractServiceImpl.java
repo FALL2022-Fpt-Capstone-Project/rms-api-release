@@ -395,8 +395,8 @@ public class ContractServiceImpl implements ContractService {
                     renterService.listRenter(e.getRoomId()),
                     assetService.listHandOverAsset(e.getId()),
                     servicesService.listHandOverGeneralService(e.getId()));
-            roomContract.setRoomsResponse(roomService.room(e.getRoomId()));
-            roomContract.setRoomName(roomService.getRoom(e.getRoomId()).getRoomName());
+            roomContract.setRoom(roomService.getRoom(e.getRoomId()));
+            roomContract.setGroupName(group.getGroupName());
             roomContracts.add(roomContract);
         });
         return roomContracts;
