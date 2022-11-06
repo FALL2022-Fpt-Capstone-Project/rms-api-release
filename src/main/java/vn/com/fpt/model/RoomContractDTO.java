@@ -46,6 +46,8 @@ public class RoomContractDTO implements Serializable {
 
     private Long roomId;
 
+    private String roomName;
+
     private Long groupId;
 
     private Integer contractType;

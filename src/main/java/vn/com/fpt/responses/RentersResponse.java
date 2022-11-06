@@ -33,6 +33,7 @@ public class RentersResponse implements Serializable {
     private Boolean represent;
 
     private Identity renterIdentity;
+    private String licensePlates;
 
     private Address address;
 
@@ -48,6 +49,7 @@ public class RentersResponse implements Serializable {
                 .represent(renters.getRepresent())
                 .renterIdentity(renters.getRenterIdentity())
                 .address(renters.getAddress())
+                .licensePlates(renters.getLicensePlates())
                 .build();
     }
 }

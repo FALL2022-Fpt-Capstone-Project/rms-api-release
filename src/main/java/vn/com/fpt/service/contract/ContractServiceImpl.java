@@ -43,7 +43,6 @@ public class ContractServiceImpl implements ContractService {
     private final GroupService groupService;
 
 
-
     @Override
     @Transactional
     public RoomContractRequest addContract(RoomContractRequest request, Long operator) {
@@ -165,15 +164,15 @@ public class ContractServiceImpl implements ContractService {
     public GroupContractRequest addContract(GroupContractRequest request, Long operator) {
 
         var address = Address.add(request.getAddressCity(),
-                                          request.getAddressDistrict(),
-                                          request.getAddressWards(),
-                                          request.getAddressMoreDetails(),
-                                          operator);
+                request.getAddressDistrict(),
+                request.getAddressWards(),
+                request.getAddressMoreDetails(),
+                operator);
 
         // tạo mới 1 nhóm phòng
         var group = RoomGroups.add(request.getGroupName(),
-                                               addressRepository.save(address).getId(),
-                                               operator);
+                addressRepository.save(address).getId(),
+                operator);
 
         // tạo mới 1 hợp đồng cho nhóm phòng đấy
         var contract = contractRepository.save(Contracts.addForGroup(request,
@@ -202,11 +201,11 @@ public class ContractServiceImpl implements ContractService {
         }
 
         //thêm tài sản bàn giao
-        if (!request.getListHandOverAsset().isEmpty()){
-            request.getListHandOverAsset().forEach(e-> assetService.addHandOverAsset(e,
-                                                       operator,
-                                                       contract.getId(),
-                                                       DateUtils.parse(e.getHandOverDateDelivery(), DATE_FORMAT_3)));
+        if (!request.getListHandOverAsset().isEmpty()) {
+            request.getListHandOverAsset().forEach(e -> assetService.addHandOverAsset(e,
+                    operator,
+                    contract.getId(),
+                    DateUtils.parse(e.getHandOverDateDelivery(), DATE_FORMAT_3)));
 
         }
 
@@ -350,10 +349,12 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public RoomContractDTO roomContract(Long id) {
         var contract = contract(id);
-        return RoomContractDTO.of(contract,
+        var roomContract = RoomContractDTO.of(contract,
                 renterService.listRenter(contract.getRoomId()),
                 assetService.listHandOverAsset(id),
                 servicesService.listHandOverGeneralService(id));
+        roomContract.setRoomName(roomService.getRoom(roomContract.getRoomId()).getRoomName());
+        return roomContract;
     }
 
     @Override
