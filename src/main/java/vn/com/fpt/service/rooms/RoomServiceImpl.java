@@ -66,8 +66,7 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public RoomsResponse removeRoom(Long id) {
-        // TODO
-        return null;
+        return RoomsResponse.of(roomsRepository.findById(id).get());
     }
 
     @Override

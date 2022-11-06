@@ -6,6 +6,7 @@ import lombok.*;
 import vn.com.fpt.common.utils.DateUtils;
 import vn.com.fpt.entity.Contracts;
 import vn.com.fpt.responses.RentersResponse;
+import vn.com.fpt.responses.RoomsResponse;
 
 import java.io.Serializable;
 import java.util.List;
@@ -22,7 +23,7 @@ public class RoomContractDTO implements Serializable {
 
     private String contractName;
 
-    private String groupName;
+    private RoomsResponse roomsResponse;
 
     private Double contractPrice;
 
