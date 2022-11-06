@@ -107,8 +107,8 @@ public class Account extends BaseEntity {
                                  Set<Role> roles,
                                  Long operator,
                                  Date time) {
-        if (registerRequest.getDeactivate() == null) registerRequest.setDeactivate(false);
-        else registerRequest.setDeactivate(true);
+        registerRequest.setDeactivate(registerRequest.getDeactivate() != null
+                                    && registerRequest.getDeactivate());
         var account = of(registerRequest, address, roles);
         var addressToUpdate = Address.of(registerRequest);
         addressToUpdate.setId(address.getId());
