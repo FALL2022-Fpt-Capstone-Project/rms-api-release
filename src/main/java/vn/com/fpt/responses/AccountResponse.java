@@ -74,6 +74,7 @@ public class AccountResponse {
         BeanUtils.copyProperties(account, response);
         response.setAccountId(account.getId());
         response.setFullName(account.getFullName());
+        response.setPhoneNumber(account.getPhoneNumber());
         response.setRoles(account.getRoles().stream().map(e -> e.getName().name()).collect(Collectors.toSet()));
         response.setAddressId(account.getAddress().getId());
         response.setAddressCity(account.getAddress().getAddressCity());
