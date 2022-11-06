@@ -18,6 +18,8 @@ import java.util.List;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class RoomContractDTO implements Serializable {
 
+    private Long contractId;
+
     private String contractName;
 
     private String groupName;
@@ -59,6 +61,7 @@ public class RoomContractDTO implements Serializable {
                                      List<HandOverAssetsDTO> listHandOverAsset,
                                      List<HandOverGeneralServiceDTO> listHandOverGeneralService) {
         var response = RoomContractDTO.builder()
+                .contractId(contract.getId())
                 .contractName(contract.getContractName())
                 .contractPrice(contract.getContractPrice())
                 .contractDeposit(contract.getContractDeposit())

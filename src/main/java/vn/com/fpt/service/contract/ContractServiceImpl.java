@@ -384,11 +384,10 @@ public class ContractServiceImpl implements ContractService {
         List<GroupContractDTO> listGroupContract = new ArrayList<>();
         var groupContracts = contractRepository.findAllByContractType(LEASE_CONTRACT);
         if (groupContracts.isEmpty()) return null;
-        groupContracts.forEach(e -> {
-            listGroupContract.add(GroupContractDTO.of(e,
-                                                      assetService.listHandOverAsset(e.getId()),
-                                                      servicesService.listGeneralService(e.getId())));
-        });
+        groupContracts.forEach(e ->
+                listGroupContract.add(GroupContractDTO.of(e,
+                        assetService.listHandOverAsset(e.getId()),
+                        servicesService.listGeneralService(e.getId()))));
         return listGroupContract;
     }
 }
