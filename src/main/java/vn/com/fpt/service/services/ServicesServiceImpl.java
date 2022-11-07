@@ -242,6 +242,6 @@ public class ServicesServiceImpl implements ServicesService {
 
     GeneralService findGeneralServiceById(Long id) {
         return generalServiceRepository.findById(id)
-                .orElseThrow(() -> new BusinessException(GENERAL_SERVICE_NOT_FOUND, "Không tìm thấy tài sản general_asset_id: " + id));
+                .orElseThrow(() -> new BusinessException(GENERAL_SERVICE_NOT_FOUND, "Không tìm thấy tài sản general_service_id: " + id));
     }
 }
