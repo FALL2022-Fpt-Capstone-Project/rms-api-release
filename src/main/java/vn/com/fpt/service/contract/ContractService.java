@@ -25,6 +25,7 @@ public interface ContractService {
                                            String phoneNumber,
                                            String identity,
                                            String renterName,
+                                           Boolean isDisable,
                                            String startDate,
                                            String endDate);
 

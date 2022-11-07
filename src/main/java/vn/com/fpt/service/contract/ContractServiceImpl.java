@@ -364,6 +364,7 @@ public class ContractServiceImpl implements ContractService {
                                                   String phoneNumber,
                                                   String identity,
                                                   String renterName,
+                                                  Boolean isDisable,
                                                   String startDate,
                                                   String endDate) {
         List<RoomContractDTO> roomContracts = new ArrayList<>();
@@ -392,7 +393,10 @@ public class ContractServiceImpl implements ContractService {
             contractSpec.add(new SearchCriteria("startDate", DateUtils.parse(startDate, DATE_FORMAT_3), GREATER_THAN_EQUAL));
             contractSpec.add(new SearchCriteria("endDate", DateUtils.parse(endDate, DATE_FORMAT_3), LESS_THAN_EQUAL));
         }
-        if (!searchRenter.isEmpty()){
+        if (org.apache.commons.lang3.ObjectUtils.isNotEmpty(isDisable)) {
+            contractSpec.add(new SearchCriteria("contractIsDisable", isDisable, EQUAL));
+        }
+        if (!searchRenter.isEmpty()) {
             contractSpec.add(new SearchCriteria("renters", searchRenter, IN));
         }
 

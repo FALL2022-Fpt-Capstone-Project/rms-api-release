@@ -58,12 +58,14 @@ public class ContractController {
                                                                                 @RequestParam(required = false) String phoneNumber,
                                                                                 @RequestParam(required = false) String identity,
                                                                                 @RequestParam(required = false) String renterName,
+                                                                                @RequestParam(required = false, defaultValue = "false") Boolean isDisable,
                                                                                 @RequestParam(required = false) String startDate,
                                                                                 @RequestParam(required = false) String endDate) {
         return AppResponse.success(contractService.listRoomContract(groupId,
                                                                     phoneNumber,
                                                                     identity,
                                                                     renterName,
+                                                                    isDisable,
                                                                     startDate,
                                                                     endDate));
     }
