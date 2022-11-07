@@ -39,17 +39,17 @@ public class ContractController {
     }
 
     @Operation(summary = "Cập nhập hợp đồng cho phòng", tags = "Room")
-    @PutMapping("/room/update/{id}")
-    public ResponseEntity<BaseResponse<RoomContractRequest>> updateContract(@PathVariable Long id,
+    @PutMapping("/room/update/{contractId}")
+    public ResponseEntity<BaseResponse<RoomContractRequest>> updateContract(@PathVariable Long contractId,
                                                                             @RequestBody RoomContractRequest request) {
-        return AppResponse.success(contractService.updateContract(id, request, Operator.operator()));
+        return AppResponse.success(contractService.updateContract(contractId, request, Operator.operator()));
     }
 
     @Operation(summary = "Xem hợp đồng của phòng", tags = "Room")
-    @GetMapping("/room/{id}")
-    public ResponseEntity<BaseResponse<RoomContractDTO>> roomContract(@PathVariable Long id) {
+    @GetMapping("/room/{contractId}")
+    public ResponseEntity<BaseResponse<RoomContractDTO>> roomContract(@PathVariable Long contractId) {
 
-        return AppResponse.success(contractService.roomContract(id));
+        return AppResponse.success(contractService.roomContract(contractId));
     }
 
     @Operation(summary = "Xem tất cả hợp đồng phòng trong nhóm phòng", tags = "Room")
@@ -82,9 +82,9 @@ public class ContractController {
     }
 
     @Operation(summary = "Thông tin hợp đồng của nhóm phòng", tags = "Group")
-    @GetMapping("/group/{id}")
-    public ResponseEntity<BaseResponse<Contracts>> groupContract(@PathVariable Long id) {
-        return AppResponse.success(contractService.groupContract(id));
+    @GetMapping("/group/{contractId}")
+    public ResponseEntity<BaseResponse<Contracts>> groupContract(@PathVariable Long contractId) {
+        return AppResponse.success(contractService.groupContract(contractId));
     }
 
 }

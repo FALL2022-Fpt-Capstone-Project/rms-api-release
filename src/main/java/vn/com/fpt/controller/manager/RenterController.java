@@ -39,10 +39,10 @@ public class RenterController {
         return AppResponse.success(renterService.listRenter(group, gender, name, phone, room));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{renterId}")
     @Operation(description = "Lấy thông tin khách thuê")
-    public ResponseEntity<BaseResponse<RentersResponse>> renter(@PathVariable Long id) {
-        return AppResponse.success(renterService.renter(id));
+    public ResponseEntity<BaseResponse<RentersResponse>> renter(@PathVariable Long renterId) {
+        return AppResponse.success(renterService.renter(renterId));
     }
 
     @PostMapping("/add")
@@ -51,22 +51,22 @@ public class RenterController {
         return AppResponse.success(renterService.addRenter(request, Operator.operator()));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{renterId}")
     @Operation(description = "Cập nhập thông tin khách khách thuê")
     public ResponseEntity<BaseResponse<RentersResponse>> updateRenter(@RequestBody RenterRequest request,
-                                                                      @PathVariable Long id) {
-        return AppResponse.success(renterService.updateRenter(id, request, Operator.operator()));
+                                                                      @PathVariable Long renterId) {
+        return AppResponse.success(renterService.updateRenter(renterId, request, Operator.operator()));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{renterId}")
     @Operation(description = "Xóa thông tin khách thuê")
-    public ResponseEntity<BaseResponse<String>> deleteRenter(@PathVariable Long id) {
-        return AppResponse.success(renterService.deleteRenter(id));
+    public ResponseEntity<BaseResponse<String>> deleteRenter(@PathVariable Long renterId) {
+        return AppResponse.success(renterService.deleteRenter(renterId));
     }
 
-    @GetMapping("/remove/{id}")
+    @GetMapping("/remove/{renterId}")
     @Operation(description = "Xóa khách thuê ra khỏi phòng")
-    public ResponseEntity<BaseResponse<RentersResponse>> removeFromRoom(@PathVariable Long id) {
-        return AppResponse.success(renterService.removeFromRoom(id, Operator.operator()));
+    public ResponseEntity<BaseResponse<RentersResponse>> removeFromRoom(@PathVariable Long renterId) {
+        return AppResponse.success(renterService.removeFromRoom(renterId, Operator.operator()));
     }
 }

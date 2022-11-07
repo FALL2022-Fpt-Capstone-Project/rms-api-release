@@ -42,10 +42,10 @@ public class AssetController {
         return AppResponse.success(assetService.listBasicAsset());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{assetId}")
     @Operation(summary = "Lấy thông tin trang thiết bị cơ bản, thiết yếu")
-    public ResponseEntity<BaseResponse<BasicAssets>> basicAsset(@PathVariable Long id) {
-        return AppResponse.success(assetService.basicAssets(id));
+    public ResponseEntity<BaseResponse<BasicAssets>> basicAsset(@PathVariable Long assetId) {
+        return AppResponse.success(assetService.basicAssets(assetId));
     }
 
     @PostMapping("/add")
@@ -54,16 +54,16 @@ public class AssetController {
         return AppResponse.success(assetService.add(request, Operator.operator()));
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/update/{assetId}")
     @Operation(summary = "Cập nhập trang thiết bị cơ bản, thiết yếu")
-    public ResponseEntity<BaseResponse<BasicAssets>> update(@PathVariable Long id,
+    public ResponseEntity<BaseResponse<BasicAssets>> update(@PathVariable Long assetId,
                                                             @RequestBody BasicAssetsRequest request) {
-        return AppResponse.success(assetService.update(id, request, Operator.operator()));
+        return AppResponse.success(assetService.update(assetId, request, Operator.operator()));
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/delete/{assetId}")
     @Operation(summary = "Xóa trang thiết bị cơ bản, thiết yếu")
-    public ResponseEntity<BaseResponse<String>> delete(@PathVariable Long id) {
+    public ResponseEntity<BaseResponse<String>> delete(@PathVariable Long assetId) {
         // TODO
         return null;
     }

@@ -45,10 +45,10 @@ public class StaffController {
         return AppResponse.success(staffService.listStaff(role, order, startDate, endDate, deactivate, name, userName));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{staffId}")
     @Operation(summary = "Thông tin tài khoản nhân viên theo id")
-    public ResponseEntity<BaseResponse<AccountResponse>> staff(@PathVariable Long id) {
-        return AppResponse.success(staffService.staff(id));
+    public ResponseEntity<BaseResponse<AccountResponse>> staff(@PathVariable Long staffId) {
+        return AppResponse.success(staffService.staff(staffId));
     }
 
     @GetMapping("/roles")
@@ -64,11 +64,11 @@ public class StaffController {
         return AppResponse.success(staffService.addStaff(request, Operator.operator()));
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/update/{staffId}")
     @Operation(summary = "Update tài khoản cho nhân viên theo id")
     public ResponseEntity<BaseResponse<AccountResponse>> update(@RequestBody RegisterRequest request,
-                                                                @PathVariable Long id) {
-        return AppResponse.success(staffService.updateStaff(id, request, Operator.operator(), Operator.time()));
+                                                                @PathVariable Long staffId) {
+        return AppResponse.success(staffService.updateStaff(staffId, request, Operator.operator(), Operator.time()));
     }
 
 

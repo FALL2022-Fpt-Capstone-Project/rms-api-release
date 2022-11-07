@@ -51,9 +51,9 @@ public class ServiceController {
     }
 
     @Operation(summary = "Xem thông tin chi tiết của dich vụ chung")
-    @GetMapping("/general/{id}")
-    public ResponseEntity<BaseResponse<GeneralServiceDTO>> generalService(@PathVariable Long id) {
-        return AppResponse.success(servicesService.generalService(id));
+    @GetMapping("/general/{generalServiceId}")
+    public ResponseEntity<BaseResponse<GeneralServiceDTO>> generalService(@PathVariable Long generalServiceId) {
+        return AppResponse.success(servicesService.generalService(generalServiceId));
     }
 
     @Operation(summary = "Thêm mới dịch vụ chung cho tòa")
@@ -69,16 +69,16 @@ public class ServiceController {
     }
 
     @Operation(summary = "Update thông tin của dịch vụ chung theo id")
-    @PutMapping("/general/update/{id}")
-    public ResponseEntity<BaseResponse<GeneralService>> updateGeneralService(@PathVariable Long id,
+    @PutMapping("/general/update/{generalServiceId}")
+    public ResponseEntity<BaseResponse<GeneralService>> updateGeneralService(@PathVariable Long generalServiceId,
                                                                              @RequestBody GeneralServiceRequest request) {
-        return AppResponse.success(servicesService.updateGeneralService(id, request, Operator.operator()));
+        return AppResponse.success(servicesService.updateGeneralService(generalServiceId, request, Operator.operator()));
     }
 
     @Operation(summary = "Xóa dịch vụ chung ra khỏi tòa")
-    @DeleteMapping("/general/remove/{id}")
-    public ResponseEntity<BaseResponse<String>> removeGeneralService(@PathVariable Long id) {
-        return AppResponse.success(servicesService.removeGeneralService(id));
+    @DeleteMapping("/general/remove/{generalServiceId}")
+    public ResponseEntity<BaseResponse<String>> removeGeneralService(@PathVariable Long generalServiceId) {
+        return AppResponse.success(servicesService.removeGeneralService(generalServiceId));
     }
 
 

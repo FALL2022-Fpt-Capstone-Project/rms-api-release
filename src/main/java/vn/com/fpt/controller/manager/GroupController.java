@@ -31,10 +31,10 @@ public class GroupController {
 
     private final GroupService groupService;
 
-    @GetMapping("/{id}")
+    @GetMapping("/{groupId}")
     @Operation(summary = "Lấy thông tin của nhóm phòng theo id")
-    public ResponseEntity<BaseResponse<GroupResponse>> group(@PathVariable Long id) {
-        return AppResponse.success(groupService.group(id));
+    public ResponseEntity<BaseResponse<GroupResponse>> group(@PathVariable Long groupId) {
+        return AppResponse.success(groupService.group(groupId));
     }
 
     @GetMapping("/all")
