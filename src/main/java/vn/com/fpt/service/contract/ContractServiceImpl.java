@@ -392,11 +392,9 @@ public class ContractServiceImpl implements ContractService {
         }
 
         if (StringUtils.isNotBlank(startDate) && StringUtils.isNotBlank(endDate)) {
-            var endTime = DateUtils.parse(endDate, DATE_FORMAT_3);
-            assert endTime != null;
-            LocalDateTime.from(endTime.toInstant()).plusDays(1);
-            contractSpec.add(new SearchCriteria("startDate", DateUtils.parse(startDate, DATE_FORMAT_3), GREATER_THAN_EQUAL));
-            contractSpec.add(new SearchCriteria("endDate", endTime, LESS_THAN_EQUAL));
+            contractSpec.add(new SearchCriteria("contractStartDate", DateUtils.parse(startDate, DATE_FORMAT_3), GREATER_THAN_EQUAL));
+
+            contractSpec.add(new SearchCriteria("contractStartDate",DateUtils.parse(startDate, DATE_FORMAT_3), LESS_THAN_EQUAL));
         }
 
         if (org.apache.commons.lang3.ObjectUtils.isNotEmpty(isDisable)) {

@@ -61,6 +61,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .antMatchers("/v1/doc/**")
                 .permitAll()
+                .antMatchers("/error")
+                .permitAll()
                 .anyRequest().authenticated();
 //                .anyRequest().permitAll();
 

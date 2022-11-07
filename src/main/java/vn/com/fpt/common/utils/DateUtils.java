@@ -53,6 +53,17 @@ public final class DateUtils {
         }
     }
 
+    public static LocalDateTime toLocalDateTime(Date dateToConvert) {
+        return dateToConvert.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
+    }
+
+    public static Date toDate(LocalDateTime dateToConvert) {
+        return java.util.Date.from(dateToConvert.atZone(ZoneId.systemDefault())
+                        .toInstant());
+    }
+
 //    public static Date of(LocalDateTime localDateTime) {
 //        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
 //    }

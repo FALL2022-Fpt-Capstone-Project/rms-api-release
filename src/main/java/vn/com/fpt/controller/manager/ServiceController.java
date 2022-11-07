@@ -4,7 +4,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import vn.com.fpt.common.response.AppResponse;
 import vn.com.fpt.common.response.BaseResponse;
@@ -16,6 +19,7 @@ import vn.com.fpt.entity.ServiceTypes;
 import vn.com.fpt.model.GeneralServiceDTO;
 import vn.com.fpt.service.services.ServicesService;
 
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 import static vn.com.fpt.configs.AppConfigs.V1_PATH;
@@ -47,6 +51,7 @@ public class ServiceController {
     @Operation(summary = "Danh sách thông tin dịch vụ chung của tòa")
     @GetMapping("/general")
     public ResponseEntity<BaseResponse<List<GeneralServiceDTO>>> generalServices(@RequestParam(required = false) Long contractId) {
+        if (ObjectUtils.isEmpty(contractId)) throw new RuntimeException("contractId không được trống");
         return AppResponse.success(servicesService.listGeneralService(contractId));
     }
 
