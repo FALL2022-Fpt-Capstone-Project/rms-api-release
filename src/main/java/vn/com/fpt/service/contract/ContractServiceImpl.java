@@ -22,6 +22,7 @@ import vn.com.fpt.service.services.ServicesService;
 import vn.com.fpt.specification.BaseSpecification;
 import vn.com.fpt.specification.SearchCriteria;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -386,13 +387,18 @@ public class ContractServiceImpl implements ContractService {
         BaseSpecification<Contracts> contractSpec = new BaseSpecification<>();
         contractSpec.add(new SearchCriteria("contractType", SUBLEASE_CONTRACT, EQUAL));
 
-        if (StringUtils.isNotBlank(startDate) && StringUtils.isNotBlank(endDate)) {
+        if (org.apache.commons.lang3.ObjectUtils.isNotEmpty(groupId)) {
             contractSpec.add(new SearchCriteria("groupId", groupId, EQUAL));
         }
-        if (org.apache.commons.lang3.ObjectUtils.isNotEmpty(groupId)) {
+
+        if (StringUtils.isNotBlank(startDate) && StringUtils.isNotBlank(endDate)) {
+            var endTime = DateUtils.parse(endDate, DATE_FORMAT_3);
+            assert endTime != null;
+            LocalDateTime.from(endTime.toInstant()).plusDays(1);
             contractSpec.add(new SearchCriteria("startDate", DateUtils.parse(startDate, DATE_FORMAT_3), GREATER_THAN_EQUAL));
-            contractSpec.add(new SearchCriteria("endDate", DateUtils.parse(endDate, DATE_FORMAT_3), LESS_THAN_EQUAL));
+            contractSpec.add(new SearchCriteria("endDate", endTime, LESS_THAN_EQUAL));
         }
+
         if (org.apache.commons.lang3.ObjectUtils.isNotEmpty(isDisable)) {
             contractSpec.add(new SearchCriteria("contractIsDisable", isDisable, EQUAL));
         }
