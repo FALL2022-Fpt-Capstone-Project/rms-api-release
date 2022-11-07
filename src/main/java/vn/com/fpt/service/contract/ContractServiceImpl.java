@@ -374,7 +374,7 @@ public class ContractServiceImpl implements ContractService {
             renterSpec.add(new SearchCriteria("phoneNumber", phoneNumber, EQUAL));
         }
         if (StringUtils.isNoneBlank(identity)) {
-            renterSpec.add(new SearchCriteria("identity", identity, EQUAL));
+            renterSpec.add(new SearchCriteria("identityNumber", identity, EQUAL));
         }
         if (StringUtils.isNoneBlank(renterName)) {
             renterSpec.add(new SearchCriteria("renterFullName", renterName, MATCH));

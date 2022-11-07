@@ -68,9 +68,12 @@ public class GeneralService extends BaseEntity {
         return generalService;
     }
 
-    public static GeneralService modify(GeneralServiceRequest request, Long operator) {
-        var generalService = of(request);
-        generalService.setId(request.getServiceId());
+    public static GeneralService modify(GeneralService old, GeneralServiceRequest neww, Long operator) {
+        var generalService = of(neww);
+        generalService.setId(old.getId());
+        generalService.setCreatedAt(old.getCreatedAt());
+        generalService.setCreatedBy(old.getCreatedBy());
+
         generalService.setModifiedBy(operator);
         generalService.setModifiedAt(DateUtils.now());
         return generalService;

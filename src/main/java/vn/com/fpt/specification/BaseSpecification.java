@@ -76,7 +76,7 @@ public class BaseSpecification<T> implements Specification<T> {
                     CriteriaBuilder.In<Object> in = builder.in(path);
                     List<Object> params = (List<Object>) criteria.value();
                     params.forEach(in::value);
-                    params.add(in);
+                    predicateList.add(in);
                     break;
                 default:
                     break;

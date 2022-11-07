@@ -20,6 +20,7 @@ import vn.com.fpt.requests.HandOverGeneralServiceRequest;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.math.BigInteger;
 import java.util.*;
 
 import static vn.com.fpt.constants.ErrorStatusConstants.*;
@@ -157,7 +158,7 @@ public class ServicesServiceImpl implements ServicesService {
     @Override
     public GeneralService updateGeneralService(Long generalServiceId, GeneralServiceRequest request, Long operator) {
         var generalService = findGeneralServiceById(generalServiceId);
-        return generalServiceRepository.save(GeneralService.modify(request, operator));
+        return generalServiceRepository.save(GeneralService.modify(generalService, request, operator));
     }
 
     @Override

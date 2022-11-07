@@ -69,7 +69,7 @@ public class ServiceController {
     }
 
     @Operation(summary = "Update thông tin của dịch vụ chung theo id")
-    @PostMapping("/general/update/{id}")
+    @PutMapping("/general/update/{id}")
     public ResponseEntity<BaseResponse<GeneralService>> updateGeneralService(@PathVariable Long id,
                                                                              @RequestBody GeneralServiceRequest request) {
         return AppResponse.success(servicesService.updateGeneralService(id, request, Operator.operator()));
