@@ -2,6 +2,7 @@ package vn.com.fpt.service.contract;
 
 import lombok.*;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
@@ -60,12 +61,11 @@ public class ContractServiceImpl implements ContractService {
         assert endDate != null;
         assert startDate != null;
         // kiểm tra ngày bắt đầu và ngày kết thúc
-        if (VALIDATE_CONTRACT_TERM(startDate, endDate))
+        if (Boolean.TRUE.equals(VALIDATE_CONTRACT_TERM(startDate, endDate)))
             throw new BusinessException(INVALID_TIME, "Ngày kết thúc không được trước ngày bắt đầu");
 
 
         if (ObjectUtils.isEmpty(request.getRenterOldId())) {
-            //TODO: Nếu có properties liên quan đến địa chỉ khách ký hợp đồng thì sẽ set vào sau
             var address = Address.add(
                     "",
                     "",
@@ -110,7 +110,7 @@ public class ContractServiceImpl implements ContractService {
         if (!request.getListHandOverAssets().isEmpty()) {
             request.getListHandOverAssets().forEach(handOverAsset -> {
                 //kiểm tra những trang thiết bị không thuộc tòa (những tài sản không thuộc tòa thì id sẽ < 0)
-                if (ADDITIONAL_ASSETS(handOverAsset.getAssetId())) {
+                if (Boolean.TRUE.equals(ADDITIONAL_ASSETS(handOverAsset.getAssetId()))) {
                     //thêm tài sản cơ bản, thiết yếu
                     assetService.add(
                             BasicAssets.add(handOverAsset.getAssetsAdditionalName(),
@@ -280,7 +280,7 @@ public class ContractServiceImpl implements ContractService {
         if (!request.getListHandOverAssets().isEmpty()) {
             request.getListHandOverAssets().forEach(handOverAsset -> {
                 //kiểm tra những trang thiết bị không thuộc tòa (những tài sản không thuộc tòa thì id sẽ < 0)
-                if (ADDITIONAL_ASSETS(handOverAsset.getAssetId())) {
+                if (Boolean.TRUE.equals(ADDITIONAL_ASSETS(handOverAsset.getAssetId()))) {
                     //thêm tài sản cơ bản, thiết yếu
                     assetService.add(
                             BasicAssets.add(handOverAsset.getAssetsAdditionalName(),
@@ -394,7 +394,7 @@ public class ContractServiceImpl implements ContractService {
         if (StringUtils.isNotBlank(startDate) && StringUtils.isNotBlank(endDate)) {
             contractSpec.add(new SearchCriteria("contractStartDate", DateUtils.parse(startDate, DATE_FORMAT_3), GREATER_THAN_EQUAL));
 
-            contractSpec.add(new SearchCriteria("contractStartDate",DateUtils.parse(startDate, DATE_FORMAT_3), LESS_THAN_EQUAL));
+            contractSpec.add(new SearchCriteria("contractEndDate",DateUtils.parse(startDate, DATE_FORMAT_3), LESS_THAN_EQUAL));
         }
 
         if (org.apache.commons.lang3.ObjectUtils.isNotEmpty(isDisable)) {
@@ -404,7 +404,7 @@ public class ContractServiceImpl implements ContractService {
             contractSpec.add(new SearchCriteria("renters", searchRenter, IN));
         }
 
-        var listContract = contractRepository.findAll(contractSpec);
+        var listContract = contractRepository.findAll(contractSpec, Sort.by("contractStartDate").descending());
 
         if (listContract.isEmpty()) return null;
         listContract.forEach(e -> {
@@ -424,7 +424,7 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public List<GroupContractDTO> listGroupContract() {
         List<GroupContractDTO> listGroupContract = new ArrayList<>();
-        var groupContracts = contractRepository.findAllByContractType(LEASE_CONTRACT);
+        var groupContracts = contractRepository.findAllByContractTypeOrderByContractStartDateDesc(LEASE_CONTRACT);
         if (groupContracts.isEmpty()) return null;
         groupContracts.forEach(e ->
                 listGroupContract.add(GroupContractDTO.of(e,

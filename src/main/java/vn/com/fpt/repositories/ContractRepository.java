@@ -1,9 +1,7 @@
 package vn.com.fpt.repositories;
 
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 import vn.com.fpt.entity.Contracts;
 
@@ -15,7 +13,7 @@ public interface ContractRepository extends JpaRepository<Contracts, Long>, JpaS
 
     Contracts findByGroupIdAndContractType(Long groupId, Integer contractType);
 
-    List<Contracts> findAllByContractType(Integer contractType);
+    List<Contracts> findAllByContractTypeOrderByContractStartDateDesc(Integer contractType);
 
     List<Contracts> findAllByRentersIn(List<Long> renterId);
 
