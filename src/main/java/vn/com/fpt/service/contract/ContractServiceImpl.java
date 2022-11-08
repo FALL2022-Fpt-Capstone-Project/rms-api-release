@@ -22,16 +22,14 @@ import vn.com.fpt.service.services.ServicesService;
 import vn.com.fpt.specification.BaseSpecification;
 import vn.com.fpt.specification.SearchCriteria;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 import static vn.com.fpt.common.utils.DateUtils.*;
-import static vn.com.fpt.constants.ErrorStatusConstants.*;
-import static vn.com.fpt.constants.ManagerConstants.*;
-import static vn.com.fpt.constants.SearchOperation.*;
+import static vn.com.fpt.common.constants.ErrorStatusConstants.*;
+import static vn.com.fpt.common.constants.ManagerConstants.*;
+import static vn.com.fpt.common.constants.SearchOperation.*;
 
 @Service
 @RequiredArgsConstructor
@@ -49,7 +47,7 @@ public class ContractServiceImpl implements ContractService {
     @Override
     @Transactional
     public RoomContractRequest addContract(RoomContractRequest request, Long operator) {
-        Contracts contractsInformation = Contracts.addForRenter(request, operator);
+        Contracts contractsInformation = Contracts.addForLease(request, operator);
 
         var roomId = request.getRoomId();
         var groupContractId = groupContract(request.getGroupId()).getId();
@@ -221,7 +219,7 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public RoomContractRequest updateContract(Long id, RoomContractRequest request, Long operator) {
         var old = contractRepository.findById(id).get();
-        Contracts contractsInformation = Contracts.modifyForRenter(old, request, operator);
+        Contracts contractsInformation = Contracts.modifyForLease(old, request, operator);
 
         var roomId = old.getRoomId();
         var groupContractId = groupContract(old.getGroupId()).getId();
@@ -276,7 +274,7 @@ public class ContractServiceImpl implements ContractService {
 
         /* nếu có những tài sản mới không thuộc tài sản bàn giao với tòa ban đầu thì sẽ:
         add thêm vào những tài sản cơ bản, thiết yếu -> add thêm vào tài sản chung của tòa -> add tài sản bàn giao cho phòng
-         */
+        */
 
         // lưu tài sản bàn giao
         if (!request.getListHandOverAssets().isEmpty()) {
@@ -356,7 +354,9 @@ public class ContractServiceImpl implements ContractService {
                 renterService.listRenter(contract.getRoomId()),
                 assetService.listHandOverAsset(id),
                 servicesService.listHandOverGeneralService(id));
+        roomContract.setRoom(roomService.getRoom(roomContract.getRoomId()));
         roomContract.setRoomName(roomService.getRoom(roomContract.getRoomId()).getRoomName());
+        roomContract.setGroupName(groupService.group(roomContract.getGroupId()).getGroupName());
         return roomContract;
     }
 
@@ -414,6 +414,7 @@ public class ContractServiceImpl implements ContractService {
                     assetService.listHandOverAsset(e.getId()),
                     servicesService.listHandOverGeneralService(e.getId()));
             roomContract.setRoom(roomService.getRoom(e.getRoomId()));
+            roomContract.setRoomName(roomService.getRoom(e.getRoomId()).getRoomName());
             roomContract.setGroupName(group.getGroupName());
             roomContracts.add(roomContract);
         });

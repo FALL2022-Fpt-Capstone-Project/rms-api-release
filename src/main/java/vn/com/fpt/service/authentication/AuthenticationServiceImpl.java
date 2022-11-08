@@ -2,7 +2,6 @@ package vn.com.fpt.service.authentication;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import lombok.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,8 +27,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static vn.com.fpt.constants.ErrorStatusConstants.EXISTED_ACCOUNT;
-import static vn.com.fpt.constants.ErrorStatusConstants.INVALID_ROLE;
+import static vn.com.fpt.common.constants.ErrorStatusConstants.EXISTED_ACCOUNT;
+import static vn.com.fpt.common.constants.ErrorStatusConstants.INVALID_ROLE;
 
 @Service
 @RequiredArgsConstructor

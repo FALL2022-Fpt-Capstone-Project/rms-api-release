@@ -22,7 +22,7 @@ import javax.persistence.Query;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static vn.com.fpt.constants.ErrorStatusConstants.*;
+import static vn.com.fpt.common.constants.ErrorStatusConstants.*;
 import static vn.com.fpt.model.AccountDTO.SQL_RESULT_SET_MAPPING;
 import static vn.com.fpt.common.utils.DateUtils.checkFormat;
 

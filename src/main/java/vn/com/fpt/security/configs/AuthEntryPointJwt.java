@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 
-import static vn.com.fpt.constants.ErrorStatusConstants.UNAUTHORIZED_ERROR;
+import static vn.com.fpt.common.constants.ErrorStatusConstants.UNAUTHORIZED_ERROR;
 
 @Component
 @Slf4j

@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Objects;
 
@@ -26,6 +27,8 @@ public final class DateUtils {
     public static final String DATE_FORMAT_3 = "yyyy-MM-dd";
     public static final String DATETIME_FORMAT = "dd/MM/yyyy HH:mm:ss";
     public static final String DATETIME_FORMAT_CUSTOM = "yyyy-MM-dd HH:mm:ss";
+
+    public static final int TOTAL_DATE_IN_MONTH = 30;
 
     public static Date now() {
         return new Date();
@@ -59,21 +62,32 @@ public final class DateUtils {
                 .toLocalDateTime();
     }
 
+    public static LocalDate toLocalDate(Date dateToConvert) {
+        return dateToConvert.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
+    }
+
+    public static int monthsBetween(Date d1, Date d2){
+        return (int) ChronoUnit.MONTHS.between(toLocalDate(d2).withDayOfMonth(1),
+                toLocalDate(d1).withDayOfMonth(1));
+    }
+
     public static Date toDate(LocalDateTime dateToConvert) {
         return java.util.Date.from(dateToConvert.atZone(ZoneId.systemDefault())
                         .toInstant());
     }
 
-//    public static Date of(LocalDateTime localDateTime) {
-//        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-//    }
-//
-//    public static Date of(LocalDate localDate) {
-//        return Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
-//    }
-//
-//    public static Date at(LocalDate localDate, LocalTime time) {
-//        return Date.from(localDate.atTime(time).atZone(ZoneId.systemDefault()).toInstant());
-//    }
+    public static Date of(LocalDateTime localDateTime) {
+        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+    }
+
+    public static Date of(LocalDate localDate) {
+        return Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+    }
+
+    public static Date at(LocalDate localDate, LocalTime time) {
+        return Date.from(localDate.atTime(time).atZone(ZoneId.systemDefault()).toInstant());
+    }
 
 }

@@ -1,13 +1,12 @@
 package vn.com.fpt.common.response;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import vn.com.fpt.constants.ErrorStatusConstants;
+import vn.com.fpt.common.constants.ErrorStatusConstants;
 
 @Getter
 @Setter

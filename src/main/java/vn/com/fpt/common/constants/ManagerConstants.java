@@ -1,4 +1,4 @@
-package vn.com.fpt.constants;
+package vn.com.fpt.common.constants;
 
 import java.util.Date;
 import java.util.Objects;
@@ -14,23 +14,6 @@ public class ManagerConstants {
     public static final int DEACTIVATE_ACCOUNT = 0;
     public static final int ACTIVATE_ACCOUNT = 1;
     public static final int NONE_FILTER_DEACTIVATE = -1;
-
-
-    // permission
-    public static final int PERMISSION_MATERIAL = 1;
-    public static final int PERMISSION_MONEY = 2;
-    public static final int PERMISSION_RECEIPT = 3;
-    public static final int PERMISSION_CONTRACT = 4;
-
-    public static final int[] PERMISSION_ALL;
-
-    static {
-        PERMISSION_ALL = new int[]{
-                PERMISSION_MATERIAL,
-                PERMISSION_MONEY,
-                PERMISSION_RECEIPT,
-                PERMISSION_CONTRACT};
-    }
 
     //assets type
     public static final Long TYPE_BATH_ROOM = 1L;

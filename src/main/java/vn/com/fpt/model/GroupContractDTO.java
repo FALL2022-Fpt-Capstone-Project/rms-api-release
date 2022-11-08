@@ -9,6 +9,8 @@ import vn.com.fpt.entity.Contracts;
 import java.io.Serializable;
 import java.util.List;
 
+import static vn.com.fpt.common.utils.DateUtils.monthsBetween;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -61,6 +63,7 @@ public class GroupContractDTO implements Serializable {
                 .contractPaymentCycle(contract.getContractPaymentCycle())
                 .contractStartDate(DateUtils.format(contract.getContractStartDate(), DateUtils.DATE_FORMAT_3))
                 .contractEndDate(DateUtils.format(contract.getContractEndDate(), DateUtils.DATE_FORMAT_3))
+                .contractTerm(monthsBetween(contract.getContractEndDate(), contract.getContractStartDate()))
                 .note(contract.getNote())
                 .contractTerm(contract.getContractTerm())
                 .contractIsDisable(contract.getContractIsDisable())

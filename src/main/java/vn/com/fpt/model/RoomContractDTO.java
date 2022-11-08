@@ -7,10 +7,12 @@ import vn.com.fpt.common.utils.DateUtils;
 import vn.com.fpt.entity.Contracts;
 import vn.com.fpt.entity.Rooms;
 import vn.com.fpt.responses.RentersResponse;
-import vn.com.fpt.responses.RoomsResponse;
 
 import java.io.Serializable;
+import java.time.Duration;
 import java.util.List;
+
+import static vn.com.fpt.common.utils.DateUtils.monthsBetween;
 
 @Getter
 @Setter
@@ -76,7 +78,7 @@ public class RoomContractDTO implements Serializable {
                 .contractStartDate(DateUtils.format(contract.getContractStartDate(), DateUtils.DATETIME_FORMAT_CUSTOM))
                 .contractEndDate(DateUtils.format(contract.getContractEndDate(), DateUtils.DATETIME_FORMAT_CUSTOM))
                 .note(contract.getNote())
-                .contractTerm(contract.getContractTerm())
+                .contractTerm(monthsBetween(contract.getContractEndDate(), contract.getContractStartDate()))
                 .contractIsDisable(contract.getContractIsDisable())
                 .renters(contract.getRenters())
                 .roomId(contract.getRoomId())

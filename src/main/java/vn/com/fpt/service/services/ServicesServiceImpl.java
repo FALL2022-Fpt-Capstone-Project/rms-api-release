@@ -4,7 +4,7 @@ import lombok.*;
 import org.springframework.stereotype.Service;
 import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.common.utils.DateUtils;
-import vn.com.fpt.constants.ManagerConstants;
+import vn.com.fpt.common.constants.ManagerConstants;
 import vn.com.fpt.entity.BasicServices;
 import vn.com.fpt.entity.GeneralService;
 import vn.com.fpt.entity.HandOverGeneralServices;
@@ -20,10 +20,9 @@ import vn.com.fpt.requests.HandOverGeneralServiceRequest;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import java.math.BigInteger;
 import java.util.*;
 
-import static vn.com.fpt.constants.ErrorStatusConstants.*;
+import static vn.com.fpt.common.constants.ErrorStatusConstants.*;
 import static vn.com.fpt.model.GeneralServiceDTO.SQL_RESULT_SET_MAPPING;
 import static vn.com.fpt.model.HandOverGeneralServiceDTO.SQL_RESULT_SETS_MAPPING;
 

@@ -1,7 +1,7 @@
 package vn.com.fpt.common;
 
 import lombok.Getter;
-import vn.com.fpt.constants.ErrorStatusConstants;
+import vn.com.fpt.common.constants.ErrorStatusConstants;
 
 @Getter
 public class BusinessException extends RuntimeException {

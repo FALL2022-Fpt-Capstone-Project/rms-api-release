@@ -46,7 +46,14 @@ public class GeneralServiceDTO implements Serializable {
 
     private String serviceShowName;
 
-    public GeneralServiceDTO(BigInteger generalServiceId, Double servicePrice, String note, BigInteger serviceTypeId, String serviceTypeName, BigInteger serviceId, String serviceName, String serviceShowName) {
+    public GeneralServiceDTO(BigInteger generalServiceId,
+                             Double servicePrice,
+                             String note,
+                             BigInteger serviceTypeId,
+                             String serviceTypeName,
+                             BigInteger serviceId,
+                             String serviceName,
+                             String serviceShowName) {
         this.generalServiceId = generalServiceId;
         this.servicePrice = servicePrice;
         this.note = note;

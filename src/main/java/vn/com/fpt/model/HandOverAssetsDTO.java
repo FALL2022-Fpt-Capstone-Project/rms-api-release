@@ -54,7 +54,15 @@ public class HandOverAssetsDTO implements Serializable {
 
     private String assetTypeShowName;
 
-    public HandOverAssetsDTO(BigInteger handOverAssetId, Integer quantity, Boolean handOverAssetStatus, Date handOverDateDelivery, BigInteger assetId, String assetName, BigInteger assetTypeId, String assetTypeName, String assetTypeShowName) {
+    public HandOverAssetsDTO(BigInteger handOverAssetId,
+                             Integer quantity,
+                             Boolean handOverAssetStatus,
+                             Date handOverDateDelivery,
+                             BigInteger assetId,
+                             String assetName,
+                             BigInteger assetTypeId,
+                             String assetTypeName,
+                             String assetTypeShowName) {
         this.handOverAssetId = handOverAssetId;
         this.handOverAssetQuantity = quantity;
         this.handOverAssetStatus = handOverAssetStatus;

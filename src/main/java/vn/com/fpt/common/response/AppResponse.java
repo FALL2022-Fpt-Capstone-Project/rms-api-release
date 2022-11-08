@@ -3,7 +3,7 @@ package vn.com.fpt.common.response;
 import lombok.experimental.UtilityClass;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import vn.com.fpt.constants.ErrorStatusConstants;
+import vn.com.fpt.common.constants.ErrorStatusConstants;
 
 @UtilityClass
 public class AppResponse {

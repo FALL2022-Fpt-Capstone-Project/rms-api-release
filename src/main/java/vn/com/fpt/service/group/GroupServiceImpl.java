@@ -1,10 +1,8 @@
 package vn.com.fpt.service.group;
 
 import lombok.RequiredArgsConstructor;
-import lombok.*;
 import org.springframework.stereotype.Service;
 
-import vn.com.fpt.entity.RoomGroups;
 import vn.com.fpt.repositories.AddressRepository;
 import vn.com.fpt.repositories.ContractRepository;
 import vn.com.fpt.repositories.GroupRepository;
@@ -18,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static vn.com.fpt.constants.ManagerConstants.LEASE_CONTRACT;
+import static vn.com.fpt.common.constants.ManagerConstants.LEASE_CONTRACT;
 
 @Service
 @RequiredArgsConstructor

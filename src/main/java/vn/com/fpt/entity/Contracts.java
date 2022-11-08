@@ -13,8 +13,8 @@ import vn.com.fpt.requests.RoomContractRequest;
 import javax.persistence.*;
 import java.util.Date;
 
-import static vn.com.fpt.constants.ManagerConstants.LEASE_CONTRACT;
-import static vn.com.fpt.constants.ManagerConstants.SUBLEASE_CONTRACT;
+import static vn.com.fpt.common.constants.ManagerConstants.LEASE_CONTRACT;
+import static vn.com.fpt.common.constants.ManagerConstants.SUBLEASE_CONTRACT;
 
 
 @Entity
@@ -111,7 +111,7 @@ public class Contracts extends BaseEntity {
         return renterContract;
     }
 
-    public static Contracts modifyForRenter(Contracts old, GroupContractRequest neww, Long operator) {
+    public static Contracts modifyForSublease(Contracts old, GroupContractRequest neww, Long operator) {
         var groupContract = of(neww, old.getGroupId());
         groupContract.setId(old.getId());
 
@@ -127,7 +127,7 @@ public class Contracts extends BaseEntity {
     }
 
 
-    public static Contracts addForRenter(RoomContractRequest request, Long operator) {
+    public static Contracts addForLease(RoomContractRequest request, Long operator) {
         var renterContract = of(request);
         renterContract.setContractType(SUBLEASE_CONTRACT);
         renterContract.setContractIsDisable(false);
@@ -136,7 +136,7 @@ public class Contracts extends BaseEntity {
         return renterContract;
     }
 
-    public static Contracts modifyForRenter(Contracts old, RoomContractRequest neww, Long operator) {
+    public static Contracts modifyForLease(Contracts old, RoomContractRequest neww, Long operator) {
         var renterContract = of(neww);
 
         renterContract.setId(old.getId());

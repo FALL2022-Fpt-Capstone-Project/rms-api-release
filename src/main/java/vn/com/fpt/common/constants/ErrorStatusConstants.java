@@ -1,4 +1,4 @@
-package vn.com.fpt.constants;
+package vn.com.fpt.common.constants;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

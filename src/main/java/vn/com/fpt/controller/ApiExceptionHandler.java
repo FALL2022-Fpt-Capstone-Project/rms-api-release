@@ -15,14 +15,14 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.common.response.AppResponse;
 import vn.com.fpt.common.response.BaseResponse;
-import vn.com.fpt.constants.ErrorStatusConstants;
+import vn.com.fpt.common.constants.ErrorStatusConstants;
 
 
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static vn.com.fpt.constants.ErrorStatusConstants.*;
+import static vn.com.fpt.common.constants.ErrorStatusConstants.*;
 
 @Slf4j
 @RestControllerAdvice

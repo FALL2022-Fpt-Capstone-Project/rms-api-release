@@ -1,6 +1,5 @@
 package vn.com.fpt.controller.manager;
 
-import io.sentry.protocol.App;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;

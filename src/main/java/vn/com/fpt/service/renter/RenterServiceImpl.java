@@ -18,8 +18,8 @@ import vn.com.fpt.specification.SearchCriteria;
 
 import java.util.List;
 
-import static vn.com.fpt.constants.ErrorStatusConstants.*;
-import static vn.com.fpt.constants.SearchOperation.*;
+import static vn.com.fpt.common.constants.ErrorStatusConstants.*;
+import static vn.com.fpt.common.constants.SearchOperation.*;
 
 @Service
 @RequiredArgsConstructor

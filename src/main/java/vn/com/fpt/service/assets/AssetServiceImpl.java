@@ -3,7 +3,6 @@ package vn.com.fpt.service.assets;
 import lombok.*;
 import org.springframework.stereotype.Service;
 import vn.com.fpt.common.BusinessException;
-import vn.com.fpt.constants.ErrorStatusConstants;
 import vn.com.fpt.entity.AssetTypes;
 import vn.com.fpt.entity.BasicAssets;
 import vn.com.fpt.entity.HandOverAssets;
@@ -21,7 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static vn.com.fpt.constants.ErrorStatusConstants.ASSET_OUT_OF_STOCK;
+import static vn.com.fpt.common.constants.ErrorStatusConstants.ASSET_OUT_OF_STOCK;
 import static vn.com.fpt.model.HandOverAssetsDTO.SQL_RESULT_SET_MAPPING;
 
 @Service

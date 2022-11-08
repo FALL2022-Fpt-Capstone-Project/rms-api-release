@@ -16,9 +16,9 @@ import vn.com.fpt.specification.SearchCriteria;
 import java.util.List;
 import java.util.Objects;
 
-import static vn.com.fpt.constants.ErrorStatusConstants.ROOM_NOT_AVAILABLE;
-import static vn.com.fpt.constants.ErrorStatusConstants.ROOM_NOT_FOUND;
-import static vn.com.fpt.constants.SearchOperation.*;
+import static vn.com.fpt.common.constants.ErrorStatusConstants.ROOM_NOT_AVAILABLE;
+import static vn.com.fpt.common.constants.ErrorStatusConstants.ROOM_NOT_FOUND;
+import static vn.com.fpt.common.constants.SearchOperation.*;
 
 @Service
 @RequiredArgsConstructor
