@@ -15,6 +15,7 @@ import vn.com.fpt.repositories.*;
 import vn.com.fpt.requests.GroupContractRequest;
 import vn.com.fpt.requests.RenterRequest;
 import vn.com.fpt.requests.RoomContractRequest;
+import vn.com.fpt.responses.RoomsResponse;
 import vn.com.fpt.service.assets.AssetService;
 import vn.com.fpt.service.group.GroupService;
 import vn.com.fpt.service.renter.RenterService;
@@ -24,6 +25,7 @@ import vn.com.fpt.specification.BaseSpecification;
 import vn.com.fpt.specification.SearchCriteria;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -232,7 +234,7 @@ public class ContractServiceImpl implements ContractService {
         assert endDate != null;
         assert startDate != null;
         // kiểm tra ngày bắt đầu và ngày kết thúc
-        if (VALIDATE_CONTRACT_TERM(endDate, startDate))
+        if (Boolean.TRUE.equals(VALIDATE_CONTRACT_TERM(endDate, startDate)))
             throw new BusinessException(INVALID_TIME, "Ngày kết thúc không được trước ngày bắt đầu");
 
         if (ObjectUtils.isEmpty(request.getRenterOldId())) {
@@ -357,6 +359,7 @@ public class ContractServiceImpl implements ContractService {
         roomContract.setRoom(roomService.getRoom(roomContract.getRoomId()));
         roomContract.setRoomName(roomService.getRoom(roomContract.getRoomId()).getRoomName());
         roomContract.setGroupName(groupService.group(roomContract.getGroupId()).getGroupName());
+        roomContract.setListRoom(roomService.listRoom(contract.getGroupId(), null, null, null));
         return roomContract;
     }
 
@@ -406,7 +409,7 @@ public class ContractServiceImpl implements ContractService {
 
         var listContract = contractRepository.findAll(contractSpec, Sort.by("contractStartDate").descending());
 
-        if (listContract.isEmpty()) return null;
+        if (listContract.isEmpty()) return Collections.emptyList();
         listContract.forEach(e -> {
             var group = groupService.group(e.getGroupId());
             var roomContract = RoomContractDTO.of(e,
@@ -425,7 +428,7 @@ public class ContractServiceImpl implements ContractService {
     public List<GroupContractDTO> listGroupContract() {
         List<GroupContractDTO> listGroupContract = new ArrayList<>();
         var groupContracts = contractRepository.findAllByContractTypeOrderByContractStartDateDesc(LEASE_CONTRACT);
-        if (groupContracts.isEmpty()) return null;
+        if (groupContracts.isEmpty()) return Collections.emptyList();
         groupContracts.forEach(e ->
                 listGroupContract.add(GroupContractDTO.of(e,
                         assetService.listHandOverAsset(e.getId()),

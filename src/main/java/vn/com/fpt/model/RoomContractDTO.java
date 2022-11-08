@@ -7,6 +7,7 @@ import vn.com.fpt.common.utils.DateUtils;
 import vn.com.fpt.entity.Contracts;
 import vn.com.fpt.entity.Rooms;
 import vn.com.fpt.responses.RentersResponse;
+import vn.com.fpt.responses.RoomsResponse;
 
 import java.io.Serializable;
 import java.time.Duration;
@@ -63,6 +64,8 @@ public class RoomContractDTO implements Serializable {
     private List<HandOverAssetsDTO> listHandOverAsset;
 
     private List<HandOverGeneralServiceDTO> listHandOverGeneralService;
+
+    private List<RoomsResponse> listRoom;
 
     public static RoomContractDTO of(Contracts contract,
                                      List<RentersResponse> listRenter,
