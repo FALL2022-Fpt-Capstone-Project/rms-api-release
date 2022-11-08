@@ -128,4 +128,9 @@ public class RenterServiceImpl implements RenterService {
     public Renters findRenter(Long id) {
         return renterRepository.findById(id).orElseThrow(() -> new BusinessException(RENTER_NOT_FOUND, "Không tìm thấy khác thuê renter_id : " + id));
     }
+
+    @Override
+    public Renters findRenter(String identity) {
+        return renterRepository.findByIdentityNumber(identity);
+    }
 }
