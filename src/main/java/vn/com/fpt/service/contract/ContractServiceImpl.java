@@ -25,6 +25,7 @@ import vn.com.fpt.specification.SearchCriteria;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import static vn.com.fpt.common.utils.DateUtils.*;
 import static vn.com.fpt.common.constants.ErrorStatusConstants.*;
@@ -63,8 +64,8 @@ public class ContractServiceImpl implements ContractService {
         if (VALIDATE_CONTRACT_TERM(startDate, endDate))
             throw new BusinessException(INVALID_TIME, "Ngày kết thúc không được trước ngày bắt đầu");
 
-
-        if (ObjectUtils.isEmpty(request.getRenterOldId())) {
+        var checkRenter = renterService.findRenter(request.getRenterIdentityCard());
+        if (Objects.isNull(checkRenter)){
             //TODO: Nếu có properties liên quan đến địa chỉ khách ký hợp đồng thì sẽ set vào sau
             var address = Address.add(
                     "",
@@ -79,7 +80,7 @@ public class ContractServiceImpl implements ContractService {
             contractsInformation.setRenters(newRenter.getId());
         } else {
             // nếu khách đã tồn tại -> set renter_id vào hợp đồng
-            contractsInformation.setRenters(request.getRenterOldId());
+            contractsInformation.setRenters(checkRenter.getId());
         }
 
         // lưu thông tin hợp đồng

@@ -10,4 +10,6 @@ import java.util.List;
 @Repository
 public interface RenterRepository extends JpaRepository<Renters, Long>, JpaSpecificationExecutor<Renters> {
     List<Renters> findAllByRoomId(Long roomId);
+
+    Renters findByIdentityNumber(String identityNumber);
 }

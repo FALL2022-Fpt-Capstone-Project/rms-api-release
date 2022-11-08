@@ -27,6 +27,8 @@ public interface RenterService {
 
     Renters findRenter(Long id);
 
+    Renters findRenter(String identity);
+
 
 
 }
