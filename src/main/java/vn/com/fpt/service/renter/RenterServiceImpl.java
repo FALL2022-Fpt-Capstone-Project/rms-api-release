@@ -87,12 +87,12 @@ public class RenterServiceImpl implements RenterService {
     @Transactional
     public RentersResponse updateRenter(Long id, RenterRequest request, Long operator) {
         var renter = findRenter(id);
-        var address = Address.modify(
+        var address = new Address().modify(
                 renter.getAddress(),
-                renter.getAddress().getAddressCity(),
-                renter.getAddress().getAddressDistrict(),
-                renter.getAddress().getAddressWards(),
-                renter.getAddress().getAddressMoreDetails(),
+                request.getAddressCity(),
+                request.getAddressDistrict(),
+                request.getAddressWards(),
+                request.getAddressMoreDetail(),
                 operator);
 
         //update thành viên

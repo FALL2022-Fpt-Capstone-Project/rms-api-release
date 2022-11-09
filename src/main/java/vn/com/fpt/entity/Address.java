@@ -98,7 +98,7 @@ public class Address extends BaseEntity {
         return address;
     }
 
-    public static Address modify(Address old,
+    public Address modify(Address old,
                                  String newCity,
                                  String newDistrict,
                                  String newWards,
