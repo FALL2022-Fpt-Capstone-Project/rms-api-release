@@ -51,20 +51,20 @@ public class RenterController {
         return AppResponse.success(renterService.addRenter(request, Operator.operator()));
     }
 
-    @PutMapping("/{renterId}")
+    @PutMapping("/update/{renterId}")
     @Operation(description = "Cập nhập thông tin khách khách thuê")
     public ResponseEntity<BaseResponse<RentersResponse>> updateRenter(@RequestBody RenterRequest request,
                                                                       @PathVariable Long renterId) {
         return AppResponse.success(renterService.updateRenter(renterId, request, Operator.operator()));
     }
 
-    @DeleteMapping("/{renterId}")
+    @DeleteMapping("/delete/{renterId}")
     @Operation(description = "Xóa thông tin khách thuê")
     public ResponseEntity<BaseResponse<String>> deleteRenter(@PathVariable Long renterId) {
         return AppResponse.success(renterService.deleteRenter(renterId));
     }
 
-    @GetMapping("/remove/{renterId}")
+    @DeleteMapping("/remove/{renterId}")
     @Operation(description = "Xóa khách thuê ra khỏi phòng")
     public ResponseEntity<BaseResponse<RentersResponse>> removeFromRoom(@PathVariable Long renterId) {
         return AppResponse.success(renterService.removeFromRoom(renterId, Operator.operator()));
