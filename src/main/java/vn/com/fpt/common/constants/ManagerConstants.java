@@ -44,6 +44,10 @@ public class ManagerConstants {
     public static final Integer SUBLEASE_CONTRACT = 1;
     public static final Integer LEASE_CONTRACT = 0;
 
+    public static final Boolean MEMBER = false;
+
+    public static final Boolean REPRESENT = true;
+
     public static Boolean ADDITIONAL_ASSETS(Long id) {
         if (Objects.isNull(id)) return false;
         return id < 0;

@@ -1,6 +1,6 @@
 package vn.com.fpt.service.assets;
 
-import lombok.*;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.entity.AssetTypes;
@@ -12,6 +12,7 @@ import vn.com.fpt.repositories.BasicAssetRepository;
 import vn.com.fpt.repositories.HandOverAssetsRepository;
 import vn.com.fpt.requests.BasicAssetsRequest;
 import vn.com.fpt.requests.HandOverAssetsRequest;
+import vn.com.fpt.service.contract.ContractService;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -21,10 +22,11 @@ import java.util.List;
 import java.util.Map;
 
 import static vn.com.fpt.common.constants.ErrorStatusConstants.ASSET_OUT_OF_STOCK;
+import static vn.com.fpt.common.utils.DateUtils.DATE_FORMAT_3;
+import static vn.com.fpt.common.utils.DateUtils.parse;
 import static vn.com.fpt.model.HandOverAssetsDTO.SQL_RESULT_SET_MAPPING;
 
 @Service
-@RequiredArgsConstructor
 public class AssetServiceImpl implements AssetService {
     private final EntityManager entityManager;
 
@@ -33,6 +35,20 @@ public class AssetServiceImpl implements AssetService {
     private final BasicAssetRepository basicAssetRepository;
 
     private final HandOverAssetsRepository handOverAssetsRepository;
+
+    private final ContractService contractService;
+
+    public AssetServiceImpl(EntityManager entityManager,
+                            AssetTypesRepository assetTypesRepository,
+                            BasicAssetRepository basicAssetRepository,
+                            HandOverAssetsRepository handOverAssetsRepository,
+                            @Lazy ContractService contractService) {
+        this.entityManager = entityManager;
+        this.assetTypesRepository = assetTypesRepository;
+        this.basicAssetRepository = basicAssetRepository;
+        this.handOverAssetsRepository = handOverAssetsRepository;
+        this.contractService = contractService;
+    }
 
     @Override
     public List<HandOverAssetsDTO> listHandOverAsset(Long contractId) {
@@ -102,6 +118,40 @@ public class AssetServiceImpl implements AssetService {
     ) {
         return handOverAssetsRepository.save(
                 HandOverAssets.add(request, contractId, dateDelivery, operator));
+    }
+
+    @Override
+    public HandOverAssets addAdditionalAsset(HandOverAssetsRequest request,
+                                             Long contractId,
+                                             Long operator) {
+
+        var groupContractId = contractService.contract(contractId).getGroupId();
+
+        add(BasicAssets.add(request.getAssetsAdditionalName(),
+                            request.getAssetsAdditionalType(),
+                            operator));
+
+        //thêm tài sản chung cho tòa
+        addGeneralAsset(
+                request,
+                operator,
+                groupContractId,
+                parse(request.getHandOverDateDelivery(), DATE_FORMAT_3));
+
+        //thêm tài sản bàn giao cho phòng
+        var response = addHandOverAsset(
+                request,
+                operator,
+                contractId,
+                parse(request.getHandOverDateDelivery(), DATE_FORMAT_3));
+
+        //cập nhập số lượng tài sản của tòa
+        updateGeneralAssetQuantity(
+                groupContractId,
+                request.getAssetId(),
+                request.getHandOverAssetQuantity());
+
+        return response;
     }
 
     @Override

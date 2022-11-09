@@ -33,6 +33,8 @@ public enum ErrorStatusConstants {
 
     RENTER_LIMIT(HttpStatus.BAD_REQUEST, 403101, "Số lượng thành viên vượt quá giới hạn thành viên trong phòng, vui lòng kiểm tra lại!!"),
 
+    RENTER_EXISTED(HttpStatus.BAD_REQUEST, 403102, "Thành viên đã tồn tại trong phòng, vui lòng kiểm tra lại!!"),
+
     GENERAL_SERVICE_NOT_FOUND(HttpStatus.BAD_REQUEST, 403004, "Không tìm thấy dịch vụ chung, vui kiểm tra lại!!"),
 
     GENERAL_SERVICE_EXISTED(HttpStatus.BAD_REQUEST, 403005, "Dịch vụ chung đã tồn tại, vui lòng kiểm tra lại"),

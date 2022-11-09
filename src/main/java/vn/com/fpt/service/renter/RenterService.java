@@ -11,6 +11,10 @@ public interface RenterService {
 
     List<RentersResponse> listRenter(Long roomId);
 
+    List<RentersResponse> listMember(Long roomId);
+
+    RentersResponse representRenter(Long roomId);
+
     RentersResponse renter(Long id);
 
     RentersResponse addRenter(RenterRequest addRenterRequest, Long operator);

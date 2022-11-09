@@ -29,6 +29,10 @@ public interface AssetService {
                                     Long contractId,
                                     Date dateDelivery);
 
+    HandOverAssets addAdditionalAsset(HandOverAssetsRequest request,
+                                      Long contractId,
+                                      Long operator);
+
     HandOverAssets updateHandOverAsset(HandOverAssets old,
                                        HandOverAssetsRequest request,
                                        Long operator,
