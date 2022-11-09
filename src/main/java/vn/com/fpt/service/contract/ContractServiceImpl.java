@@ -2,6 +2,7 @@ package vn.com.fpt.service.contract;
 
 import lombok.*;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +16,7 @@ import vn.com.fpt.repositories.*;
 import vn.com.fpt.requests.GroupContractRequest;
 import vn.com.fpt.requests.RenterRequest;
 import vn.com.fpt.requests.RoomContractRequest;
-import vn.com.fpt.responses.RoomsResponse;
+import vn.com.fpt.responses.RentersResponse;
 import vn.com.fpt.service.assets.AssetService;
 import vn.com.fpt.service.group.GroupService;
 import vn.com.fpt.service.renter.RenterService;
@@ -36,9 +37,11 @@ import static vn.com.fpt.common.constants.ManagerConstants.*;
 import static vn.com.fpt.common.constants.SearchOperation.*;
 
 @Service
+@Lazy
 @RequiredArgsConstructor
 public class ContractServiceImpl implements ContractService {
     private final ContractRepository contractRepository;
+
     private final AssetService assetService;
     private final RoomService roomService;
     private final RenterService renterService;
@@ -67,7 +70,7 @@ public class ContractServiceImpl implements ContractService {
         if (Boolean.TRUE.equals(VALIDATE_CONTRACT_TERM(startDate, endDate)))
             throw new BusinessException(INVALID_TIME, "Ngày kết thúc không được trước ngày bắt đầu");
         var checkRenter = renterService.findRenter(request.getRenterIdentityCard());
-        if (Objects.isNull(checkRenter)){
+        if (Objects.isNull(checkRenter)) {
             //TODO: Nếu có properties liên quan đến địa chỉ khách ký hợp đồng thì sẽ set vào sau
             var address = Address.add(
                     "",
@@ -224,56 +227,32 @@ public class ContractServiceImpl implements ContractService {
         var old = contractRepository.findById(id).get();
         Contracts contractsInformation = Contracts.modifyForLease(old, request, operator);
 
-        var roomId = old.getRoomId();
-        var groupContractId = groupContract(old.getGroupId()).getId();
-        var room = roomService.emptyRoom(roomId);
 
-        //parse string to date
+        var groupContractId = groupContract(old.getGroupId()).getId();
+        var roomId = old.getRoomId(); //oldRoom
+
+        if (!Objects.equals(request.getRoomId(), roomId)) { // nếu khác thì sẽ check r add
+            roomId = roomService.emptyRoom(request.getRoomId()).getId();
+        }
+        contractsInformation.setRoomId(roomId);
+
+        // kiểm tra ngày bắt đầu và ngày kết thúc
         Date startDate = parse(request.getContractStartDate(), DATE_FORMAT_3);
         Date endDate = parse(request.getContractEndDate(), DATE_FORMAT_3);
-
         assert endDate != null;
         assert startDate != null;
-        // kiểm tra ngày bắt đầu và ngày kết thúc
+
         if (Boolean.TRUE.equals(VALIDATE_CONTRACT_TERM(endDate, startDate)))
             throw new BusinessException(INVALID_TIME, "Ngày kết thúc không được trước ngày bắt đầu");
+        var modifyRenter = RenterRequest.contractOf(request);
 
-        if (ObjectUtils.isEmpty(request.getRenterOldId())) {
-            //TODO: Nếu có properties liên quan đến địa chỉ khách ký hợp đồng thì sẽ set vào sau
+        // cập nhập thông tin thằng đại diện
+        modifyRenter.setRoomId(roomId);
+        renterService.updateRenter(old.getRenters(), modifyRenter, operator);
 
-            var address = Address.add(
-                    "",
-                    "",
-                    "",
-                    "",
-                    operator);
-
-            var newRenter =
-                    renterService.addRenter(Renters.add(RenterRequest.contractOf(request), address, operator));
-
-            // sau khi thêm khách thuê đại diện -> set thông tin đại diện cho hợp đồng để add
-            contractsInformation.setRenters(newRenter.getId());
-        } else {
-            // nếu khách đã tồn tại -> set renter_id vào hợp đồng
-            renterService.updateRenter(request.getRenterOldId(), RenterRequest.contractOf(request), operator);
-        }
 
         // cập nhập thông tin hợp đồng
-        contractRepository.save(contractsInformation);
-
-        // cập nhập trạng thái phòng trống -> đã thuê D:
-        // cập nhập thành viên vào phòng
-        if (!request.getListRenter().isEmpty()) {
-            if (request.getListRenter().size() + 1 > room.getRoomLimitPeople())
-                throw new BusinessException(RENTER_LIMIT, "Giới hạn thành viên trong phòng " + room.getRoomLimitPeople() + " số lượng thành viên hiện tại:" + request.getListRenter().size() + 1);
-            request.getListRenter().forEach(e -> {
-                var address = Address.add(RenterRequest.contractOf(request), operator);
-                var renter = Renters.add(RenterRequest.contractOf(request), address, operator);
-                e.setRepresent(false);
-                e.setRoomId(roomId);
-                renterService.updateRenter(e.getId(), renter, operator);
-            });
-        }
+        var updatedContract = contractRepository.save(contractsInformation);
 
         /* nếu có những tài sản mới không thuộc tài sản bàn giao với tòa ban đầu thì sẽ:
         add thêm vào những tài sản cơ bản, thiết yếu -> add thêm vào tài sản chung của tòa -> add tài sản bàn giao cho phòng
@@ -327,16 +306,16 @@ public class ContractServiceImpl implements ContractService {
                 }
             });
         }
-        //lưu dịch vụ chung
-        //TODO: Set chỉ số điện nước cho phòng
-        if (!request.getListGeneralService().isEmpty()) {
-            request.getListGeneralService().forEach(service -> servicesService.updateHandOverGeneralService(
-                    service.getHandOverGeneralServiceId(),
-                    service,
-                    old.getId(),
-                    startDate,
-                    operator));
-        }
+//        //lưu dịch vụ chung
+//        //TODO: Set chỉ số điện nước cho phòng
+//        if (!request.getListGeneralService().isEmpty()) {
+//            request.getListGeneralService().forEach(service -> servicesService.updateHandOverGeneralService(
+//                    service.getHandOverGeneralServiceId(),
+//                    service,
+//                    old.getId(),
+//                    startDate,
+//                    operator));
+//        }
         return request;
     }
 
@@ -353,8 +332,11 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public RoomContractDTO roomContract(Long id) {
         var contract = contract(id);
+        List<RentersResponse> listRenter = new ArrayList<>(renterService.listMember(contract.getRoomId()));
+        listRenter.add(renterService.renter(contract.getRenters()));
+
         var roomContract = RoomContractDTO.of(contract,
-                renterService.listRenter(contract.getRoomId()),
+                listRenter,
                 assetService.listHandOverAsset(id),
                 servicesService.listHandOverGeneralService(id));
         roomContract.setRoom(roomService.getRoom(roomContract.getRoomId()));
@@ -398,7 +380,7 @@ public class ContractServiceImpl implements ContractService {
         if (StringUtils.isNotBlank(startDate) && StringUtils.isNotBlank(endDate)) {
             contractSpec.add(new SearchCriteria("contractStartDate", DateUtils.parse(startDate, DATE_FORMAT_3), GREATER_THAN_EQUAL));
 
-            contractSpec.add(new SearchCriteria("contractEndDate",DateUtils.parse(startDate, DATE_FORMAT_3), LESS_THAN_EQUAL));
+            contractSpec.add(new SearchCriteria("contractEndDate", DateUtils.parse(startDate, DATE_FORMAT_3), LESS_THAN_EQUAL));
         }
 
         if (org.apache.commons.lang3.ObjectUtils.isNotEmpty(isDisable)) {
@@ -412,9 +394,12 @@ public class ContractServiceImpl implements ContractService {
 
         if (listContract.isEmpty()) return Collections.emptyList();
         listContract.forEach(e -> {
+            List<RentersResponse> listRenter = new ArrayList<>(renterService.listMember(e.getRoomId()));
+            listRenter.add(renterService.renter(e.getRenters()));
+
             var group = groupService.group(e.getGroupId());
             var roomContract = RoomContractDTO.of(e,
-                    renterService.listRenter(e.getRoomId()),
+                    listRenter,
                     assetService.listHandOverAsset(e.getId()),
                     servicesService.listHandOverGeneralService(e.getId()));
             roomContract.setRoom(roomService.getRoom(e.getRoomId()));

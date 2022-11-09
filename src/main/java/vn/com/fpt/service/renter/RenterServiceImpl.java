@@ -19,6 +19,8 @@ import vn.com.fpt.specification.SearchCriteria;
 import java.util.List;
 
 import static vn.com.fpt.common.constants.ErrorStatusConstants.*;
+import static vn.com.fpt.common.constants.ManagerConstants.MEMBER;
+import static vn.com.fpt.common.constants.ManagerConstants.REPRESENT;
 import static vn.com.fpt.common.constants.SearchOperation.*;
 
 @Service
@@ -57,6 +59,16 @@ public class RenterServiceImpl implements RenterService {
     }
 
     @Override
+    public List<RentersResponse> listMember(Long roomId) {
+        return renterRepository.findAllByRoomIdAndRepresent(roomId, MEMBER).stream().map(RentersResponse::of).toList();
+    }
+
+    @Override
+    public RentersResponse representRenter(Long roomId) {
+        return RentersResponse.of(renterRepository.findByRoomIdAndRepresent(roomId, REPRESENT));
+    }
+
+    @Override
     public RentersResponse renter(Long id) {
         return RentersResponse.of(findRenter(id));
     }
@@ -65,7 +77,9 @@ public class RenterServiceImpl implements RenterService {
     @Transactional
     public RentersResponse addRenter(RenterRequest request, Long operator) {
         roomService.roomChecker(request.getRoomId());
-
+        if(renterRepository.findByIdentityNumberAndRoomId(request.getIdentityCard(), request.getRoomId()).isPresent()){
+            throw new BusinessException(RENTER_EXISTED, "CCMND/CCCD : " + request.getIdentityCard());
+        }
         var address = Address.add(
                 request.getAddressCity(),
                 request.getAddressDistrict(),

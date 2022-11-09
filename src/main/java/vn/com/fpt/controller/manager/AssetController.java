@@ -3,7 +3,6 @@ package vn.com.fpt.controller.manager;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +11,9 @@ import vn.com.fpt.common.response.BaseResponse;
 import vn.com.fpt.common.utils.Operator;
 import vn.com.fpt.entity.AssetTypes;
 import vn.com.fpt.entity.BasicAssets;
+import vn.com.fpt.entity.HandOverAssets;
 import vn.com.fpt.requests.BasicAssetsRequest;
+import vn.com.fpt.requests.HandOverAssetsRequest;
 import vn.com.fpt.service.assets.AssetService;
 
 import java.util.List;
@@ -52,6 +53,13 @@ public class AssetController {
     @Operation(summary = "Thêm trang thiết bị cơ bản, thiết yếu")
     public ResponseEntity<BaseResponse<BasicAssets>> add(@RequestBody BasicAssetsRequest request) {
         return AppResponse.success(assetService.add(request, Operator.operator()));
+    }
+
+    @PostMapping("/hand-over/add/{contractId}")
+    @Operation(summary = "Thêm trang thiết bị bàn giao cho hợp đồng")
+    public ResponseEntity<BaseResponse<HandOverAssets>> add(@RequestBody HandOverAssetsRequest request,
+                                                            @PathVariable Long contractId) {
+        return AppResponse.success(assetService.addAdditionalAsset(request, contractId, Operator.operator()));
     }
 
     @PutMapping("/update/{assetId}")
