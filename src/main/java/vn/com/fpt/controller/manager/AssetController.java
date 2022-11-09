@@ -62,6 +62,9 @@ public class AssetController {
         return AppResponse.success(assetService.addAdditionalAsset(request, contractId, Operator.operator()));
     }
 
+//    @PutMapping("/hand-over/update/{id}")
+//    @Operation(summary = "Cập nhập trang thiết bị bàn gia")
+
     @PutMapping("/update/{assetId}")
     @Operation(summary = "Cập nhập trang thiết bị cơ bản, thiết yếu")
     public ResponseEntity<BaseResponse<BasicAssets>> update(@PathVariable Long assetId,

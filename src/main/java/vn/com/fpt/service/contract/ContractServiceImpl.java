@@ -242,7 +242,7 @@ public class ContractServiceImpl implements ContractService {
         assert endDate != null;
         assert startDate != null;
 
-        if (Boolean.TRUE.equals(VALIDATE_CONTRACT_TERM(endDate, startDate)))
+        if (Boolean.TRUE.equals(VALIDATE_CONTRACT_TERM(startDate, endDate)))
             throw new BusinessException(INVALID_TIME, "Ngày kết thúc không được trước ngày bắt đầu");
         var modifyRenter = RenterRequest.contractOf(request);
 
