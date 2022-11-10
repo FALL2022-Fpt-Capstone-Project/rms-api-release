@@ -14,12 +14,15 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import vn.com.fpt.configs.AppConfigs;
+import static vn.com.fpt.configs.AppConfigs.*;
 
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+    private static final String DOC_API = V1_PATH + DOC_PATH + ALL_PATH;
+    private static final String ATHENTICATION_API = V1_PATH + AUTHEN_PATH + ALL_PATH;
+    private static final String CONFIG_API = V1_PATH + CONFIG_PATH + ALL_PATH;
 
     @Autowired
     UserDetailsService userDetailsService;
@@ -57,12 +60,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
-                .antMatchers(AppConfigs.V1_PATH + AppConfigs.AUTHEN_PATH + "/**")
-                .permitAll()
-                .antMatchers("/v1/doc/**")
-                .permitAll()
-                .antMatchers("/error")
-                .permitAll()
+                .antMatchers(ATHENTICATION_API).permitAll()
+                .antMatchers(DOC_API).permitAll()
+                .antMatchers("/error").permitAll()
+                .antMatchers(CONFIG_API).permitAll()
                 .anyRequest().authenticated();
 //                .anyRequest().permitAll();
 

@@ -38,6 +38,12 @@ public class AppConfigs {
 
     public static final String AUTHEN_PATH = "/api/auth";
     public static final String MANAGER_PATH = "/api/manager";
+
+    public static final String CONFIG_PATH = "/api/config";
+
+    public static final String DOC_PATH = "/doc";
+
+    public static final String ALL_PATH = "/**";
     //request path
     public static final String CONTRACT_PATH = "/contract";
     public static final String SERVICE_PATH = "/service";
@@ -51,5 +57,7 @@ public class AppConfigs {
     public static final String TABLE_AUTHENTICATION = "authentication.";
 
     public static final String TABLE_MANAGER = "manager.";
+
+    public static final String TABLE_CONFIG = "config.";
 
 }
