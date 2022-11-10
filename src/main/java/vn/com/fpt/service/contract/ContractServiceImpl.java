@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ObjectUtils;
 import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.common.utils.DateUtils;
 import vn.com.fpt.entity.*;
@@ -225,7 +224,7 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public RoomContractRequest updateContract(Long id, RoomContractRequest request, Long operator) {
         var old = contractRepository.findById(id).get();
-        Contracts contractsInformation = Contracts.modifyForLease(old, request, operator);
+        Contracts contractsInformation = Contracts.modifyForSublease(old, request, operator);
 
 
         var groupContractId = groupContract(old.getGroupId()).getId();

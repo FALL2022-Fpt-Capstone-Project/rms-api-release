@@ -136,11 +136,11 @@ public class Contracts extends BaseEntity {
         return renterContract;
     }
 
-    public static Contracts modifyForLease(Contracts old, RoomContractRequest neww, Long operator) {
+    public static Contracts modifyForSublease(Contracts old, RoomContractRequest neww, Long operator) {
         var renterContract = of(neww);
 
         renterContract.setId(old.getId());
-        renterContract.setContractType(LEASE_CONTRACT);
+        renterContract.setContractType(SUBLEASE_CONTRACT);
         renterContract.setRenters(old.getRenters());
         renterContract.setContractIsDisable(false);
         renterContract.setCreatedBy(old.getCreatedBy());
