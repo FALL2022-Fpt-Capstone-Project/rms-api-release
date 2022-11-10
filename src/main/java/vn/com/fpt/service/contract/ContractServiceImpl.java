@@ -314,7 +314,7 @@ public class ContractServiceImpl implements ContractService {
             });
         }
 //        //lưu dịch vụ chung
-//        //TODO: Set chỉ số điện nước cho phòng
+        //TODO: Set chỉ số điện nước cho phòng
 //        if (!request.getListGeneralService().isEmpty()) {
 //            request.getListGeneralService().forEach(service -> servicesService.updateHandOverGeneralService(
 //                    service.getHandOverGeneralServiceId(),

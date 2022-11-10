@@ -12,6 +12,9 @@ import vn.com.fpt.common.utils.DateUtils;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static java.lang.Boolean.TRUE;
+import static vn.com.fpt.common.constants.ConfigVariable.ACTIVE;
+import static vn.com.fpt.common.constants.ConfigVariable.DEACTIVATE;
 import static vn.com.fpt.common.utils.DateUtils.DATETIME_FORMAT_CUSTOM;
 
 @NoArgsConstructor
@@ -49,6 +52,8 @@ public class AccountResponse {
 
     private Boolean isDeactivate;
 
+    private String status;
+
     private String createdAt;
 
     private String token;
@@ -75,6 +80,7 @@ public class AccountResponse {
         response.setAccountId(account.getId());
         response.setFullName(account.getFullName());
         response.setPhoneNumber(account.getPhoneNumber());
+        response.setStatus(account.isDeactivate() ? DEACTIVATE : ACTIVE);
         response.setRoles(account.getRoles().stream().map(e -> e.getName().name()).collect(Collectors.toSet()));
         response.setAddressId(account.getAddress().getId());
         response.setAddressCity(account.getAddress().getAddressCity());
@@ -91,6 +97,7 @@ public class AccountResponse {
         AccountResponse response = new AccountResponse();
         BeanUtils.copyProperties(accountDTO, response);
         response.setCreatedAt(DateUtils.format(accountDTO.getCreatedAt(), DATETIME_FORMAT_CUSTOM));
+        response.setStatus(TRUE.equals(accountDTO.getIsDeactivate()) ? DEACTIVATE : ACTIVE);
         response.setAccountId(accountDTO.getAccountId().longValue());
         response.setAddressId(accountDTO.getAddressId().longValue());
         return response;

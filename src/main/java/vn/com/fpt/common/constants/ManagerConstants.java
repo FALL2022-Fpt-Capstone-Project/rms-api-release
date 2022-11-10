@@ -10,11 +10,6 @@ public class ManagerConstants {
     public static final String LATEST_CONTRACT = "latest";
     public static final String EXPIRED_CONTRACT = "expired";
 
-    //filter staff account condition
-    public static final int DEACTIVATE_ACCOUNT = 0;
-    public static final int ACTIVATE_ACCOUNT = 1;
-    public static final int NONE_FILTER_DEACTIVATE = -1;
-
     //assets type
     public static final Long TYPE_BATH_ROOM = 1L;
     public static final Long TYPE_LIVING_ROOM = 2L;

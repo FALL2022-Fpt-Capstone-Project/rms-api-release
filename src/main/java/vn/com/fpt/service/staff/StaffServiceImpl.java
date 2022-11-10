@@ -81,7 +81,6 @@ public class StaffServiceImpl implements StaffService {
                                            Boolean deactivate,
                                            String name,
                                            String userName) {
-        Boolean onlyStaff = Boolean.FALSE;
 
         StringBuilder selectBuild = new StringBuilder("SELECT ");
         selectBuild.append("acc.account_id,");
@@ -110,7 +109,7 @@ public class StaffServiceImpl implements StaffService {
         //only select staff
         whereBuild.append("AND acc.owner = :isOwner ");
 
-        params.put("isOwner", onlyStaff);
+        params.put("isOwner", false);
 
         if (StringUtils.isNotBlank(role)) {
             if (!role.contains(",")) {
@@ -162,7 +161,7 @@ public class StaffServiceImpl implements StaffService {
         params.forEach(query::setParameter);
 
         List<AccountDTO> queryResult = query.getResultList();
-        return queryResult.stream().map(AccountResponse::of).collect(Collectors.toList());
+        return queryResult.stream().map(AccountResponse::of).toList();
     }
 
     @Override
@@ -218,9 +217,7 @@ public class StaffServiceImpl implements StaffService {
     public List<String> roles() {
         List<String> rolesName = new ArrayList<>();
         var roles = roleRepository.getAll();
-        roles.forEach(e -> {
-            rolesName.add(e.getName().name().replace("ROLE_", ""));
-        });
+        roles.forEach(e -> rolesName.add(e.getName().name().replace("ROLE_", "")));
         return rolesName;
     }
 }
