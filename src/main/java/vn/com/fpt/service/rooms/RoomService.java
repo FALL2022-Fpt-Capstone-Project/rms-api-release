@@ -9,7 +9,7 @@ import java.util.List;
 public interface RoomService {
     List<RoomsResponse> listRoom(Long groupId, Long floor, Integer status, String name);
 
-    RoomsResponse room (Long id);
+    Rooms room (Long id);
 
     List<Rooms> add(List<Rooms> rooms);
 
@@ -20,6 +20,8 @@ public interface RoomService {
     Rooms updateRoom(Long id, RoomsRequest roomsRequest);
 
     Rooms updateRoom(Rooms roomsRequest);
+
+    Rooms setServiceIndex(Long id, Integer electric, Integer water, Long operator);
 
     Rooms roomChecker(Long id);
 

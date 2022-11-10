@@ -49,9 +49,8 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public RoomsResponse room(Long id) {
-        // TODO
-        return null;
+    public Rooms room(Long id) {
+        return roomChecker(id);
     }
 
     @Override
@@ -78,6 +77,15 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public Rooms updateRoom(Rooms roomsRequest) {
         return roomsRepository.save(roomsRequest);
+    }
+
+    @Override
+    public Rooms setServiceIndex(Long id, Integer electric, Integer water, Long operator) {
+        var roomToSet = room(id);
+        roomToSet.setRoomCurrentElectricIndex(electric);
+        roomToSet.setRoomCurrentWaterIndex(water);
+
+        return roomsRepository.save(Rooms.modify(room(id), roomToSet, operator));
     }
 
     @Override

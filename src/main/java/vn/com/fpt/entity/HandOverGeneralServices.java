@@ -80,7 +80,7 @@ public class HandOverGeneralServices extends BaseEntity {
                 generalServiceId,
                 dateDelivery);
 
-        handOverGeneralServices.setId(old.getGeneralServiceId());
+        handOverGeneralServices.setId(old.getId());
         handOverGeneralServices.setModifiedAt(DateUtils.now());
         handOverGeneralServices.setModifiedBy(operator);
         return handOverGeneralServices;

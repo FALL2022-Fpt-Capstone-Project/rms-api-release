@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static vn.com.fpt.common.utils.DateUtils.*;
 import static vn.com.fpt.common.constants.ErrorStatusConstants.*;
@@ -158,9 +159,28 @@ public class ContractServiceImpl implements ContractService {
             });
         }
         //lưu dịch vụ chung
-        //TODO: Set chỉ số điện nước cho phòng
         if (!request.getListGeneralService().isEmpty()) {
-            request.getListGeneralService().forEach(service -> servicesService.addHandOverGeneralService(service, contractId, startDate, operator));
+            AtomicInteger currentElectric = new AtomicInteger(0);
+            AtomicInteger currentWater = new AtomicInteger(0);
+
+            request.getListGeneralService().forEach(service -> {
+                        var serviceId = servicesService.generalService(service.getGeneralServiceId()).getServiceId().longValue();
+                        var serviceTypeId = servicesService.generalService(service.getGeneralServiceId()).getServiceTypeId().longValue();
+
+                        if (serviceId == SERVICE_WATER && serviceTypeId == SERVICE_TYPE_METER) {
+                            currentWater.set(service.getHandOverServiceIndex());
+                        }
+                        if (serviceId == SERVICE_ELECTRIC) {
+                            currentElectric.set(service.getHandOverServiceIndex());
+                        }
+                        servicesService.addHandOverGeneralService(service, contractId, startDate, operator);
+                    }
+            );
+            //cập nhập chỉ số điện nước cho phòng
+            roomService.setServiceIndex(request.getRoomId(),
+                                        currentElectric.get(),
+                                        currentWater.get(),
+                                        operator);
         }
         return request;
     }
@@ -223,12 +243,12 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     public RoomContractRequest updateContract(Long id, RoomContractRequest request, Long operator) {
-        var old = contractRepository.findById(id).get();
-        Contracts contractsInformation = Contracts.modifyForSublease(old, request, operator);
+        var oldContract = contractRepository.findById(id).get();
+        Contracts contractsInformation = Contracts.modifyForSublease(oldContract, request, operator);
 
 
-        var groupContractId = groupContract(old.getGroupId()).getId();
-        var roomId = old.getRoomId(); //oldRoom
+        var groupContractId = groupContract(oldContract.getGroupId()).getId();
+        var roomId = oldContract.getRoomId(); //oldRoom
 
         if (!Objects.equals(request.getRoomId(), roomId)) { // nếu khác thì sẽ check r add
             roomId = roomService.emptyRoom(request.getRoomId()).getId();
@@ -255,7 +275,7 @@ public class ContractServiceImpl implements ContractService {
         // cập nhập thông tin thằng đại diện
         modifyRenter.setRoomId(roomId);
         modifyRenter.setAddressMoreDetail(request.getAddressMoreDetail());
-        renterService.updateRenter(old.getRenters(), modifyRenter, operator);
+        renterService.updateRenter(oldContract.getRenters(), modifyRenter, operator);
 
 
         // cập nhập thông tin hợp đồng
@@ -286,7 +306,7 @@ public class ContractServiceImpl implements ContractService {
                     assetService.addHandOverAsset(
                             handOverAsset,
                             operator,
-                            old.getId(),
+                            oldContract.getId(),
                             startDate);
 
                     //cập nhập số lượng tài sản của tòa
@@ -302,8 +322,8 @@ public class ContractServiceImpl implements ContractService {
                             assetService.handOverAsset(handOverAsset.getHandOverAssetId()),
                             handOverAsset,
                             operator,
-                            old.getId(),
-                            old.getContractStartDate());
+                            oldContract.getId(),
+                            oldContract.getContractStartDate());
 
                     //cập nhập số lượng tài sản của tòa
                     assetService.updateGeneralAssetQuantity(
@@ -313,16 +333,36 @@ public class ContractServiceImpl implements ContractService {
                 }
             });
         }
-//        //lưu dịch vụ chung
-        //TODO: Set chỉ số điện nước cho phòng
-//        if (!request.getListGeneralService().isEmpty()) {
-//            request.getListGeneralService().forEach(service -> servicesService.updateHandOverGeneralService(
-//                    service.getHandOverGeneralServiceId(),
-//                    service,
-//                    old.getId(),
-//                    startDate,
-//                    operator));
-//        }
+        //cap nhap dịch vụ chung
+        if (!request.getListGeneralService().isEmpty()) {
+
+            AtomicInteger currentElectric = new AtomicInteger(0);
+            AtomicInteger currentWater = new AtomicInteger(0);
+
+            request.getListGeneralService().forEach(service -> {
+                var serviceId = servicesService.generalService(service.getGeneralServiceId()).getServiceId().longValue();
+                var serviceTypeId = servicesService.generalService(service.getGeneralServiceId()).getServiceTypeId().longValue();
+
+                if (serviceId == SERVICE_WATER && serviceTypeId == SERVICE_TYPE_METER) {
+                    currentWater.set(service.getHandOverServiceIndex());
+                }
+                if (serviceId == SERVICE_ELECTRIC) {
+                    currentElectric.set(service.getHandOverServiceIndex());
+                }
+
+                servicesService.updateHandOverGeneralService(
+                        service.getHandOverGeneralServiceId(),
+                        service,
+                        oldContract.getId(),
+                        startDate,
+                        operator);
+            });
+            //cập nhập chỉ số điện nước cho phòng
+            roomService.setServiceIndex(request.getRoomId(),
+                    currentElectric.get(),
+                    currentWater.get(),
+                    operator);
+        }
         return request;
     }
 

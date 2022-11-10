@@ -38,7 +38,7 @@ public class ServicesServiceImpl implements ServicesService {
 
     private final GeneralServiceRepository generalServiceRepository;
 
-    private final HandOverGeneralServicesRepository handOverGeneralServices;
+    private final HandOverGeneralServicesRepository handOverGeneralServicesRepo;
 
     @Override
     public List<GeneralServiceDTO> listGeneralService(Long contractId) {
@@ -76,7 +76,7 @@ public class ServicesServiceImpl implements ServicesService {
     @Override
     public GeneralServiceDTO generalService(Long id) {
 
-        var checker = findGeneralServiceById(id);
+        findGeneralServiceById(id);
 
         StringBuilder selectBuild = new StringBuilder("SELECT ");
         selectBuild.append("mgs.general_service_id,");
@@ -176,7 +176,7 @@ public class ServicesServiceImpl implements ServicesService {
                                                              Long contractId,
                                                              Date dateDelivery,
                                                              Long operator) {
-        return handOverGeneralServices.save(HandOverGeneralServices.add(contractId,
+        return handOverGeneralServicesRepo.save(HandOverGeneralServices.add(contractId,
                 request.getHandOverServiceIndex(),
                 request.getGeneralServiceId(),
                 dateDelivery,
@@ -189,8 +189,14 @@ public class ServicesServiceImpl implements ServicesService {
                                                                 Long contractId,
                                                                 Date dateDelivery,
                                                                 Long operator) {
-        var general = handOverGeneralServices.findById(id).get();
-        return handOverGeneralServices.save(general);
+        var old = handOverGeneralServicesRepo.findById(id).get();
+        return handOverGeneralServicesRepo.save(HandOverGeneralServices.modify(old,
+                                                contractId,
+                                                request.getHandOverServiceIndex(),
+                                                request.getGeneralServiceId(),
+                                                dateDelivery,
+                                                operator
+        ));
     }
 
 
