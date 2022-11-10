@@ -333,36 +333,36 @@ public class ContractServiceImpl implements ContractService {
                 }
             });
         }
-        //cap nhap dịch vụ chung
-        if (!request.getListGeneralService().isEmpty()) {
-
-            AtomicInteger currentElectric = new AtomicInteger(0);
-            AtomicInteger currentWater = new AtomicInteger(0);
-
-            request.getListGeneralService().forEach(service -> {
-                var serviceId = servicesService.generalService(service.getGeneralServiceId()).getServiceId().longValue();
-                var serviceTypeId = servicesService.generalService(service.getGeneralServiceId()).getServiceTypeId().longValue();
-
-                if (serviceId == SERVICE_WATER && serviceTypeId == SERVICE_TYPE_METER) {
-                    currentWater.set(service.getHandOverServiceIndex());
-                }
-                if (serviceId == SERVICE_ELECTRIC) {
-                    currentElectric.set(service.getHandOverServiceIndex());
-                }
-
-                servicesService.updateHandOverGeneralService(
-                        service.getHandOverGeneralServiceId(),
-                        service,
-                        oldContract.getId(),
-                        startDate,
-                        operator);
-            });
-            //cập nhập chỉ số điện nước cho phòng
-            roomService.setServiceIndex(request.getRoomId(),
-                    currentElectric.get(),
-                    currentWater.get(),
-                    operator);
-        }
+//        //cap nhap dịch vụ chung
+//        if (!request.getListGeneralService().isEmpty()) {
+//
+//            AtomicInteger currentElectric = new AtomicInteger(0);
+//            AtomicInteger currentWater = new AtomicInteger(0);
+//
+//            request.getListGeneralService().forEach(service -> {
+//                var serviceId = servicesService.generalService(service.getGeneralServiceId()).getServiceId().longValue();
+//                var serviceTypeId = servicesService.generalService(service.getGeneralServiceId()).getServiceTypeId().longValue();
+//
+//                if (serviceId == SERVICE_WATER && serviceTypeId == SERVICE_TYPE_METER) {
+//                    currentWater.set(service.getHandOverServiceIndex());
+//                }
+//                if (serviceId == SERVICE_ELECTRIC) {
+//                    currentElectric.set(service.getHandOverServiceIndex());
+//                }
+//
+//                servicesService.updateHandOverGeneralService(
+//                        service.getHandOverGeneralServiceId(),
+//                        service,
+//                        oldContract.getId(),
+//                        startDate,
+//                        operator);
+//            });
+//            //cập nhập chỉ số điện nước cho phòng
+//            roomService.setServiceIndex(request.getRoomId(),
+//                    currentElectric.get(),
+//                    currentWater.get(),
+//                    operator);
+//        }
         return request;
     }
 
