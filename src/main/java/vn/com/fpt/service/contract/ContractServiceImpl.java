@@ -75,7 +75,7 @@ public class ContractServiceImpl implements ContractService {
                     "",
                     "",
                     "",
-                    "",
+                    request.getAddressMoreDetail(),
                     operator);
             var newRenter =
                     renterService.addRenter(Renters.add(RenterRequest.contractOf(request), address, operator));
@@ -254,6 +254,7 @@ public class ContractServiceImpl implements ContractService {
 
         // cập nhập thông tin thằng đại diện
         modifyRenter.setRoomId(roomId);
+        modifyRenter.setAddressMoreDetail(request.getAddressMoreDetail());
         renterService.updateRenter(old.getRenters(), modifyRenter, operator);
 
 

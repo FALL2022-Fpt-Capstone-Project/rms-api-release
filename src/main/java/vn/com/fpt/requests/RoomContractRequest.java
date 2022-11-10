@@ -45,6 +45,10 @@ public class RoomContractRequest {
     private Boolean renterGender;
 
     private String renterIdentityCard;
+
+    private String licensePlates;
+
+    private String addressMoreDetail;
     //--------------------------
 
     // room information
