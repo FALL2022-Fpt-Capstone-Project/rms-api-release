@@ -140,7 +140,9 @@ public class Contracts extends BaseEntity {
         var renterContract = of(neww);
 
         renterContract.setId(old.getId());
-
+        renterContract.setContractType(LEASE_CONTRACT);
+        renterContract.setRenters(old.getRenters());
+        renterContract.setContractIsDisable(false);
         renterContract.setCreatedBy(old.getCreatedBy());
         renterContract.setCreatedAt(old.getCreatedAt());
 

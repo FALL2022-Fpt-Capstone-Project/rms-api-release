@@ -7,7 +7,7 @@ import vn.com.fpt.responses.RoomsResponse;
 import java.util.List;
 
 public interface RoomService {
-    List<RoomsResponse> listRoom(Long groupId, Long floor, Boolean status, String name);
+    List<RoomsResponse> listRoom(Long groupId, Long floor, Integer status, String name);
 
     RoomsResponse room (Long id);
 

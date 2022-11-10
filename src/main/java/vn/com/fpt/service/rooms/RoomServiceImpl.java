@@ -26,16 +26,16 @@ public class RoomServiceImpl implements RoomService {
     private final RoomsRepository roomsRepository;
 
     @Override
-    public List<RoomsResponse> listRoom(Long groupId, Long floor, Boolean status, String name) {
+    public List<RoomsResponse> listRoom(Long groupId, Long floor, Integer status, String name) {
         BaseSpecification<Rooms> specification = new BaseSpecification<>();
-        if (ObjectUtils.allNotNull(groupId)) {
+        if (ObjectUtils.isNotEmpty(groupId)) {
             specification.add(new SearchCriteria("groupId", groupId, EQUAL));
         }
         if (ObjectUtils.isNotEmpty(floor)) {
             specification.add(new SearchCriteria("roomFloor", floor, EQUAL));
         }
-        if (ObjectUtils.allNotNull(status)) {
-            if(status){
+        if (ObjectUtils.isNotEmpty(status)) {
+            if(status == 1){
                 specification.add(new SearchCriteria("contractId", null, EQUAL));
             }
             else {
