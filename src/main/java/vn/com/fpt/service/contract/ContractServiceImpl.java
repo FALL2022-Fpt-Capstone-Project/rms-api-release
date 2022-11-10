@@ -53,7 +53,7 @@ public class ContractServiceImpl implements ContractService {
     @Override
     @Transactional
     public RoomContractRequest addContract(RoomContractRequest request, Long operator) {
-        Contracts contractsInformation = Contracts.addForLease(request, operator);
+        Contracts contractsInformation = Contracts.addForSubLease(request, operator);
 
         var roomId = request.getRoomId();
         var groupContractId = groupContract(request.getGroupId()).getId();
@@ -181,7 +181,7 @@ public class ContractServiceImpl implements ContractService {
                 operator);
 
         // tạo mới 1 hợp đồng cho nhóm phòng đấy
-        var contract = contractRepository.save(Contracts.addForGroup(request,
+        var contract = contractRepository.save(Contracts.addForLease(request,
                 group.getId(),
                 operator));
 
@@ -235,6 +235,13 @@ public class ContractServiceImpl implements ContractService {
         }
         contractsInformation.setRoomId(roomId);
 
+        //update giá phòng
+        var oldRoom = roomService.getRoom(roomId);
+        var newRoom = oldRoom;
+
+        newRoom.setRoomPrice(request.getContractPrice());
+        roomService.updateRoom(Rooms.modify(oldRoom, newRoom, operator));
+
         // kiểm tra ngày bắt đầu và ngày kết thúc
         Date startDate = parse(request.getContractStartDate(), DATE_FORMAT_3);
         Date endDate = parse(request.getContractEndDate(), DATE_FORMAT_3);
@@ -251,7 +258,7 @@ public class ContractServiceImpl implements ContractService {
 
 
         // cập nhập thông tin hợp đồng
-        var updatedContract = contractRepository.save(contractsInformation);
+        contractRepository.save(contractsInformation);
 
         /* nếu có những tài sản mới không thuộc tài sản bàn giao với tòa ban đầu thì sẽ:
         add thêm vào những tài sản cơ bản, thiết yếu -> add thêm vào tài sản chung của tòa -> add tài sản bàn giao cho phòng

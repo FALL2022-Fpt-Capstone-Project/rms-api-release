@@ -53,12 +53,14 @@ public class Rooms extends BaseEntity {
     @Column(name = "room_area")
     private Double roomArea;
 
-    public static Rooms modify(Rooms rooms, Long operator) {
-        rooms.setCreatedAt(rooms.getCreatedAt());
-        rooms.setCreatedBy(rooms.getCreatedBy());
-        rooms.setModifiedBy(operator);
-        rooms.setModifiedAt(DateUtils.now());
-        return rooms;
+    public static Rooms modify(Rooms old, Rooms neww, Long operator) {
+        neww.setCreatedAt(old.getCreatedAt());
+        neww.setCreatedBy(old.getCreatedBy());
+        neww.setId(old.getId());
+
+        neww.setModifiedBy(operator);
+        neww.setModifiedAt(DateUtils.now());
+        return neww;
     }
 
     public static Rooms of(String name,

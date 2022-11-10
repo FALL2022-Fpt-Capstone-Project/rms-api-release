@@ -76,6 +76,11 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
+    public Rooms updateRoom(Rooms roomsRequest) {
+        return roomsRepository.save(roomsRequest);
+    }
+
+    @Override
     public Rooms roomChecker(Long id) {
         return roomsRepository.findById(id).orElseThrow(() ->
                 new BusinessException(ROOM_NOT_FOUND, "Không tìm thấy phòng room_id: " + id));

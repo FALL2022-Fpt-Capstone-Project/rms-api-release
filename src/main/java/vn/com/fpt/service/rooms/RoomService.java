@@ -19,6 +19,8 @@ public interface RoomService {
 
     Rooms updateRoom(Long id, RoomsRequest roomsRequest);
 
+    Rooms updateRoom(Rooms roomsRequest);
+
     Rooms roomChecker(Long id);
 
     Rooms getRoom(Long id);

@@ -15,6 +15,7 @@ import java.util.Date;
 
 import static vn.com.fpt.common.constants.ManagerConstants.LEASE_CONTRACT;
 import static vn.com.fpt.common.constants.ManagerConstants.SUBLEASE_CONTRACT;
+import static vn.com.fpt.common.utils.DateUtils.parse;
 
 
 @Entity
@@ -81,8 +82,8 @@ public class Contracts extends BaseEntity {
                 .contractDeposit(request.getContractDeposit())
                 .contractBillCycle(request.getContractBillCycle())
                 .contractPaymentCycle(request.getContractPaymentCycle())
-                .contractStartDate(DateUtils.parse(request.getContractStartDate(), DateUtils.DATE_FORMAT_3))
-                .contractEndDate(DateUtils.parse(request.getContractEndDate(), DateUtils.DATE_FORMAT_3))
+                .contractStartDate(parse(request.getContractStartDate(), DateUtils.DATE_FORMAT_3))
+                .contractEndDate(parse(request.getContractEndDate(), DateUtils.DATE_FORMAT_3))
                 .note(request.getContractNote())
                 .contractTerm(request.getContractTerm())
                 .roomId(request.getRoomId())
@@ -96,14 +97,14 @@ public class Contracts extends BaseEntity {
                 .contractDeposit(request.getContractDeposit())
                 .contractBillCycle(request.getContractBillCycle())
                 .contractPaymentCycle(request.getContractPaymentCycle())
-                .contractStartDate(DateUtils.parse(request.getContractStartDate(), DateUtils.DATE_FORMAT_3))
-                .contractEndDate(DateUtils.parse(request.getContractEndDate(), DateUtils.DATE_FORMAT_3))
+                .contractStartDate(parse(request.getContractStartDate(), DateUtils.DATE_FORMAT_3))
+                .contractEndDate(parse(request.getContractEndDate(), DateUtils.DATE_FORMAT_3))
                 .note(request.getContractNote())
                 .contractTerm(request.getContractTerm())
                 .groupId(groupId).build();
     }
 
-    public static Contracts addForGroup(GroupContractRequest request, Long groupId, Long operator) {
+    public static Contracts addForLease(GroupContractRequest request, Long groupId, Long operator) {
         var renterContract = of(request, groupId);
         renterContract.setContractType(LEASE_CONTRACT);
         renterContract.setCreatedBy(operator);
@@ -111,23 +112,7 @@ public class Contracts extends BaseEntity {
         return renterContract;
     }
 
-    public static Contracts modifyForSublease(Contracts old, GroupContractRequest neww, Long operator) {
-        var groupContract = of(neww, old.getGroupId());
-        groupContract.setId(old.getId());
-
-        //fetch
-        groupContract.setCreatedBy(old.getCreatedBy());
-        groupContract.setCreatedAt(old.getCreatedAt());
-
-
-        groupContract.setModifiedAt(DateUtils.now());
-        groupContract.setModifiedBy(operator);
-
-        return groupContract;
-    }
-
-
-    public static Contracts addForLease(RoomContractRequest request, Long operator) {
+    public static Contracts addForSubLease(RoomContractRequest request, Long operator) {
         var renterContract = of(request);
         renterContract.setContractType(SUBLEASE_CONTRACT);
         renterContract.setContractIsDisable(false);
