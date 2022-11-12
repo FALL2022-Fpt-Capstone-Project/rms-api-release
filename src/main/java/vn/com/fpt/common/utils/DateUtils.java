@@ -73,6 +73,15 @@ public final class DateUtils {
                 toLocalDate(d1).withDayOfMonth(1));
     }
 
+    public static Date monthsCalculate(Date date, Long months) {
+        var process = toLocalDate(date);
+        if (months < 0) return of(process.minusMonths(-months));
+
+        if (months > 0) return of(process.plusMonths(months));
+
+        return date;
+    }
+
     public static Date toDate(LocalDateTime dateToConvert) {
         return java.util.Date.from(dateToConvert.atZone(ZoneId.systemDefault())
                         .toInstant());

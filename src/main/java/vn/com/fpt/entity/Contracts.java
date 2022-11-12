@@ -75,6 +75,9 @@ public class Contracts extends BaseEntity {
     @Column(name = "contract_type")
     private Integer contractType;
 
+    @Column(name = "address_id")
+    private Long addressId;
+
     public static Contracts of(RoomContractRequest request) {
         return Contracts.builder()
                 .contractName(request.getContractName())

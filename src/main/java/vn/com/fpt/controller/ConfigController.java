@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import vn.com.fpt.common.response.AppResponse;
 import vn.com.fpt.common.response.BaseResponse;
 import vn.com.fpt.entity.config.Month;
+import vn.com.fpt.model.DistrictDTO;
 import vn.com.fpt.service.config_value.ConfigService;
 
 import java.util.List;
@@ -29,5 +30,11 @@ public class ConfigController {
     @GetMapping("/month")
     public ResponseEntity<BaseResponse<List<Month>>> getConfigMonth(){
         return AppResponse.success(configService.listConfigMonth());
+    }
+
+    @Operation(summary = "Lấy thông tin địa chỉ thành phố đã được thêm")
+    @GetMapping("/city")
+    private ResponseEntity<BaseResponse<List<DistrictDTO>>> getAddedCity(){
+        return AppResponse.success(configService.listAddedDistrict());
     }
 }

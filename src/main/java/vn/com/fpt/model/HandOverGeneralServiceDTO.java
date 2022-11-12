@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import vn.com.fpt.common.utils.DateUtils;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -41,7 +42,7 @@ public class HandOverGeneralServiceDTO implements Serializable {
 
     private Integer handOverGeneralServiceIndex;
 
-    private Date handOverGeneralServiceDateDelivery;
+    private String handOverGeneralServiceDateDelivery;
 
     private Double servicePrice;
 
@@ -68,7 +69,7 @@ public class HandOverGeneralServiceDTO implements Serializable {
         this.handOverGeneralServiceId = handOverGeneralServiceId;
         this.generalServiceId = generalServiceId;
         this.handOverGeneralServiceIndex = handOverGeneralServiceIndex;
-        this.handOverGeneralServiceDateDelivery = handOverGeneralServiceDateDelivery;
+        this.handOverGeneralServiceDateDelivery = DateUtils.format(handOverGeneralServiceDateDelivery, DateUtils.DATE_FORMAT_3);
         this.servicePrice = servicePrice;
         this.serviceId = serviceId;
         this.serviceName = serviceName;
