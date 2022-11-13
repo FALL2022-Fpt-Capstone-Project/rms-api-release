@@ -36,7 +36,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-public class AuthenticationServiceImplTest {
+class AuthenticationServiceImplTest {
     @Mock
     private AuthenticationManager authenticationManager;
 
@@ -106,12 +106,12 @@ public class AuthenticationServiceImplTest {
         registerRequest.setAddressMoreDetail("Ngo 32");
         registerRequest.setRoles("admin");
         registerRequest.setPassword("password");
-        Long operator = 1l;
+        Long operator = 1L;
         //mock result
         when(roleRepository.findByName(ERole.ROLE_ADMIN)).thenReturn(Optional.of(Role.builder().name(ERole.ROLE_ADMIN).build()));
         when(accountRepository.findAccountByUserName(registerRequest.getUserName())).thenReturn(Optional.ofNullable(null));
         Account account = new Account();
-        account.setId(1l);
+        account.setId(1L);
         account.setFullName("fullName");
         account.setPhoneNumber("phone");
         account.setDeactivate(true);
@@ -130,14 +130,14 @@ public class AuthenticationServiceImplTest {
         //run test
         AccountResponse result = authenticationService.register(registerRequest, operator);
         //veryfi
-        Assertions.assertEquals(1l, result.getAccountId());
+        Assertions.assertEquals(1L, result.getAccountId());
     }
 
     @Test
     void testRegisterException() {
         RegisterRequest registerRequest = new RegisterRequest();
         registerRequest.setUserName("Thanh");
-        Long operator = 1l;
+        Long operator = 1L;
         //mock result
         when(roleRepository.findByName(ERole.ROLE_ADMIN)).thenReturn(Optional.of(Role.builder().name(ERole.ROLE_ADMIN).build()));
         when(accountRepository.findAccountByUserName(registerRequest.getUserName())).thenReturn(Optional.ofNullable(new Account()));

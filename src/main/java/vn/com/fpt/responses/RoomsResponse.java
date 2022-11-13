@@ -32,6 +32,8 @@ public class RoomsResponse {
 
     private Double roomPrice;
 
+    private Double roomArea;
+
     public static RoomsResponse of(Rooms rooms) {
         return RoomsResponse.builder()
                 .roomId(rooms.getId())
@@ -42,6 +44,7 @@ public class RoomsResponse {
                 .roomCurrentElectricIndex(rooms.getRoomCurrentElectricIndex())
                 .groupId(rooms.getGroupId())
                 .roomPrice(rooms.getRoomPrice())
+                .roomArea(rooms.getRoomArea())
                 .contractId(rooms.getContractId()).build();
     }
 }
