@@ -1,5 +1,6 @@
 package vn.com.fpt.controller.manager;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ public class StatisticalController {
     private final StatisticalService statisticalService;
 
     @GetMapping("/contract/room")
+    @Operation(summary = "Hiện thị số liệu thống kê hợp đồng của phòng")
     public ResponseEntity<BaseResponse<StatisticalRoomContractResponse>> roomContract(@RequestParam(required = false, defaultValue = "1") Long duration,
                                                                                       @RequestParam(required = false) Long groupId) {
         return AppResponse.success(statisticalService.statisticalRoomContract(groupId, duration));

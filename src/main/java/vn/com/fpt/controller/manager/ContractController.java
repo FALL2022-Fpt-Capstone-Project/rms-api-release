@@ -37,21 +37,21 @@ public class ContractController {
         return AppResponse.success(contractService.addContract(request, Operator.operator()));
     }
 
-    @Operation(summary = "Cập nhập hợp đồng cho phòng", tags = "Room")
+    @Operation(summary = "Cập nhập hợp đồng cho phòng")
     @PutMapping("/room/update/{contractId}")
     public ResponseEntity<BaseResponse<RoomContractRequest>> updateContract(@PathVariable Long contractId,
                                                                             @RequestBody RoomContractRequest request) {
         return AppResponse.success(contractService.updateContract(contractId, request, Operator.operator()));
     }
 
-    @Operation(summary = "Xem hợp đồng của phòng", tags = "Room")
+    @Operation(summary = "Xem hợp đồng của phòng")
     @GetMapping("/room/{contractId}")
     public ResponseEntity<BaseResponse<RoomContractDTO>> roomContract(@PathVariable Long contractId) {
 
         return AppResponse.success(contractService.roomContract(contractId));
     }
 
-    @Operation(summary = "Xem tất cả hợp đồng phòng trong nhóm phòng", tags = "Room")
+    @Operation(summary = "Xem tất cả hợp đồng phòng trong nhóm phòng")
     @GetMapping("")
     public ResponseEntity<BaseResponse<List<RoomContractDTO>>> listRoomContract(@RequestParam(required = false) Long groupId,
                                                                                 @RequestParam(required = false) String phoneNumber,
@@ -70,19 +70,19 @@ public class ContractController {
     }
 
 
-    @Operation(summary = "Thêm mới một hợp đồng cho nhóm phòng", tags = "Group")
+    @Operation(summary = "Thêm mới một hợp đồng cho nhóm phòng")
     @PostMapping("/group/add")
     public ResponseEntity<BaseResponse<GroupContractRequest>> addContract(@RequestBody GroupContractRequest request) {
         return AppResponse.success(contractService.addContract(request, Operator.operator()));
     }
 
-    @Operation(summary = "Danh sách tất cả hợp đồng của nhóm phòng", tags = "Group")
+    @Operation(summary = "Danh sách tất cả hợp đồng của nhóm phòng")
     @GetMapping("/group")
     public ResponseEntity<BaseResponse<List<GroupContractDTO>>> listGroupContract() {
         return AppResponse.success(contractService.listGroupContract());
     }
 
-    @Operation(summary = "Thông tin hợp đồng của nhóm phòng", tags = "Group")
+    @Operation(summary = "Thông tin hợp đồng của nhóm phòng")
     @GetMapping("/group/{contractId}")
     public ResponseEntity<BaseResponse<Contracts>> groupContract(@PathVariable Long contractId) {
         return AppResponse.success(contractService.groupContract(contractId));
