@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.entity.Address;
 import vn.com.fpt.entity.BaseEntity;
 import vn.com.fpt.entity.authentication.Account;
@@ -29,12 +30,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.postgresql.hostchooser.HostRequirement.any;
+import static vn.com.fpt.common.constants.ErrorStatusConstants.EXISTED_ACCOUNT;
+import static vn.com.fpt.common.constants.ErrorStatusConstants.USER_NOT_FOUND;
 import static vn.com.fpt.security.ERole.ROLE_ADMIN;
 import static vn.com.fpt.security.ERole.ROLE_STAFF;
 
 @ExtendWith(MockitoExtension.class)
 class StaffServiceImplTest {
-
 
     @InjectMocks
     private StaffServiceImpl staffService;
@@ -88,27 +90,20 @@ class StaffServiceImplTest {
         request.setUserName("value-wrong");
         request.setAddressCity("value-wrong");
         request.setPassword("value-wrong");
-
         Long operator = 1L;
-
-        //mock result
-        AccountResponse accountResponse = AccountResponse.builder()
-                .accountId(1L)
-                .addressCity("Viet-nam")
-                .userName("abc-demo")
-                .password("123")
-                .build();
-
         //mock function accountService.register
-        when(accountService.register(any(RegisterRequest.class), anyLong())).thenReturn(accountResponse);
+        when(accountService.register(any(RegisterRequest.class), anyLong())).thenThrow(new BusinessException(EXISTED_ACCOUNT, "Tài khoản: 123"));
 
         //result
-        AccountResponse result = staffService.addStaff(request, operator);
+        String messageError = "Tài khoản: 123";
 
-        assertEquals(accountResponse.getAccountId(), result.getAccountId());
-        assertEquals(accountResponse.getAddressCity(), result.getAddressCity());
-        assertEquals(accountResponse.getUserName(), result.getUserName());
-        assertEquals(accountResponse.getPassword(), result.getPassword());
+        BusinessException thrown = assertThrows(
+                BusinessException.class,
+                () -> staffService.addStaff(request, operator)
+        );
+        assertEquals(thrown.getMessage(), messageError);
+        assertEquals(thrown.getErrorStatus(), EXISTED_ACCOUNT);
+
     }
 
     @Test
@@ -171,6 +166,130 @@ class StaffServiceImplTest {
     }
 
     @Test
+    void GivenNullPasswordValue_Then_updateStaff_ResultAccountResponseHavePasswordNull() {
+        //mock request
+        RegisterRequest request = new RegisterRequest();
+        request.setUserName("abc-demo");
+        request.setAddressCity("Viet-Nam");
+        request.setPassword(null);
+        request.setRoles("demoRole");
+
+        Long id = 1L;
+        Long modifyBy = 1L;
+        Date modifyAt = new Date();
+
+        //mock result
+        AccountResponse accountResponse = AccountResponse.builder()
+                .accountId(1L)
+                .addressCity("Viet-nam")
+                .userName("abc-demo")
+                .password(null)
+                .build();
+
+        //mock function accountRepository.findById
+        Address address = new Address();
+        address.setId(1L);
+        address.setAddressCity("Viet-nam");
+
+        Account account = new Account();
+        account.setId(1L);
+        account.setAddress(address);
+        account.setUserName("abc-demo");
+        account.setPassword(null);
+        Optional<Account> optionalAccount = Optional.of(account);
+        when(accountRepository.findById(anyLong())).thenReturn(optionalAccount);
+
+        //mock function accountRepository.findAccountByUserNameAndIdNot
+        Optional<Account> optionalAccountRes = Optional.empty();
+        when(accountRepository.findAccountByUserNameAndIdNot(anyString(), anyLong())).thenReturn(optionalAccountRes);
+
+        //mock function addressRepository.findById
+        Optional<Address> optionalAddress = Optional.of(address);
+        when(addressRepository.findById(anyLong())).thenReturn(optionalAddress);
+
+        //mock function accountService.roleChecker
+        Set<Role> roleSet = new HashSet<Role>();
+        when(accountService.roleChecker(anyString())).thenReturn(roleSet);
+
+        //mock function accountRepository.save
+        when(accountRepository.save(any(Account.class))).thenReturn(account);
+
+
+        //result
+        AccountResponse result = staffService.updateStaff(id, request, modifyBy, modifyAt);
+
+        assertEquals(accountResponse.getAccountId(), result.getAccountId());
+        assertEquals(accountResponse.getAddressCity(), result.getAddressCity());
+        assertEquals(accountResponse.getUserName(), result.getUserName());
+        assertEquals(accountResponse.getPassword(), result.getPassword());
+    }
+
+    @Test
+    void GivenWrongValue_Then_updateStaff_ThrowBusinessExceptionWhen_FindAccountByUserNameAndIdNot() {
+        //mock request
+        RegisterRequest request = new RegisterRequest();
+        request.setUserName("abc-demo");
+        request.setAddressCity("Viet-Nam");
+        request.setPassword(null);
+        request.setRoles("demoRole");
+
+        Long id = 1L;
+        Long modifyBy = 1L;
+        Date modifyAt = new Date();
+
+        //mock function accountRepository.findById
+        Address address = new Address();
+        address.setId(1L);
+        address.setAddressCity("Viet-nam");
+
+        Account account = new Account();
+        account.setId(1L);
+        account.setAddress(address);
+        account.setUserName("abc-demo");
+        account.setPassword(null);
+        Optional<Account> optionalAccount = Optional.of(account);
+        when(accountRepository.findById(anyLong())).thenReturn(optionalAccount);
+
+        //mock function accountRepository.findAccountByUserNameAndIdNot
+        when(accountRepository.findAccountByUserNameAndIdNot(anyString(), anyLong())).thenReturn(optionalAccount);
+
+        //result
+        String messageError = "Tên tài khoản: abc-demo";
+
+        BusinessException thrown = assertThrows(
+                BusinessException.class,
+                () -> staffService.updateStaff(id, request, modifyBy, modifyAt)
+        );
+        assertEquals(thrown.getMessage(), messageError);
+        assertEquals(thrown.getErrorStatus(), EXISTED_ACCOUNT);
+
+    }
+
+    @Test
+    void GivenIdWrongValue_Then_updateStaff_ResultAccountResponseExact() {
+        //mock request
+        RegisterRequest request = new RegisterRequest();
+
+        Long id = 1111111111L;
+        Long modifyBy = 1L;
+        Date modifyAt = new Date();
+
+
+        //mock function accountRepository.findById
+        when(accountRepository.findById(anyLong())).thenThrow(new BusinessException(USER_NOT_FOUND, "Không tìm thấy tài khoản: account_id" + id));
+
+        //result
+        String messageError = "Không tìm thấy tài khoản: account_id" + id;
+
+        BusinessException thrown = assertThrows(
+                BusinessException.class,
+                () -> staffService.updateStaff(id, request, modifyBy, modifyAt)
+        );
+        assertEquals(thrown.getMessage(), messageError);
+        assertEquals(thrown.getErrorStatus(), USER_NOT_FOUND);
+    }
+
+    @Test
     void GivenExactValue_Then_listStaff_ResultAccountResponseExact() {
         //mock request
         String role = "role";
@@ -195,7 +314,7 @@ class StaffServiceImplTest {
         assertEquals(accountResponse.getAccountId(), result.size());
 
     }
-    
+
     @Test
     void GivenExactValue_Then_staff_ResultAccountResponseExact() {
         //mock request
@@ -242,4 +361,6 @@ class StaffServiceImplTest {
         assertEquals("ADMIN", result.get(1));
 
     }
+
+
 }
