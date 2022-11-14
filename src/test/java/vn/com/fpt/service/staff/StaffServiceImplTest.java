@@ -82,6 +82,36 @@ class StaffServiceImplTest {
     }
 
     @Test
+    void GivenWrongValue_Then_addStaff_ThrowBusinessException() {
+        //mock request
+        RegisterRequest request = new RegisterRequest();
+        request.setUserName("value-wrong");
+        request.setAddressCity("value-wrong");
+        request.setPassword("value-wrong");
+
+        Long operator = 1L;
+
+        //mock result
+        AccountResponse accountResponse = AccountResponse.builder()
+                .accountId(1L)
+                .addressCity("Viet-nam")
+                .userName("abc-demo")
+                .password("123")
+                .build();
+
+        //mock function accountService.register
+        when(accountService.register(any(RegisterRequest.class), anyLong())).thenReturn(accountResponse);
+
+        //result
+        AccountResponse result = staffService.addStaff(request, operator);
+
+        assertEquals(accountResponse.getAccountId(), result.getAccountId());
+        assertEquals(accountResponse.getAddressCity(), result.getAddressCity());
+        assertEquals(accountResponse.getUserName(), result.getUserName());
+        assertEquals(accountResponse.getPassword(), result.getPassword());
+    }
+
+    @Test
     void GivenExactValue_Then_updateStaff_ResultAccountResponseExact() {
         //mock request
         RegisterRequest request = new RegisterRequest();
@@ -140,8 +170,6 @@ class StaffServiceImplTest {
         assertEquals(accountResponse.getPassword(), result.getPassword());
     }
 
-    //cần refactor lại service vì sai tầng ,tại sao lại đưa câu lệnh truy vấn vào service ??
-    // dẫn tới việc không thể mock được entityManager.createNativeQuery vì do đây là trọc thẳng vào DB
     @Test
     void GivenExactValue_Then_listStaff_ResultAccountResponseExact() {
         //mock request
@@ -167,8 +195,7 @@ class StaffServiceImplTest {
         assertEquals(accountResponse.getAccountId(), result.size());
 
     }
-
-    //cmt như trên ,sai tầng ???
+    
     @Test
     void GivenExactValue_Then_staff_ResultAccountResponseExact() {
         //mock request
