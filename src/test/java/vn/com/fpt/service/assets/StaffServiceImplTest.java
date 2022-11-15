@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import vn.com.fpt.common.BusinessException;
+import vn.com.fpt.common.constants.ErrorStatusConstants;
 import vn.com.fpt.entity.Address;
 import vn.com.fpt.entity.authentication.Account;
 import vn.com.fpt.entity.authentication.Role;
@@ -30,6 +31,7 @@ import java.math.BigInteger;
 import java.util.*;
 
 import static org.mockito.Mockito.*;
+import static vn.com.fpt.common.constants.ErrorStatusConstants.BAD_REQUEST;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -103,9 +105,29 @@ public class StaffServiceImplTest {
         account.setAddress(new Address());
         account.setCreatedAt(new Date());
         when(accountRepository.save(any(Account.class))).thenReturn(account);
+        //run test
         AccountResponse result = staffServiceTest.updateStaff(id, registerRequest, modifyBy, modifyAt);
         //verify
         Assertions.assertEquals("Thanh", result.getUserName());
+    }
+
+    @Test
+    void testUpdateStaffException() {
+        Long id = 1l;
+        RegisterRequest registerRequest = new RegisterRequest();
+        Long modifyBy = 1l;
+        Date modifyAt = new Date();
+
+        //mock result
+        var mockAccount = new Account();
+        mockAccount.setId(1l);
+        when(accountRepository.findById(id)).thenReturn(Optional.of(mockAccount));
+        when(accountRepository.findAccountByUserNameAndIdNot(registerRequest.getUserName(), id))
+                .thenReturn(Optional.ofNullable(new Account()));
+        //run test
+        BusinessException businessException = Assertions.assertThrows(BusinessException.class, () -> staffServiceTest.updateStaff(id, registerRequest, modifyBy, modifyAt));
+        //verify
+        Assertions.assertEquals(ErrorStatusConstants.EXISTED_ACCOUNT, businessException.getErrorStatus());
     }
 
     @Test
@@ -132,6 +154,22 @@ public class StaffServiceImplTest {
         List<AccountResponse> result = staffServiceTest.listStaff(role, order, startDate, endDate, deactivate, name, userName);
         //verify
         Assertions.assertEquals("Thanh", result.get(0).getFullName());
+    }
+
+    @Test
+    void testListStaffException() {
+        String role = "role";
+        String order = "user, admin";
+        String startDate = "2022-22-11";
+        String endDate = "2022-11-11";
+        Boolean deactivate = true;
+        String name = "name";
+        String userName = "userName";
+
+        //run test
+        BusinessException result = Assertions.assertThrows(BusinessException.class, () -> staffServiceTest.listStaff(role, order, startDate, endDate, deactivate, name, userName));
+        //verify
+        Assertions.assertEquals(BAD_REQUEST, result.getErrorStatus());
     }
 
     @Test
