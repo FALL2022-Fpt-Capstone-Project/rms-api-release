@@ -71,7 +71,6 @@ public class ContractServiceImpl implements ContractService {
             throw new BusinessException(INVALID_TIME, "Ngày kết thúc không được trước ngày bắt đầu");
         var checkRenter = renterService.findRenter(request.getRenterIdentityCard());
         if (Objects.isNull(checkRenter)) {
-            //TODO: Nếu có properties liên quan đến địa chỉ khách ký hợp đồng thì sẽ set vào sau
             var address = Address.add(
                     "",
                     "",
@@ -86,6 +85,7 @@ public class ContractServiceImpl implements ContractService {
         } else {
             // nếu khách đã tồn tại -> set renter_id vào hợp đồng
             contractsInformation.setRenters(checkRenter.getId());
+            renterService.updateRenter(checkRenter.getId(), RenterRequest.contractOf(request), operator);
         }
 
         // lưu thông tin hợp đồng
