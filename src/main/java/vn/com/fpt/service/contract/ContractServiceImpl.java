@@ -427,7 +427,7 @@ public class ContractServiceImpl implements ContractService {
         if (StringUtils.isNotBlank(startDate) && StringUtils.isNotBlank(endDate)) {
             contractSpec.add(new SearchCriteria("contractStartDate", DateUtils.parse(startDate, DATE_FORMAT_3), GREATER_THAN_EQUAL));
 
-            contractSpec.add(new SearchCriteria("contractEndDate", DateUtils.parse(startDate, DATE_FORMAT_3), LESS_THAN_EQUAL));
+            contractSpec.add(new SearchCriteria("contractStartDate", DateUtils.parse(endDate, DATE_FORMAT_3), LESS_THAN_EQUAL));
         }
 
         if (org.apache.commons.lang3.ObjectUtils.isNotEmpty(isDisable)) {
