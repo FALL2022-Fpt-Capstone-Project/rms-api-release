@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicUpdate;
-import vn.com.fpt.common.utils.DateUtils;
 import vn.com.fpt.configs.AppConfigs;
 import vn.com.fpt.requests.GroupContractRequest;
 import vn.com.fpt.requests.RoomContractRequest;
@@ -15,7 +14,8 @@ import java.util.Date;
 
 import static vn.com.fpt.common.constants.ManagerConstants.LEASE_CONTRACT;
 import static vn.com.fpt.common.constants.ManagerConstants.SUBLEASE_CONTRACT;
-import static vn.com.fpt.common.utils.DateUtils.parse;
+import static vn.com.fpt.common.utils.DateUtils.*;
+
 
 
 @Entity
@@ -85,8 +85,8 @@ public class Contracts extends BaseEntity {
                 .contractDeposit(request.getContractDeposit())
                 .contractBillCycle(request.getContractBillCycle())
                 .contractPaymentCycle(request.getContractPaymentCycle())
-                .contractStartDate(parse(request.getContractStartDate(), DateUtils.DATE_FORMAT_3))
-                .contractEndDate(parse(request.getContractEndDate(), DateUtils.DATE_FORMAT_3))
+                .contractStartDate(parse(request.getContractStartDate(), DATE_FORMAT_3))
+                .contractEndDate(parse(request.getContractEndDate(), DATE_FORMAT_3))
                 .note(request.getContractNote())
                 .contractTerm(request.getContractTerm())
                 .roomId(request.getRoomId())
@@ -100,8 +100,8 @@ public class Contracts extends BaseEntity {
                 .contractDeposit(request.getContractDeposit())
                 .contractBillCycle(request.getContractBillCycle())
                 .contractPaymentCycle(request.getContractPaymentCycle())
-                .contractStartDate(parse(request.getContractStartDate(), DateUtils.DATE_FORMAT_3))
-                .contractEndDate(parse(request.getContractEndDate(), DateUtils.DATE_FORMAT_3))
+                .contractStartDate(parse(request.getContractStartDate(), DATE_FORMAT_3))
+                .contractEndDate(parse(request.getContractEndDate(), DATE_FORMAT_3))
                 .note(request.getContractNote())
                 .contractTerm(request.getContractTerm())
                 .groupId(groupId).build();
@@ -111,7 +111,7 @@ public class Contracts extends BaseEntity {
         var renterContract = of(request, groupId);
         renterContract.setContractType(LEASE_CONTRACT);
         renterContract.setCreatedBy(operator);
-        renterContract.setCreatedAt(DateUtils.now());
+        renterContract.setCreatedAt(now());
         return renterContract;
     }
 
@@ -120,7 +120,7 @@ public class Contracts extends BaseEntity {
         renterContract.setContractType(SUBLEASE_CONTRACT);
         renterContract.setContractIsDisable(false);
         renterContract.setCreatedBy(operator);
-        renterContract.setCreatedAt(DateUtils.now());
+        renterContract.setCreatedAt(now());
         return renterContract;
     }
 
@@ -133,9 +133,10 @@ public class Contracts extends BaseEntity {
         renterContract.setContractIsDisable(false);
         renterContract.setCreatedBy(old.getCreatedBy());
         renterContract.setCreatedAt(old.getCreatedAt());
+        renterContract.setContractTerm(monthsBetween(neww.getContractStartDate(), neww.getContractEndDate()));
 
         //fetch
-        renterContract.setModifiedAt(DateUtils.now());
+        renterContract.setModifiedAt(now());
         renterContract.setModifiedBy(operator);
 
         return renterContract;

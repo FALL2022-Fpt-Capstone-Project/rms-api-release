@@ -4,7 +4,11 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import vn.com.fpt.entity.config.Month;
+import vn.com.fpt.entity.config.TotalFloor;
+import vn.com.fpt.entity.config.TotalRoom;
 import vn.com.fpt.model.DistrictDTO;
+import vn.com.fpt.repositories.FloorConfigRepository;
+import vn.com.fpt.repositories.RoomConfigRepository;
 import vn.com.fpt.repositories.config_repo.MonthConfigRepository;
 
 import javax.persistence.EntityManager;
@@ -21,11 +25,25 @@ public class ConfigServiceImpl implements ConfigService {
 
     public final MonthConfigRepository monthRepo;
 
+    private final RoomConfigRepository roomRepo;
+
+    private final FloorConfigRepository floorRepo;
+
     private final EntityManager entityManager;
 
     @Override
     public List<Month> listConfigMonth() {
         return monthRepo.findAll(Sort.by("numberMonth").ascending());
+    }
+
+    @Override
+    public List<TotalRoom> listConfigRoom() {
+        return roomRepo.findAll(Sort.by("numberRoom").ascending());
+    }
+
+    @Override
+    public List<TotalFloor> listConfigFloor() {
+        return floorRepo.findAll(Sort.by("numberFloor").ascending());
     }
 
     @Override

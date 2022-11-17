@@ -1,6 +1,7 @@
 package vn.com.fpt.service.contract;
 
 import lombok.*;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Sort;
@@ -71,7 +72,6 @@ public class ContractServiceImpl implements ContractService {
             throw new BusinessException(INVALID_TIME, "Ngày kết thúc không được trước ngày bắt đầu");
         var checkRenter = renterService.findRenter(request.getRenterIdentityCard());
         if (Objects.isNull(checkRenter)) {
-            //TODO: Nếu có properties liên quan đến địa chỉ khách ký hợp đồng thì sẽ set vào sau
             var address = Address.add(
                     "",
                     "",
@@ -86,6 +86,7 @@ public class ContractServiceImpl implements ContractService {
         } else {
             // nếu khách đã tồn tại -> set renter_id vào hợp đồng
             contractsInformation.setRenters(checkRenter.getId());
+            renterService.updateRenter(checkRenter.getId(), RenterRequest.contractOf(request), operator);
         }
 
         // lưu thông tin hợp đồng
@@ -96,7 +97,7 @@ public class ContractServiceImpl implements ContractService {
         roomService.updateRoomStatus(roomId, contractId, operator);
 
         // lưu thành viên vào phòng
-        if (!request.getListRenter().isEmpty()) {
+        if (ObjectUtils.isNotEmpty(request.getListRenter())) {
             if (request.getListRenter().size() + 1 > room.getRoomLimitPeople())
                 throw new BusinessException(RENTER_LIMIT, "Giới hạn thành viên trong phòng " + room.getRoomLimitPeople() + " số lượng thành viên hiện tại:" + (request.getListRenter().size() + 1));
             request.getListRenter().forEach(e -> {
@@ -113,7 +114,7 @@ public class ContractServiceImpl implements ContractService {
          */
 
         // lưu tài sản bàn giao
-        if (!request.getListHandOverAssets().isEmpty()) {
+        if (ObjectUtils.isNotEmpty(request.getListHandOverAssets())) {
             request.getListHandOverAssets().forEach(handOverAsset -> {
                 //kiểm tra những trang thiết bị không thuộc tòa (những tài sản không thuộc tòa thì id sẽ < 0)
                 if (Boolean.TRUE.equals(ADDITIONAL_ASSETS(handOverAsset.getAssetId()))) {
@@ -206,7 +207,7 @@ public class ContractServiceImpl implements ContractService {
                 operator));
 
 
-        if (!request.getListFloorAndRoom().isEmpty()) {
+        if (ObjectUtils.isNotEmpty(request.getListFloorAndRoom())) {
             List<Rooms> generateRoom = new ArrayList<>();
 
             // tự động gen phòng theo tầng
@@ -227,7 +228,7 @@ public class ContractServiceImpl implements ContractService {
         }
 
         //thêm tài sản bàn giao
-        if (!request.getListHandOverAsset().isEmpty()) {
+        if (ObjectUtils.isNotEmpty(request.getListHandOverAsset())) {
             request.getListHandOverAsset().forEach(e -> assetService.addHandOverAsset(e,
                     operator,
                     contract.getId(),
@@ -286,7 +287,7 @@ public class ContractServiceImpl implements ContractService {
         */
 
         // lưu tài sản bàn giao
-        if (!request.getListHandOverAssets().isEmpty()) {
+        if (ObjectUtils.isNotEmpty(request.getListHandOverAssets())) {
             request.getListHandOverAssets().forEach(handOverAsset -> {
                 //kiểm tra những trang thiết bị không thuộc tòa (những tài sản không thuộc tòa thì id sẽ < 0)
                 if (Boolean.TRUE.equals(ADDITIONAL_ASSETS(handOverAsset.getAssetId()))) {
@@ -334,7 +335,7 @@ public class ContractServiceImpl implements ContractService {
             });
         }
         //cap nhap dịch vụ chung
-        if (!request.getListGeneralService().isEmpty()) {
+        if (ObjectUtils.isNotEmpty(request.getListGeneralService())) {
 
             AtomicInteger currentElectric = new AtomicInteger(0);
             AtomicInteger currentWater = new AtomicInteger(0);
@@ -427,7 +428,7 @@ public class ContractServiceImpl implements ContractService {
         if (StringUtils.isNotBlank(startDate) && StringUtils.isNotBlank(endDate)) {
             contractSpec.add(new SearchCriteria("contractStartDate", DateUtils.parse(startDate, DATE_FORMAT_3), GREATER_THAN_EQUAL));
 
-            contractSpec.add(new SearchCriteria("contractEndDate", DateUtils.parse(startDate, DATE_FORMAT_3), LESS_THAN_EQUAL));
+            contractSpec.add(new SearchCriteria("contractStartDate", DateUtils.parse(endDate, DATE_FORMAT_3), LESS_THAN_EQUAL));
         }
 
         if (org.apache.commons.lang3.ObjectUtils.isNotEmpty(isDisable)) {

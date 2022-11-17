@@ -73,6 +73,11 @@ public final class DateUtils {
                 toLocalDate(d1).withDayOfMonth(1));
     }
 
+    public static int monthsBetween(String d1, String d2){
+        return (int) ChronoUnit.MONTHS.between(toLocalDate(Objects.requireNonNull(parse(d1, DATE_FORMAT_3))).withDayOfMonth(1),
+                toLocalDate(Objects.requireNonNull(parse(d2, DATE_FORMAT_3))).withDayOfMonth(1));
+    }
+
     public static Date monthsCalculate(Date date, Long months) {
         var process = toLocalDate(date);
         if (months < 0) return of(process.minusMonths(-months));
