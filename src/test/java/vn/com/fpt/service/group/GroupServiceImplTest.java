@@ -38,7 +38,7 @@ import static vn.com.fpt.common.constants.ErrorStatusConstants.USER_NOT_FOUND;
 @ExtendWith(MockitoExtension.class)
 class GroupServiceImplTest {
 
-    @InjectMocks //test cái gì  ,cái class nào cần test
+    @InjectMocks
     private GroupServiceImpl groupService;
 
     @Mock
