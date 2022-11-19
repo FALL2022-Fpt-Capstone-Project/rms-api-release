@@ -9,6 +9,7 @@ import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.entity.Address;
 import vn.com.fpt.entity.Renters;
 import vn.com.fpt.entity.Rooms;
+import vn.com.fpt.repositories.RackRenterRepository;
 import vn.com.fpt.repositories.RenterRepository;
 import vn.com.fpt.requests.RenterRequest;
 import vn.com.fpt.responses.RentersResponse;
@@ -33,6 +34,9 @@ class RenterServiceImplTest {
 
     @Mock
     private RenterRepository renterRepository;
+
+    @Mock
+    private RackRenterRepository rackRenterRepository;
 
     @Mock
     private RoomService roomService;

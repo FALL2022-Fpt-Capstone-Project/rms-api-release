@@ -36,6 +36,9 @@ public class GeneralService extends BaseEntity {
     @Column(name = "service_type_id")
     private Long serviceTypeId;
 
+    @Column(name = "group_id")
+    private Long groupId;
+
     @Column(name = "service_price")
     private Double servicePrice;
 

@@ -1,5 +1,6 @@
 package vn.com.fpt.service.renter;
 
+import vn.com.fpt.entity.RackRenters;
 import vn.com.fpt.entity.Renters;
 import vn.com.fpt.requests.RenterRequest;
 import vn.com.fpt.responses.RentersResponse;
@@ -32,6 +33,10 @@ public interface RenterService {
     Renters findRenter(Long id);
 
     Renters findRenter(String identity);
+
+    RackRenters rackRenter(Long id);
+
+    List<RackRenters> listRackRenter();
 
 
 

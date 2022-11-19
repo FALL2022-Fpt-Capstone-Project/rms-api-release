@@ -20,11 +20,6 @@ public interface ServicesService {
     List<BasicServices> basicServices();
 
     List<ServiceTypes> serviceTypes();
-
-    GeneralService updateGeneralService(Long generalServiceId,
-                                        GeneralServiceRequest request,
-                                        Long operator);
-
     GeneralService addGeneralService(GeneralServiceRequest request, Long operator);
 
     List<GeneralService> addGeneralService(List<GeneralServiceRequest> request, Long operator);
@@ -38,6 +33,10 @@ public interface ServicesService {
                                                          Long contractId,
                                                          Date dateDelivery,
                                                          Long operator);
+
+    GeneralService updateGeneralService(Long generalServiceId,
+                                        GeneralServiceRequest request,
+                                        Long operator);
 
     List<HandOverGeneralServiceDTO> listHandOverGeneralService(Long contractId);
 

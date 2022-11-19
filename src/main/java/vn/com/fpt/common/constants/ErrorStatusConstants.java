@@ -31,6 +31,8 @@ public enum ErrorStatusConstants {
 
     RENTER_NOT_FOUND(HttpStatus.BAD_REQUEST, 403005, "Không tìm thấy khách thuê, vui lòng kiểm tra lại!!"),
 
+    RACK_RENTER_NOT_FOUND(HttpStatus.BAD_REQUEST, 403008, "Không tìm thấy chủ cho thuê, vui lòng kiểm tra lại!!"),
+
     RENTER_LIMIT(HttpStatus.BAD_REQUEST, 403101, "Số lượng thành viên vượt quá giới hạn thành viên trong phòng, vui lòng kiểm tra lại!!"),
 
     RENTER_EXISTED(HttpStatus.BAD_REQUEST, 403102, "Thành viên đã tồn tại trong phòng, vui lòng kiểm tra lại!!"),

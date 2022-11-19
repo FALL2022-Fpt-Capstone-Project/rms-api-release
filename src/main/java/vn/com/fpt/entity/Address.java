@@ -48,6 +48,10 @@ public class Address extends BaseEntity {
     @JsonIgnore
     private Renters renters;
 
+    @OneToOne(mappedBy = "address")
+    @JsonIgnore
+    private RackRenters rackRenters;
+
     public static Address of(RegisterRequest registerRequest) {
         return Address.builder()
                 .addressCity(registerRequest.getAddressCity())

@@ -8,7 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.common.utils.DateUtils;
 import vn.com.fpt.entity.Address;
+import vn.com.fpt.entity.RackRenters;
 import vn.com.fpt.entity.Renters;
+import vn.com.fpt.repositories.RackRenterRepository;
 import vn.com.fpt.repositories.RenterRepository;
 import vn.com.fpt.requests.RenterRequest;
 import vn.com.fpt.responses.RentersResponse;
@@ -26,9 +28,11 @@ import static vn.com.fpt.common.constants.SearchOperation.*;
 @Service
 @RequiredArgsConstructor
 public class RenterServiceImpl implements RenterService {
-    private final RenterRepository renterRepository;
+    private final RenterRepository renterRepo;
 
     private final RoomService roomService;
+
+    private final RackRenterRepository rackRenterRepo;
 
     @Override
     public List<RentersResponse> listRenter(Long groupId, Boolean gender, String name, String phone, Long room) {
@@ -50,22 +54,22 @@ public class RenterServiceImpl implements RenterService {
             specification.add(new SearchCriteria("phoneNumber", phone, MATCH));
         }
 
-        return renterRepository.findAll(specification).stream().map(RentersResponse::of).toList();
+        return renterRepo.findAll(specification).stream().map(RentersResponse::of).toList();
     }
 
     @Override
     public List<RentersResponse> listRenter(Long roomId) {
-        return renterRepository.findAllByRoomId(roomId).stream().map(RentersResponse::of).toList();
+        return renterRepo.findAllByRoomId(roomId).stream().map(RentersResponse::of).toList();
     }
 
     @Override
     public List<RentersResponse> listMember(Long roomId) {
-        return renterRepository.findAllByRoomIdAndRepresent(roomId, MEMBER).stream().map(RentersResponse::of).toList();
+        return renterRepo.findAllByRoomIdAndRepresent(roomId, MEMBER).stream().map(RentersResponse::of).toList();
     }
 
     @Override
     public RentersResponse representRenter(Long roomId) {
-        return RentersResponse.of(renterRepository.findByRoomIdAndRepresent(roomId, REPRESENT));
+        return RentersResponse.of(renterRepo.findByRoomIdAndRepresent(roomId, REPRESENT));
     }
 
     @Override
@@ -77,8 +81,8 @@ public class RenterServiceImpl implements RenterService {
     @Transactional
     public RentersResponse addRenter(RenterRequest request, Long operator) {
         roomService.roomChecker(request.getRoomId());
-        if(renterRepository.findByIdentityNumberAndRoomId(request.getIdentityCard(), request.getRoomId()).isPresent()){
-            throw new BusinessException(RENTER_EXISTED, "CCMND/CCCD : " + request.getIdentityCard());
+        if(renterRepo.findByIdentityNumberAndRoomId(request.getIdentityCard(), request.getRoomId()).isPresent()){
+            throw new BusinessException(RENTER_EXISTED, "CMND/CCCD : " + request.getIdentityCard());
         }
         var address = Address.add(
                 request.getAddressCity(),
@@ -89,12 +93,12 @@ public class RenterServiceImpl implements RenterService {
 
         // add thành viên
         request.setRepresent(false);
-        return RentersResponse.of(renterRepository.save(Renters.add(request, address, operator)));
+        return RentersResponse.of(renterRepo.save(Renters.add(request, address, operator)));
     }
 
     @Override
     public Renters addRenter(Renters renters) {
-        return renterRepository.save(renters);
+        return renterRepo.save(renters);
     }
 
     @Override
@@ -110,7 +114,7 @@ public class RenterServiceImpl implements RenterService {
                 operator);
 
         //update thành viên
-        return RentersResponse.of(renterRepository.save(Renters.modify(renter, request, address, operator)));
+        return RentersResponse.of(renterRepo.save(Renters.modify(renter, request, address, operator)));
     }
 
     @Override
@@ -122,7 +126,7 @@ public class RenterServiceImpl implements RenterService {
     @Transactional
     public String deleteRenter(Long id) {
         try {
-            renterRepository.delete(findRenter(id));
+            renterRepo.delete(findRenter(id));
             return "Xóa khách thuê renter_id: " + id + " thành công";
         } catch (BusinessException e) {
             throw new BusinessException("Xóa khách thuê renter_id: " + id + " thất bại");
@@ -135,16 +139,26 @@ public class RenterServiceImpl implements RenterService {
         renter.setRoomId(null);
         renter.setModifiedAt(DateUtils.now());
         renter.setModifiedBy(operator);
-        return RentersResponse.of(renterRepository.save(renter));
+        return RentersResponse.of(renterRepo.save(renter));
     }
 
     @Override
     public Renters findRenter(Long id) {
-        return renterRepository.findById(id).orElseThrow(() -> new BusinessException(RENTER_NOT_FOUND, "Không tìm thấy khác thuê renter_id : " + id));
+        return renterRepo.findById(id).orElseThrow(() -> new BusinessException(RENTER_NOT_FOUND, "Không tìm thấy khác thuê renter_id : " + id));
     }
 
     @Override
     public Renters findRenter(String identity) {
-        return renterRepository.findByIdentityNumber(identity);
+        return renterRepo.findByIdentityNumber(identity);
+    }
+
+    @Override
+    public RackRenters rackRenter(Long id) {
+        return rackRenterRepo.findById(id).orElseThrow(()-> new BusinessException(RACK_RENTER_NOT_FOUND, "Không tìm thấy chủ thuê rack_renter_id : " + id));
+    }
+
+    @Override
+    public List<RackRenters> listRackRenter() {
+        return rackRenterRepo.findAll();
     }
 }

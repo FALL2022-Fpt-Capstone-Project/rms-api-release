@@ -3,13 +3,14 @@ package vn.com.fpt.model;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
-import vn.com.fpt.common.utils.DateUtils;
 import vn.com.fpt.entity.Contracts;
+import vn.com.fpt.entity.RackRenters;
+import vn.com.fpt.responses.GroupResponse;
 
 import java.io.Serializable;
 import java.util.List;
 
-import static vn.com.fpt.common.utils.DateUtils.monthsBetween;
+import static vn.com.fpt.common.utils.DateUtils.*;
 
 @Getter
 @Setter
@@ -18,42 +19,37 @@ import static vn.com.fpt.common.utils.DateUtils.monthsBetween;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class GroupContractDTO implements Serializable {
     private Long contractId;
-
     private String contractName;
-
     private Double contractPrice;
-
     private Double contractDeposit;
-
     private Integer contractBillCycle;
-
     private Integer contractPaymentCycle;
-
     private String contractStartDate;
-
     private String contractEndDate;
-
+    private Integer contractTerm;
+    private Boolean contractIsDisable;
     private String note;
 
-    private Integer contractTerm;
+    private Long    rackRenter;
+    private String rackRenterFullName;
+    private Boolean gender;
+    private String  phoneNumber;
+    private String  identityNumber;
 
-    private Boolean contractIsDisable;
-
-    private Long renters;
-
-    private Long roomId;
-
-    private Long groupId;
+    private Long    groupId;
+    private Integer totalRoom ;
+    private Integer totalFloor;
 
     private Integer contractType;
 
     private List<HandOverAssetsDTO> listHandOverAsset;
-
     private List<GeneralServiceDTO> listGeneralService;
 
     public static GroupContractDTO of(Contracts contract,
+                                      GroupResponse groupResponse,
                                       List<HandOverAssetsDTO> handOverAssets,
-                                      List<GeneralServiceDTO> generalServices) {
+                                      List<GeneralServiceDTO> generalServices,
+                                      RackRenters rackRenters) {
         var response = GroupContractDTO.builder()
                 .contractId(contract.getId())
                 .contractName(contract.getContractName())
@@ -61,16 +57,21 @@ public class GroupContractDTO implements Serializable {
                 .contractDeposit(contract.getContractDeposit())
                 .contractBillCycle(contract.getContractBillCycle())
                 .contractPaymentCycle(contract.getContractPaymentCycle())
-                .contractStartDate(DateUtils.format(contract.getContractStartDate(), DateUtils.DATE_FORMAT_3))
-                .contractEndDate(DateUtils.format(contract.getContractEndDate(), DateUtils.DATE_FORMAT_3))
+                .contractStartDate(format(contract.getContractStartDate(),DATE_FORMAT_3))
+                .contractEndDate(format(contract.getContractEndDate(), DATE_FORMAT_3))
                 .contractTerm(monthsBetween(contract.getContractEndDate(), contract.getContractStartDate()))
                 .note(contract.getNote())
-                .contractTerm(contract.getContractTerm())
                 .contractIsDisable(contract.getContractIsDisable())
-                .renters(contract.getRenters())
-                .roomId(contract.getRoomId())
+                .rackRenter(contract.getRackRenters())
                 .groupId(contract.getGroupId())
+                .totalRoom(groupResponse.getTotalRoom())
+                .totalFloor(groupResponse.getTotalFloor())
                 .contractType(contract.getContractType())
+                .rackRenter(rackRenters.getId())
+                .rackRenterFullName(rackRenters.getRackRenterFullName())
+                .gender(rackRenters.getGender())
+                .phoneNumber(rackRenters.getPhoneNumber())
+                .identityNumber(rackRenters.getIdentityNumber())
                 .build();
         response.setListHandOverAsset(handOverAssets);
         response.setListGeneralService(generalServices);

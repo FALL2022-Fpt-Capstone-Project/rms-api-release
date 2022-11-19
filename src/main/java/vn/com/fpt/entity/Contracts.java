@@ -66,6 +66,9 @@ public class Contracts extends BaseEntity {
     @Column(name = "renter_id")
     private Long renters;
 
+    @Column(name = "rack_renter_id")
+    private Long rackRenters;
+
     @Column(name = "room_id")
     private Long roomId;
 

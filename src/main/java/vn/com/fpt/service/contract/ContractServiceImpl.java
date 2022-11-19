@@ -179,9 +179,9 @@ public class ContractServiceImpl implements ContractService {
             );
             //cập nhập chỉ số điện nước cho phòng
             roomService.setServiceIndex(request.getRoomId(),
-                                        currentElectric.get(),
-                                        currentWater.get(),
-                                        operator);
+                    currentElectric.get(),
+                    currentWater.get(),
+                    operator);
         }
         return request;
     }
@@ -463,10 +463,17 @@ public class ContractServiceImpl implements ContractService {
         List<GroupContractDTO> listGroupContract = new ArrayList<>();
         var groupContracts = contractRepository.findAllByContractTypeOrderByContractStartDateDesc(LEASE_CONTRACT);
         if (groupContracts.isEmpty()) return Collections.emptyList();
-        groupContracts.forEach(e ->
-                listGroupContract.add(GroupContractDTO.of(e,
-                        assetService.listHandOverAsset(e.getId()),
-                        servicesService.listGeneralService(e.getId()))));
+        groupContracts.forEach
+                (e ->
+                        listGroupContract.add(GroupContractDTO.of(
+                                        e,
+                                        groupService.group(e.getGroupId()),
+                                        assetService.listHandOverAsset(e.getId()),
+                                        servicesService.listGeneralService(e.getId()),
+                                        renterService.rackRenter(e.getRackRenters())
+                                )
+                        )
+                );
         return listGroupContract;
     }
 }
