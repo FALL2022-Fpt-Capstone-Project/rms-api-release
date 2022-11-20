@@ -14,7 +14,6 @@ import vn.com.fpt.service.services.ServicesService;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static vn.com.fpt.common.constants.ManagerConstants.LEASE_CONTRACT;
 
@@ -40,7 +39,7 @@ public class GroupServiceImpl implements GroupService {
         var rooms = roomsRepository.findAllByGroupId(groupId)
                 .stream()
                 .map(RoomsResponse::of)
-                .collect(Collectors.toList());
+                .toList();
         var address = addressRepository.findById(group.getAddress()).get();
         var generalService = servicesService.listGeneralService(contract.getId());
         var handOverAsset = assetService.listHandOverAsset(contract.getId());
@@ -69,7 +68,7 @@ public class GroupServiceImpl implements GroupService {
                             roomsRepository.findAllByGroupId(group.getId())
                                     .stream()
                                     .map(RoomsResponse::of)
-                                    .collect(Collectors.toList()),
+                                    .toList(),
                             servicesService.listGeneralService(contract.getId()),
                             assetService.listHandOverAsset(contract.getId()),
                             roomsRepository.findAllFloorByGroupId(group.getId()).size() + 1,

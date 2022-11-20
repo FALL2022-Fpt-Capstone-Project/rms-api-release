@@ -78,8 +78,20 @@ public class ContractController {
 
     @Operation(summary = "Danh sách tất cả hợp đồng của nhóm phòng")
     @GetMapping("/group")
-    public ResponseEntity<BaseResponse<List<GroupContractDTO>>> listGroupContract() {
-        return AppResponse.success(contractService.listGroupContract());
+    public ResponseEntity<BaseResponse<List<GroupContractDTO>>> listGroupContract(@RequestParam(required = false) String phoneNumber,
+                                                                                  @RequestParam(required = false) String identity,
+                                                                                  @RequestParam(required = false) String name,
+                                                                                  @RequestParam(required = false) Long groupId,
+                                                                                  @RequestParam(required = false) String startDate,
+                                                                                  @RequestParam(required = false) String endDate,
+                                                                                  @RequestParam(required = false, defaultValue = "false") Boolean isDisable) {
+        return AppResponse.success(contractService.listGroupContract(phoneNumber,
+                                                                     identity,
+                                                                     name,
+                                                                     groupId,
+                                                                     startDate,
+                                                                     endDate,
+                                                                     isDisable));
     }
 
     @Operation(summary = "Thông tin hợp đồng của nhóm phòng")

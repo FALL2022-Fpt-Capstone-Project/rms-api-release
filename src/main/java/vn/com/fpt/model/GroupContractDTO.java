@@ -37,6 +37,7 @@ public class GroupContractDTO implements Serializable {
     private String  identityNumber;
 
     private Long    groupId;
+    private String  groupName;
     private Integer totalRoom ;
     private Integer totalFloor;
 
@@ -64,6 +65,7 @@ public class GroupContractDTO implements Serializable {
                 .contractIsDisable(contract.getContractIsDisable())
                 .rackRenter(contract.getRackRenters())
                 .groupId(contract.getGroupId())
+                .groupName(groupResponse.getGroupName())
                 .totalRoom(groupResponse.getTotalRoom())
                 .totalFloor(groupResponse.getTotalFloor())
                 .contractType(contract.getContractType())

@@ -87,7 +87,6 @@ public class RoomServiceImpl implements RoomService {
 
         return roomsRepository.save(Rooms.modify(room(id), roomToSet, operator));
     }
-
     @Override
     public Rooms roomChecker(Long id) {
         return roomsRepository.findById(id).orElseThrow(() ->
@@ -103,7 +102,7 @@ public class RoomServiceImpl implements RoomService {
     public Rooms emptyRoom(Long id) {
         var room = roomChecker(id);
         if (Objects.nonNull(room.getContractId()))
-            throw new BusinessException(ROOM_NOT_AVAILABLE, "Phòng room_id" + id);
+            throw new BusinessException(ROOM_NOT_AVAILABLE, "Phòng này đã có người thuê room_id :" + id);
         return room;
     }
 

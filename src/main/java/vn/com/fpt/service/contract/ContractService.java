@@ -29,5 +29,11 @@ public interface ContractService {
                                            String startDate,
                                            String endDate);
 
-    List<GroupContractDTO> listGroupContract();
+    List<GroupContractDTO> listGroupContract(String phoneNumber,
+                                             String identity,
+                                             String name,
+                                             Long groupId,
+                                             String startDate,
+                                             String endDate,
+                                             Boolean isDisable);
 }

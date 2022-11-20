@@ -31,6 +31,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import static vn.com.fpt.common.utils.DateUtils.*;
 import static vn.com.fpt.common.constants.ErrorStatusConstants.*;
@@ -425,10 +426,10 @@ public class ContractServiceImpl implements ContractService {
             contractSpec.add(new SearchCriteria("groupId", groupId, EQUAL));
         }
 
-        if (StringUtils.isNotBlank(startDate) && StringUtils.isNotBlank(endDate)) {
+        if (StringUtils.isNoneBlank(startDate, endDate) ) {
             contractSpec.add(new SearchCriteria("contractStartDate", DateUtils.parse(startDate, DATE_FORMAT_3), GREATER_THAN_EQUAL));
 
-            contractSpec.add(new SearchCriteria("contractStartDate", DateUtils.parse(endDate, DATE_FORMAT_3), LESS_THAN_EQUAL));
+            contractSpec.add(new SearchCriteria("contractEndDate", DateUtils.parse(endDate, DATE_FORMAT_3), LESS_THAN_EQUAL));
         }
 
         if (org.apache.commons.lang3.ObjectUtils.isNotEmpty(isDisable)) {
@@ -459,10 +460,56 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public List<GroupContractDTO> listGroupContract() {
+    public List<GroupContractDTO> listGroupContract(String phoneNumber,
+                                                    String identity,
+                                                    String name,
+                                                    Long groupId,
+                                                    String startDate,
+                                                    String endDate,
+                                                    Boolean isDisable) {
+        if (ObjectUtils.isNotEmpty(groupId)) {
+            var groupContracts = contractRepository.findByGroupIdAndContractType(groupId, LEASE_CONTRACT);
+            if (Objects.isNull(groupContracts)) return Collections.emptyList();
+            return List.of(
+                    GroupContractDTO.of(
+                            groupContracts,
+                            groupService.group(groupId),
+                            assetService.listHandOverAsset(groupContracts.getId()),
+                            servicesService.listGeneralService(groupContracts.getId()),
+                            renterService.rackRenter(groupContracts.getRackRenters())
+                    )
+            );
+        }
+        //filter theo thông tin rack-renter
+        BaseSpecification<RackRenters> rackRenterSpec = new BaseSpecification<>();
+        if (StringUtils.isNoneBlank(name)) {
+            rackRenterSpec.add(SearchCriteria.of("rackRenterFullName", name, MATCH));
+        }
+        if (StringUtils.isNoneBlank(phoneNumber)) {
+            rackRenterSpec.add(SearchCriteria.of("phoneNumber", phoneNumber, EQUAL));
+        }
+        if (StringUtils.isNoneBlank(identity)) {
+            rackRenterSpec.add(SearchCriteria.of("identityNumber", identity, EQUAL));
+        }
+        var rackRenterIdToFilter = renterService.listRackRenter(rackRenterSpec).stream().map(RackRenters::getId).toList();
+
+        //filter theo thông tin hợp đồng
+        BaseSpecification<Contracts> contractsSpec = new BaseSpecification<>();
+        contractsSpec.add(SearchCriteria.of("contractType", LEASE_CONTRACT, EQUAL));
+
+        if (StringUtils.isNoneBlank(startDate, endDate)) {
+            contractsSpec.add(SearchCriteria.of("contractStartDate", parse(startDate, DATE_FORMAT_3), GREATER_THAN_EQUAL));
+            contractsSpec.add(SearchCriteria.of("contractStartDate", parse(endDate, DATE_FORMAT_3), LESS_THAN_EQUAL));
+        }
+        if (Objects.nonNull(isDisable)) {
+            contractsSpec.add(SearchCriteria.of("contractIsDisable", isDisable, EQUAL));
+        }
+            contractsSpec.add(SearchCriteria.of("rackRenters", rackRenterIdToFilter, IN));
+
         List<GroupContractDTO> listGroupContract = new ArrayList<>();
-        var groupContracts = contractRepository.findAllByContractTypeOrderByContractStartDateDesc(LEASE_CONTRACT);
+        var groupContracts = contractRepository.findAll(contractsSpec, Sort.by("contractStartDate").ascending());
         if (groupContracts.isEmpty()) return Collections.emptyList();
+
         groupContracts.forEach
                 (e ->
                         listGroupContract.add(GroupContractDTO.of(

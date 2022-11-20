@@ -3,6 +3,7 @@ package vn.com.fpt.service.renter;
 import lombok.*;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.com.fpt.common.BusinessException;
@@ -160,5 +161,10 @@ public class RenterServiceImpl implements RenterService {
     @Override
     public List<RackRenters> listRackRenter() {
         return rackRenterRepo.findAll();
+    }
+
+    @Override
+    public List<RackRenters> listRackRenter(Specification<RackRenters> filter) {
+        return rackRenterRepo.findAll(filter);
     }
 }

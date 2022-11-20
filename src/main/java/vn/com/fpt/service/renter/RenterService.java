@@ -1,5 +1,6 @@
 package vn.com.fpt.service.renter;
 
+import org.springframework.data.jpa.domain.Specification;
 import vn.com.fpt.entity.RackRenters;
 import vn.com.fpt.entity.Renters;
 import vn.com.fpt.requests.RenterRequest;
@@ -37,6 +38,8 @@ public interface RenterService {
     RackRenters rackRenter(Long id);
 
     List<RackRenters> listRackRenter();
+
+    List<RackRenters> listRackRenter(Specification<RackRenters> filter);
 
 
 
