@@ -39,13 +39,13 @@ public class StatisticalServiceImpl implements StatisticalService {
         BaseSpecification<Contracts> almostExpired = new BaseSpecification<>();
         almostExpired.as(rootCondition);
         almostExpired.add(SearchCriteria.of("contractEndDate", now, GREATER_THAN_EQUAL));
-        almostExpired.add(SearchCriteria.of("contractEndDate", monthsCalculate(now, 3L), LESS_THAN_EQUAL));
+        almostExpired.add(SearchCriteria.of("contractEndDate", monthsCalculate(now, duration), LESS_THAN_EQUAL));
         Integer total1 = contractRepo.findAll(almostExpired).size();
 
         // tổng số hợp đồng mới tạo
         BaseSpecification<Contracts> latest = new BaseSpecification<>();
         latest.as(rootCondition);
-        latest.add(SearchCriteria.of("contractStartDate", monthsCalculate(now, -3L), GREATER_THAN_EQUAL));
+        latest.add(SearchCriteria.of("contractStartDate", monthsCalculate(now, -duration), GREATER_THAN_EQUAL));
         latest.add(SearchCriteria.of("contractStartDate", now, LESS_THAN_EQUAL));
         Integer total2 = contractRepo.findAll(latest).size();
 
@@ -53,8 +53,11 @@ public class StatisticalServiceImpl implements StatisticalService {
         BaseSpecification<Contracts> expired = new BaseSpecification<>();
         expired.as(rootCondition);
         expired.add(SearchCriteria.of("contractEndDate", now, LESS_THAN_EQUAL));
-        expired.add(SearchCriteria.of("contractIsDisable", true, EQUAL));
-        Integer total3 = contractRepo.findAll(expired).size();
+
+        BaseSpecification<Contracts> isDisable = new BaseSpecification<>();
+        isDisable.as(rootCondition);
+        isDisable.add(SearchCriteria.of("contractIsDisable", true, EQUAL));
+        Integer total3 = contractRepo.findAll(isDisable).size() + contractRepo.findAll(expired).size();
 
         return StatisticalRoomContractResponse.of(duration, total1, total2, total3);
     }

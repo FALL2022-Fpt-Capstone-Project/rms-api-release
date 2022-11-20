@@ -18,8 +18,8 @@ public class BaseSpecification<T> implements Specification<T> {
     public void add(SearchCriteria criteria) {
         list.add(criteria);
     }
-    public void as(List<SearchCriteria> list){
-        list.addAll(list);
+    public void as(List<SearchCriteria> lists){
+        list.addAll(lists);
     }
 
     @Override
