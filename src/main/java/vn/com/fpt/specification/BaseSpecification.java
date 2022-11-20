@@ -14,6 +14,10 @@ public class BaseSpecification<T> implements Specification<T> {
     public BaseSpecification() {
         list = new ArrayList<>();
     }
+    public BaseSpecification(List<SearchCriteria> vars) {
+        list = vars;
+    }
+
 
     public void add(SearchCriteria criteria) {
         list.add(criteria);

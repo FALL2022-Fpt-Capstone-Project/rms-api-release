@@ -59,6 +59,8 @@ public class StatisticalServiceImpl implements StatisticalService {
         isDisable.add(SearchCriteria.of("contractIsDisable", true, EQUAL));
         Integer total3 = contractRepo.findAll(isDisable).size() + contractRepo.findAll(expired).size();
 
-        return StatisticalRoomContractResponse.of(duration, total1, total2, total3);
+        Integer total4 = contractRepo.findAll(new BaseSpecification<>(rootCondition)).size();
+
+        return StatisticalRoomContractResponse.of(duration, total1, total2, total3, total4);
     }
 }

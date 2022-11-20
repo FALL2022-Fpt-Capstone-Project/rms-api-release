@@ -20,16 +20,20 @@ public class StatisticalRoomContractResponse {
 
     private Integer latestContract;
 
+    private Integer totalContract;
+
     public static StatisticalRoomContractResponse of (Long duration,
                                                       Integer almostExpiredContract,
                                                       Integer latestContract,
-                                                      Integer expiredContract){
+                                                      Integer expiredContract,
+                                                      Integer totalContract){
         return StatisticalRoomContractResponse
                 .builder()
                 .duration(duration)
                 .almostExpiredContract(almostExpiredContract)
                 .expiredContract(expiredContract)
                 .latestContract(latestContract)
+                .totalContract(totalContract)
                 .build();
     }
 }
