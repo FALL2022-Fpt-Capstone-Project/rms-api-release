@@ -15,6 +15,7 @@ import vn.com.fpt.repositories.RackRenterRepository;
 import vn.com.fpt.repositories.RenterRepository;
 import vn.com.fpt.requests.RenterRequest;
 import vn.com.fpt.responses.RentersResponse;
+import vn.com.fpt.responses.RoomsResponse;
 import vn.com.fpt.service.rooms.RoomService;
 import vn.com.fpt.specification.BaseSpecification;
 import vn.com.fpt.specification.SearchCriteria;
@@ -38,9 +39,9 @@ public class RenterServiceImpl implements RenterService {
     @Override
     public List<RentersResponse> listRenter(Long groupId, Boolean gender, String name, String phone, Long room) {
         BaseSpecification<Renters> specification = new BaseSpecification<>();
-
         if (ObjectUtils.allNotNull(groupId)) {
-            specification.add(new SearchCriteria("groupId", groupId, EQUAL));
+            var roomId = roomService.listRoom(groupId, null, null, null).stream().map(RoomsResponse::getRoomId).toList();
+            specification.add(new SearchCriteria("roomId", roomId, IN));
         }
         if (ObjectUtils.isNotEmpty(room)) {
             specification.add(new SearchCriteria("roomId", room, EQUAL));

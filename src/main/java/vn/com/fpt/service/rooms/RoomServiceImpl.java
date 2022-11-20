@@ -29,7 +29,10 @@ public class RoomServiceImpl implements RoomService {
     private final RoomsRepository roomsRepository;
 
     @Override
-    public List<RoomsResponse> listRoom(Long groupId, Long floor, Integer status, String name) {
+    public List<RoomsResponse> listRoom(Long groupId,
+                                        Long floor,
+                                        Integer status,
+                                        String name) {
         BaseSpecification<Rooms> specification = new BaseSpecification<>();
         if (ObjectUtils.isNotEmpty(groupId)) {
             specification.add(new SearchCriteria("groupId", groupId, EQUAL));
