@@ -186,60 +186,60 @@ public class ContractServiceImpl implements ContractService {
         return request;
     }
 
-    @Override
-    @Transactional
-    public GroupContractRequest addContract(GroupContractRequest request, Long operator) {
-
-        var address = Address.add(request.getAddressCity(),
-                request.getAddressDistrict(),
-                request.getAddressWards(),
-                request.getAddressMoreDetails(),
-                operator);
-
-        // tạo mới 1 nhóm phòng
-        var group = RoomGroups.add(request.getGroupName(),
-                addressRepository.save(address).getId(),
-                operator);
-
-        // tạo mới 1 hợp đồng cho nhóm phòng đấy
-        var contract = contractRepository.save(Contracts.addForLease(request,
-                group.getId(),
-                operator));
-
-
-        if (ObjectUtils.isNotEmpty(request.getListFloorAndRoom())) {
-            List<Rooms> generateRoom = new ArrayList<>();
-
-            // tự động gen phòng theo tầng
-            request.getListFloorAndRoom().forEach(e -> {
-                for (int i = 1; i <= e.getRoom(); i++) {
-                    String roomName = e.getFloor() + String.format("%02d", i);
-                    var room = Rooms.add(roomName,
-                            e.getFloor(),
-                            request.getGeneralLimitPeople(),
-                            group.getId(),
-                            request.getGeneralPrice(),
-                            request.getGeneralArea(),
-                            operator);
-                    generateRoom.add(room);
-                }
-            });
-            roomService.add(generateRoom);
-        }
-
-        //thêm tài sản bàn giao
-        if (ObjectUtils.isNotEmpty(request.getListHandOverAsset())) {
-            request.getListHandOverAsset().forEach(e -> assetService.addHandOverAsset(e,
-                    operator,
-                    contract.getId(),
-                    DateUtils.parse(e.getHandOverDateDelivery(), DATE_FORMAT_3)));
-
-        }
-
-        servicesService.addGeneralService(request.getListGeneralService(), operator);
-
-        return request;
-    }
+//    @Override
+//    @Transactional
+//    public GroupContractRequest addContract(GroupContractRequest request, Long operator) {
+//
+//        var address = Address.add(request.getAddressCity(),
+//                request.getAddressDistrict(),
+//                request.getAddressWards(),
+//                request.getAddressMoreDetails(),
+//                operator);
+//
+//        // tạo mới 1 nhóm phòng
+//        var group = RoomGroups.add(request.getGroupName(),
+//                addressRepository.save(address).getId(),
+//                operator);
+//
+//        // tạo mới 1 hợp đồng cho nhóm phòng đấy
+//        var contract = contractRepository.save(Contracts.addForLease(request,
+//                group.getId(),
+//                operator));
+//
+//
+//        if (ObjectUtils.isNotEmpty(request.getListFloorAndRoom())) {
+//            List<Rooms> generateRoom = new ArrayList<>();
+//
+//            // tự động gen phòng theo tầng
+//            request.getListFloorAndRoom().forEach(e -> {
+//                for (int i = 1; i <= e.getRoom(); i++) {
+//                    String roomName = e.getFloor() + String.format("%02d", i);
+//                    var room = Rooms.add(roomName,
+//                            e.getFloor(),
+//                            request.getGeneralLimitPeople(),
+//                            group.getId(),
+//                            request.getGeneralPrice(),
+//                            request.getGeneralArea(),
+//                            operator);
+//                    generateRoom.add(room);
+//                }
+//            });
+//            roomService.add(generateRoom);
+//        }
+//
+//        //thêm tài sản bàn giao
+//        if (ObjectUtils.isNotEmpty(request.getListHandOverAsset())) {
+//            request.getListHandOverAsset().forEach(e -> assetService.addHandOverAsset(e,
+//                    operator,
+//                    contract.getId(),
+//                    DateUtils.parse(e.getHandOverDateDelivery(), DATE_FORMAT_3)));
+//
+//        }
+//
+//        servicesService.addGeneralService(request.getListGeneralService(), operator);
+//
+//        return request;
+//    }
 
 
     @Override

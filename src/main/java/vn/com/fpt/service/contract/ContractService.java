@@ -11,7 +11,7 @@ import java.util.List;
 public interface ContractService {
     RoomContractRequest addContract(RoomContractRequest request, Long operator);
 
-    GroupContractRequest addContract(GroupContractRequest request, Long operator);
+//    GroupContractRequest addContract(GroupContractRequest request, Long operator);
 
     RoomContractRequest updateContract(Long id, RoomContractRequest request, Long operator);
 

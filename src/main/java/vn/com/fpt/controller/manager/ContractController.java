@@ -12,7 +12,6 @@ import vn.com.fpt.common.utils.Operator;
 import vn.com.fpt.entity.Contracts;
 import vn.com.fpt.model.GroupContractDTO;
 import vn.com.fpt.model.RoomContractDTO;
-import vn.com.fpt.requests.GroupContractRequest;
 import vn.com.fpt.requests.RoomContractRequest;
 import vn.com.fpt.service.contract.ContractService;
 
@@ -70,11 +69,11 @@ public class ContractController {
     }
 
 
-    @Operation(summary = "Thêm mới một hợp đồng cho nhóm phòng")
-    @PostMapping("/group/add")
-    public ResponseEntity<BaseResponse<GroupContractRequest>> addContract(@RequestBody GroupContractRequest request) {
-        return AppResponse.success(contractService.addContract(request, Operator.operator()));
-    }
+//    @Operation(summary = "Thêm mới một hợp đồng cho nhóm phòng")
+//    @PostMapping("/group/add")
+//    public ResponseEntity<BaseResponse<GroupContractRequest>> addContract(@RequestBody GroupContractRequest request) {
+//        return AppResponse.success(contractService.addContract(request, Operator.operator()));
+//    }
 
     @Operation(summary = "Danh sách tất cả hợp đồng của nhóm phòng")
     @GetMapping("/group")
