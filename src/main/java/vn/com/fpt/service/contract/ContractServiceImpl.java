@@ -13,7 +13,6 @@ import vn.com.fpt.entity.*;
 import vn.com.fpt.model.GroupContractDTO;
 import vn.com.fpt.model.RoomContractDTO;
 import vn.com.fpt.repositories.*;
-import vn.com.fpt.requests.GroupContractRequest;
 import vn.com.fpt.requests.RenterRequest;
 import vn.com.fpt.requests.RoomContractRequest;
 import vn.com.fpt.responses.RentersResponse;
@@ -169,10 +168,10 @@ public class ContractServiceImpl implements ContractService {
                         var serviceTypeId = servicesService.generalService(service.getGeneralServiceId()).getServiceTypeId().longValue();
 
                         if (serviceId == SERVICE_WATER && serviceTypeId == SERVICE_TYPE_METER) {
-                            currentWater.set(service.getHandOverServiceIndex());
+                            currentWater.set(service.getHandOverGeneralServiceIndex());
                         }
                         if (serviceId == SERVICE_ELECTRIC) {
-                            currentElectric.set(service.getHandOverServiceIndex());
+                            currentElectric.set(service.getHandOverGeneralServiceIndex());
                         }
                         servicesService.addHandOverGeneralService(service, contractId, startDate, operator);
                     }
@@ -345,10 +344,10 @@ public class ContractServiceImpl implements ContractService {
                 var serviceTypeId = servicesService.generalService(service.getGeneralServiceId()).getServiceTypeId().longValue();
 
                 if (serviceId == SERVICE_WATER && serviceTypeId == SERVICE_TYPE_METER) {
-                    currentWater.set(service.getHandOverServiceIndex());
+                    currentWater.set(service.getHandOverGeneralServiceIndex());
                 }
                 if (serviceId == SERVICE_ELECTRIC) {
-                    currentElectric.set(service.getHandOverServiceIndex());
+                    currentElectric.set(service.getHandOverGeneralServiceIndex());
                 }
 
                 servicesService.updateHandOverGeneralService(

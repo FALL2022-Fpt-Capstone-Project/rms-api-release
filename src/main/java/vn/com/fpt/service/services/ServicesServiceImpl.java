@@ -177,7 +177,7 @@ public class ServicesServiceImpl implements ServicesService {
                                                              Date dateDelivery,
                                                              Long operator) {
         return handOverGeneralServicesRepo.save(HandOverGeneralServices.add(contractId,
-                request.getHandOverServiceIndex(),
+                request.getHandOverGeneralServiceIndex(),
                 request.getGeneralServiceId(),
                 dateDelivery,
                 operator));
@@ -192,7 +192,7 @@ public class ServicesServiceImpl implements ServicesService {
         var old = handOverGeneralServicesRepo.findById(id).get();
         return handOverGeneralServicesRepo.save(HandOverGeneralServices.modify(old,
                                                 contractId,
-                                                request.getHandOverServiceIndex(),
+                                                request.getHandOverGeneralServiceIndex(),
                                                 request.getGeneralServiceId(),
                                                 dateDelivery,
                                                 operator
