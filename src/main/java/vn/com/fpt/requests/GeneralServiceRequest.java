@@ -20,4 +20,6 @@ public class GeneralServiceRequest {
     private Long generalServiceType;
 
     private String note;
+
+    private Long groupId;
 }

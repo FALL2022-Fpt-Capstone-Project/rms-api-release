@@ -61,6 +61,7 @@ public class GeneralService extends BaseEntity {
                 .contractId(request.getContractId())
                 .serviceTypeId(request.getGeneralServiceType())
                 .servicePrice(request.getGeneralServicePrice())
+                .groupId(request.getGroupId())
                 .note(request.getNote()).build();
     }
 

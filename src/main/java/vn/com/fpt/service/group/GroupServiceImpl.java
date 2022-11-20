@@ -3,13 +3,18 @@ package vn.com.fpt.service.group;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import org.springframework.transaction.annotation.Transactional;
+import vn.com.fpt.entity.Address;
+import vn.com.fpt.entity.RoomGroups;
 import vn.com.fpt.repositories.AddressRepository;
 import vn.com.fpt.repositories.ContractRepository;
 import vn.com.fpt.repositories.GroupRepository;
 import vn.com.fpt.repositories.RoomsRepository;
+import vn.com.fpt.requests.AddGroupRequest;
 import vn.com.fpt.responses.GroupResponse;
 import vn.com.fpt.responses.RoomsResponse;
 import vn.com.fpt.service.assets.AssetService;
+import vn.com.fpt.service.rooms.RoomService;
 import vn.com.fpt.service.services.ServicesService;
 
 import java.util.ArrayList;
@@ -21,6 +26,8 @@ import static vn.com.fpt.common.constants.ManagerConstants.LEASE_CONTRACT;
 @RequiredArgsConstructor
 public class GroupServiceImpl implements GroupService {
     private final RoomsRepository roomsRepository;
+
+    private final RoomService roomService;
 
     private final ServicesService servicesService;
 
@@ -77,4 +84,39 @@ public class GroupServiceImpl implements GroupService {
                 });
         return groupResponse;
     }
+
+    @Override
+    @Transactional
+    public AddGroupRequest add(AddGroupRequest request, Long operator) {
+        var addressId = addressRepository.save(Address.add(
+                request.getAddressCity(),
+                request.getAddressDistrict(),
+                request.getAddressDistrict(),
+                request.getAddressMoreDetail(),
+                operator)
+        ).getId();
+
+        //Thêm mới 1 nhóm
+        groupRepository.save(RoomGroups.add(
+                request.getGroupName(),
+                request.getDescription(),
+                addressId,
+                operator));
+
+        //Tự động generate phòng
+        roomService.generateRoom(
+                request.getTotalRoomPerFloor(),
+                request.getTotalFloor(),
+                request.getRoomLimitedPeople(),
+                request.getRoomPrice(),
+                request.getRoomArea(),
+                request.getRoomNameConvention(),
+                operator);
+
+        servicesService.addGeneralService(request.getListGeneralService(), operator);
+
+        return request;
+    }
+
+
 }

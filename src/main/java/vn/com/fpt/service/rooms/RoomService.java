@@ -13,6 +13,22 @@ public interface RoomService {
 
     List<Rooms> add(List<Rooms> rooms);
 
+    List<Rooms> generateRoom(Integer totalRoom,
+                             Integer totalFloor,
+                             Integer generalLimitedPeople,
+                             Double generalPrice,
+                             Double generalArea,
+                             String nameConvention,
+                             Long operator);
+
+    List<Rooms> previewGenerateRoom(Integer totalRoom,
+                                    Integer totalFloor,
+                                    Integer generalLimitedPeople,
+                                    Double generalPrice,
+                                    Double generalArea,
+                                    String nameConvention,
+                                    Long operator);
+
     Rooms add(Rooms rooms);
 
     RoomsResponse removeRoom(Long id);

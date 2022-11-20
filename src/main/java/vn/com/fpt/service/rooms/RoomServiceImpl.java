@@ -4,6 +4,7 @@ import lombok.*;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.common.utils.DateUtils;
 import vn.com.fpt.entity.Rooms;
@@ -13,11 +14,13 @@ import vn.com.fpt.responses.RoomsResponse;
 import vn.com.fpt.specification.BaseSpecification;
 import vn.com.fpt.specification.SearchCriteria;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import static vn.com.fpt.common.constants.ErrorStatusConstants.ROOM_NOT_AVAILABLE;
 import static vn.com.fpt.common.constants.ErrorStatusConstants.ROOM_NOT_FOUND;
+import static vn.com.fpt.common.constants.ManagerConstants.NOT_RENTED_YET;
 import static vn.com.fpt.common.constants.SearchOperation.*;
 
 @Service
@@ -56,6 +59,53 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public List<Rooms> add(List<Rooms> rooms) {
         return roomsRepository.saveAll(rooms);
+    }
+
+    @Override
+    @Transactional
+    public List<Rooms> generateRoom(Integer totalRoom,
+                                    Integer totalFloor,
+                                    Integer generalLimitedPeople,
+                                    Double generalPrice,
+                                    Double generalArea,
+                                    String nameConvention,
+                                    Long operator) {
+        return add(previewGenerateRoom(
+                totalRoom,
+                totalFloor,
+                generalLimitedPeople,
+                generalPrice,
+                generalArea,
+                nameConvention,
+                operator)
+        );
+    }
+
+    @Override
+    public List<Rooms> previewGenerateRoom(Integer totalRoom,
+                                           Integer totalFloor,
+                                           Integer generalLimitedPeople,
+                                           Double generalPrice,
+                                           Double generalArea,
+                                           String nameConvention,
+                                           Long operator) {
+
+        List<Rooms> generateRoom = new ArrayList<>();
+        // tự động gen phòng theo tầng
+        for (int floor = 1; floor <= totalFloor; floor++) {
+            for (int room = 1; room <= totalRoom; room++) {
+                String roomName = nameConvention + floor + String.format("%02d", room);
+                generateRoom.add(Rooms.add(roomName,
+                        floor,
+                        generalLimitedPeople,
+                        NOT_RENTED_YET,
+                        generalPrice,
+                        generalArea,
+                        operator
+                ));
+            }
+        }
+        return generateRoom;
     }
 
     @Override

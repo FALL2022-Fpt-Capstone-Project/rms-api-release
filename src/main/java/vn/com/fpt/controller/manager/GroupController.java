@@ -7,12 +7,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import vn.com.fpt.common.response.AppResponse;
 import vn.com.fpt.common.response.BaseResponse;
+import vn.com.fpt.common.utils.Operator;
+import vn.com.fpt.requests.AddGroupRequest;
 import vn.com.fpt.responses.GroupResponse;
 import vn.com.fpt.service.group.GroupService;
 import vn.com.fpt.service.group.GroupServiceImpl;
@@ -38,8 +37,14 @@ public class GroupController {
     }
 
     @GetMapping("/all")
-    @Operation(summary = "Lấy thông tin của tất cả group")
+    @Operation(summary = "Lấy thông tin của tất cả nhóm phòng")
     public ResponseEntity<BaseResponse<List<GroupResponse>>> list() {
         return AppResponse.success(groupService.list());
+    }
+
+    @PostMapping("/add")
+    @Operation(summary = "Tạo mới một nhóm phòng")
+    public ResponseEntity<BaseResponse<Object>> add(@RequestBody AddGroupRequest request) {
+        return AppResponse.success(groupService.add(request, Operator.operator()));
     }
 }

@@ -31,7 +31,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 import static vn.com.fpt.common.utils.DateUtils.*;
 import static vn.com.fpt.common.constants.ErrorStatusConstants.*;

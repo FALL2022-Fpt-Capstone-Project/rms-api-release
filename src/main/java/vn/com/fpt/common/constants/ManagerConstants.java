@@ -39,6 +39,8 @@ public class ManagerConstants {
     public static final Integer SUBLEASE_CONTRACT = 1;
     public static final Integer LEASE_CONTRACT = 0;
 
+    public static final Long NOT_RENTED_YET = null;
+
     public static final Boolean MEMBER = false;
 
     public static final Boolean REPRESENT = true;
