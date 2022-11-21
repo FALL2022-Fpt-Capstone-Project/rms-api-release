@@ -7,6 +7,7 @@ import vn.com.fpt.entity.Rooms;
 
 import javax.persistence.Column;
 
+
 @Getter
 @Setter
 @Builder
@@ -30,6 +31,8 @@ public class RoomsResponse {
 
     private Long contractId;
 
+    private Long groupContractId;
+
     private Double roomPrice;
 
     private Double roomArea;
@@ -45,6 +48,8 @@ public class RoomsResponse {
                 .groupId(rooms.getGroupId())
                 .roomPrice(rooms.getRoomPrice())
                 .roomArea(rooms.getRoomArea())
-                .contractId(rooms.getContractId()).build();
+                .contractId(rooms.getContractId())
+                .groupContractId(rooms.getGroupContractId())
+                .build();
     }
 }

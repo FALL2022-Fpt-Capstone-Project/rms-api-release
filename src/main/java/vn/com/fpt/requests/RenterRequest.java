@@ -48,6 +48,7 @@ public class RenterRequest {
                 .gender(request.getRenterGender())
                 .identityCard(request.getRenterIdentityCard())
                 .licensePlates(request.getLicensePlates())
+                .addressMoreDetail(request.getAddressMoreDetail())
                 // khách thuê đại diện ký
                 .represent(true)
                 .roomId(request.getRoomId())

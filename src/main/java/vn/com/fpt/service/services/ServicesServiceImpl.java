@@ -74,6 +74,38 @@ public class ServicesServiceImpl implements ServicesService {
     }
 
     @Override
+    public List<GeneralServiceDTO> listGeneralServiceByGroupId(Long groupId) {
+        StringBuilder selectBuild = new StringBuilder("SELECT ");
+        selectBuild.append("mgs.general_service_id,");
+        selectBuild.append("mgs.service_price,");
+        selectBuild.append("mgs.note,");
+        selectBuild.append("mgs.service_type_id,");
+        selectBuild.append("mst.service_type_name,");
+        selectBuild.append("mgs.service_id,");
+        selectBuild.append("mbs.service_name,");
+        selectBuild.append("mbs.service_show_name ");
+
+
+        StringBuilder fromBuild = new StringBuilder("FROM ");
+        fromBuild.append("manager_general_services mgs ");
+        fromBuild.append("INNER JOIN manager_basic_services mbs on mgs.service_id = mbs.service_id ");
+        fromBuild.append("INNER JOIN manager_service_types mst on mgs.service_type_id = mst.service_types_id ");
+
+        StringBuilder whereBuild = new StringBuilder("WHERE 1=1 ");
+        whereBuild.append("AND mgs.group_id = :groupId");
+
+        String queryBuild = new StringBuilder()
+                .append(selectBuild)
+                .append(fromBuild)
+                .append(whereBuild)
+                .toString();
+
+        Query query = entityManager.createNativeQuery(queryBuild, SQL_RESULT_SET_MAPPING);
+        query.setParameter("groupId", groupId);
+        return query.getResultList();
+    }
+
+    @Override
     public GeneralServiceDTO generalService(Long id) {
 
         findGeneralServiceById(id);
@@ -177,7 +209,7 @@ public class ServicesServiceImpl implements ServicesService {
                                                              Date dateDelivery,
                                                              Long operator) {
         return handOverGeneralServicesRepo.save(HandOverGeneralServices.add(contractId,
-                request.getHandOverServiceIndex(),
+                request.getHandOverGeneralServiceIndex(),
                 request.getGeneralServiceId(),
                 dateDelivery,
                 operator));
@@ -192,7 +224,7 @@ public class ServicesServiceImpl implements ServicesService {
         var old = handOverGeneralServicesRepo.findById(id).get();
         return handOverGeneralServicesRepo.save(HandOverGeneralServices.modify(old,
                                                 contractId,
-                                                request.getHandOverServiceIndex(),
+                                                request.getHandOverGeneralServiceIndex(),
                                                 request.getGeneralServiceId(),
                                                 dateDelivery,
                                                 operator
@@ -242,6 +274,12 @@ public class ServicesServiceImpl implements ServicesService {
         var generalService = findGeneralServiceById(id);
         generalServiceRepository.delete(generalService);
         return "Xóa dịch vụ chung thành công. general_service_id : " + id;
+    }
+
+    @Override
+    public String removeGroupGeneralService(Long id) {
+        generalServiceRepository.deleteAll(generalServiceRepository.findAllByGroupId(id));
+        return "Xóa dịch vụ chung thành công của tòa. group_id : " + id;
     }
 
 

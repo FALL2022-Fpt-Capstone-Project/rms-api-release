@@ -2,6 +2,8 @@ package vn.com.fpt.controller;
 
 import io.sentry.Sentry;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -44,6 +46,7 @@ public class ApiExceptionHandler {
         Sentry.captureException(e);
         Sentry.addBreadcrumb(e.getErrorStatus().getMessage());
         log.error("Đã có lỗi xảy ra, chi tiết: {}", e.getErrorStatus().getMessage());
+        if (ObjectUtils.isEmpty(e.getErrorStatus())) return AppResponse.error(INTERNAL_ERROR, e.getMessage());
         return AppResponse.error(e.getErrorStatus(), e.getMessage());
     }
 

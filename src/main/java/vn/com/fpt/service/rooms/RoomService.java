@@ -2,16 +2,29 @@ package vn.com.fpt.service.rooms;
 
 import vn.com.fpt.entity.Rooms;
 import vn.com.fpt.requests.RoomsRequest;
+import vn.com.fpt.responses.GroupContractedResponse;
 import vn.com.fpt.responses.RoomsResponse;
 
 import java.util.List;
 
 public interface RoomService {
-    List<RoomsResponse> listRoom(Long groupId, Long floor, Integer status, String name);
+    List<RoomsResponse> listRoom(Long groupId,
+                                 Long groupContractId,
+                                 Long floor,
+                                 Integer status,
+                                 String name);
 
     Rooms room (Long id);
 
+    List<Rooms> listRoom(List<Long> roomId);
+
+    List<GroupContractedResponse.RoomLeaseContracted> listRoomLeaseContracted(Long groupId);
+
+    List<GroupContractedResponse.RoomNonLeaseContracted> listRoomLeaseNonContracted(Long groupId);
+
     List<Rooms> add(List<Rooms> rooms);
+
+
 
     List<Rooms> generateRoom(Integer totalRoom,
                              Integer totalFloor,
@@ -31,11 +44,13 @@ public interface RoomService {
 
     Rooms add(Rooms rooms);
 
-    RoomsResponse removeRoom(Long id);
+    Rooms removeRoom(Long id, Long operator);
 
     Rooms updateRoom(Long id, RoomsRequest roomsRequest);
 
     Rooms updateRoom(Rooms roomsRequest);
+
+    List<Rooms> updateRoom(List<Rooms> rooms);
 
     Rooms setServiceIndex(Long id, Integer electric, Integer water, Long operator);
 

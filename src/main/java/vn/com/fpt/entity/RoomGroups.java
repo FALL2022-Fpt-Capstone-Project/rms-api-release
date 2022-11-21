@@ -33,6 +33,9 @@ public class RoomGroups extends BaseEntity {
     @Column(name = "group_description")
     private String groupDescription;
 
+    @Column(name = "is_disable")
+    private Boolean isDisable;
+
     @Column(name = "address_id")
     private Long address;
 
@@ -52,8 +55,20 @@ public class RoomGroups extends BaseEntity {
                                  Long operator) {
         var group = of(name, description, address);
         group.setCreatedAt(now());
+        group.setIsDisable(false);
         group.setCreatedBy(operator);
         return group;
+    }
+
+    public static RoomGroups delete(RoomGroups old, Long operator){
+        var delete = modify(
+                old,
+                old.getGroupName(),
+                old.getAddress(),
+                old.getGroupDescription(),
+                operator);
+        delete.setIsDisable(true);
+        return delete;
     }
 
     public static RoomGroups modify(RoomGroups old,

@@ -5,7 +5,10 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
 import vn.com.fpt.entity.Contracts;
 import vn.com.fpt.entity.RackRenters;
-import vn.com.fpt.responses.GroupResponse;
+import vn.com.fpt.entity.Rooms;
+import vn.com.fpt.responses.GroupAllResponse;
+import vn.com.fpt.responses.GroupContractedResponse;
+import vn.com.fpt.responses.RoomsResponse;
 
 import java.io.Serializable;
 import java.util.List;
@@ -31,7 +34,7 @@ public class GroupContractDTO implements Serializable {
     private String note;
 
     private Long    rackRenter;
-    private String rackRenterFullName;
+    private String  rackRenterFullName;
     private Boolean gender;
     private String  phoneNumber;
     private String  identityNumber;
@@ -45,11 +48,13 @@ public class GroupContractDTO implements Serializable {
 
     private List<HandOverAssetsDTO> listHandOverAsset;
     private List<GeneralServiceDTO> listGeneralService;
+    private List<RoomsResponse> listLeaseContractedRoom;
 
     public static GroupContractDTO of(Contracts contract,
-                                      GroupResponse groupResponse,
+                                      GroupContractedResponse groupContracted,
                                       List<HandOverAssetsDTO> handOverAssets,
                                       List<GeneralServiceDTO> generalServices,
+                                      List<RoomsResponse> listLeaseContractedRoom,
                                       RackRenters rackRenters) {
         var response = GroupContractDTO.builder()
                 .contractId(contract.getId())
@@ -65,9 +70,10 @@ public class GroupContractDTO implements Serializable {
                 .contractIsDisable(contract.getContractIsDisable())
                 .rackRenter(contract.getRackRenters())
                 .groupId(contract.getGroupId())
-                .groupName(groupResponse.getGroupName())
-                .totalRoom(groupResponse.getTotalRoom())
-                .totalFloor(groupResponse.getTotalFloor())
+                .groupName(groupContracted.getGroupName())
+                .totalRoom(groupContracted.getTotalRoom())
+                .totalFloor(groupContracted.getTotalFloor())
+                .listLeaseContractedRoom(listLeaseContractedRoom)
                 .contractType(contract.getContractType())
                 .rackRenter(rackRenters.getId())
                 .rackRenterFullName(rackRenters.getRackRenterFullName())

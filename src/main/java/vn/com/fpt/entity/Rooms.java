@@ -56,6 +56,9 @@ public class Rooms extends BaseEntity {
     @Column(name = "room_area")
     private Double roomArea;
 
+    @Column(name = "is_disable")
+    private Boolean isDisable;
+
     public static Rooms modify(Rooms old, Rooms neww, Long operator) {
         neww.setCreatedAt(old.getCreatedAt());
         neww.setCreatedBy(old.getCreatedBy());
@@ -92,6 +95,7 @@ public class Rooms extends BaseEntity {
         var room = of(name, floor, limit, groupId, area, price);
         room.setCreatedAt(DateUtils.now());
         room.setCreatedBy(operator);
+        room.setIsDisable(false);
         return room;
     }
 
@@ -109,10 +113,26 @@ public class Rooms extends BaseEntity {
         room.setId(old.getId());
         room.setCreatedAt(old.getCreatedAt());
         room.setCreatedBy(old.getCreatedBy());
+        room.setIsDisable(old.getIsDisable());
 
         room.setModifiedAt(DateUtils.now());
         room.setCreatedBy(operator);
+
         return room;
+    }
+
+    public static Rooms delete(Rooms old, Long operator){
+        var delete = modify(old,
+                old.getRoomName(),
+                old.getRoomFloor(),
+                old.getRoomLimitPeople(),
+                old.getGroupId(),
+                old.getRoomPrice(),
+                old.getRoomArea(),
+                operator
+                );
+        delete.setIsDisable(true);
+        return delete;
     }
 
 }

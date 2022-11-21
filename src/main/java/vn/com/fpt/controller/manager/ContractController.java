@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import vn.com.fpt.common.response.AppResponse;
 import vn.com.fpt.common.response.BaseResponse;
 import vn.com.fpt.common.utils.Operator;
-import vn.com.fpt.entity.Contracts;
 import vn.com.fpt.model.GroupContractDTO;
 import vn.com.fpt.model.RoomContractDTO;
 import vn.com.fpt.requests.RoomContractRequest;
@@ -88,6 +87,7 @@ public class ContractController {
                                                                      identity,
                                                                      name,
                                                                      groupId,
+                                                                     null,
                                                                      startDate,
                                                                      endDate,
                                                                      isDisable));
@@ -95,7 +95,7 @@ public class ContractController {
 
     @Operation(summary = "Thông tin hợp đồng của nhóm phòng")
     @GetMapping("/group/{contractId}")
-    public ResponseEntity<BaseResponse<Contracts>> groupContract(@PathVariable Long contractId) {
+    public ResponseEntity<BaseResponse<GroupContractDTO>> groupContract(@PathVariable Long contractId) {
         return AppResponse.success(contractService.groupContract(contractId));
     }
 
