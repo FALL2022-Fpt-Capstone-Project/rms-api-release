@@ -32,6 +32,7 @@ public interface RoomService {
                              Double generalPrice,
                              Double generalArea,
                              String nameConvention,
+                             Long groupId,
                              Long operator);
 
     List<Rooms> previewGenerateRoom(Integer totalRoom,
@@ -40,6 +41,7 @@ public interface RoomService {
                                     Double generalPrice,
                                     Double generalArea,
                                     String nameConvention,
+                                    Long groupId,
                                     Long operator);
 
     Rooms add(Rooms rooms);

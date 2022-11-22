@@ -141,7 +141,7 @@ public class GroupServiceImpl implements GroupService {
         ).getId();
 
         //Thêm mới 1 nhóm
-        groupRepository.save(RoomGroups.add(
+        var group = groupRepository.save(RoomGroups.add(
                 request.getGroupName(),
                 request.getDescription(),
                 addressId,
@@ -155,6 +155,7 @@ public class GroupServiceImpl implements GroupService {
                 request.getRoomPrice(),
                 request.getRoomArea(),
                 request.getRoomNameConvention(),
+                group.getId(),
                 operator);
 
         servicesService.addGeneralService(request.getListGeneralService(), operator);

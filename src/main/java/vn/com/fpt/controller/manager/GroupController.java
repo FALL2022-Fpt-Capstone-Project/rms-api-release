@@ -71,18 +71,18 @@ public class GroupController {
         return AppResponse.success(groupService.delete(groupId, Operator.operator()));
     }
 
-    @PostMapping("/preview")
-    @Operation(summary = "Xem trước kết quả tự động tạo mới các phòng")
-    public ResponseEntity<BaseResponse<List<Rooms>>> preview(@RequestBody @NotNull AddGroupRequest request) {
-        return AppResponse.success(roomService.previewGenerateRoom(
-                request.getTotalRoomPerFloor(),
-                request.getTotalFloor(),
-                request.getRoomLimitedPeople(),
-                request.getRoomPrice(),
-                request.getRoomArea(),
-                request.getRoomNameConvention(),
-                Operator.operator())
-        );
-    }
+//    @PostMapping("/preview")
+//    @Operation(summary = "Xem trước kết quả tự động tạo mới các phòng")
+//    public ResponseEntity<BaseResponse<List<Rooms>>> preview(@RequestBody @NotNull AddGroupRequest request) {
+//        return AppResponse.success(roomService.previewGenerateRoom(
+//                request.getTotalRoomPerFloor(),
+//                request.getTotalFloor(),
+//                request.getRoomLimitedPeople(),
+//                request.getRoomPrice(),
+//                request.getRoomArea(),
+//                request.getRoomNameConvention(),
+//                Operator.operator())
+//        );
+//    }
 
 }

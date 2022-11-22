@@ -133,6 +133,7 @@ public class RoomServiceImpl implements RoomService {
                                     Double generalPrice,
                                     Double generalArea,
                                     String nameConvention,
+                                    Long groupId,
                                     Long operator) {
         return add(previewGenerateRoom(
                 totalRoom,
@@ -141,6 +142,7 @@ public class RoomServiceImpl implements RoomService {
                 generalPrice,
                 generalArea,
                 nameConvention,
+                groupId,
                 operator)
         );
     }
@@ -152,6 +154,7 @@ public class RoomServiceImpl implements RoomService {
                                            Double generalPrice,
                                            Double generalArea,
                                            String nameConvention,
+                                           Long groupId,
                                            Long operator) {
 
         List<Rooms> generateRoom = new ArrayList<>();
@@ -162,6 +165,7 @@ public class RoomServiceImpl implements RoomService {
                 generateRoom.add(Rooms.add(roomName,
                         floor,
                         generalLimitedPeople,
+                        groupId,
                         NOT_RENTED_YET,
                         generalPrice,
                         generalArea,
