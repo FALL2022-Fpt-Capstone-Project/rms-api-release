@@ -30,4 +30,6 @@ public class GroupNonContractedResponse {
 
     private List<GeneralServiceDTO> listGeneralService;
 
+    private Boolean groupContracted;
+
 }

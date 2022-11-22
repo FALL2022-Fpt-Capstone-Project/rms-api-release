@@ -36,6 +36,8 @@ public class GroupContractedResponse {
 
     private List<GeneralServiceDTO> listGeneralService;
 
+    private Boolean groupContracted;
+
     @Getter
     @Setter
     @NoArgsConstructor

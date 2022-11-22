@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
 import vn.com.fpt.common.BusinessException;
-import vn.com.fpt.common.constants.ErrorStatusConstants;
 import vn.com.fpt.entity.Address;
 import vn.com.fpt.entity.RoomGroups;
 import vn.com.fpt.repositories.AddressRepository;
@@ -71,13 +70,14 @@ public class GroupServiceImpl implements GroupService {
                 group.setGroupId(roomGroups.getId());
                 group.setGroupName(roomGroups.getGroupName());
                 group.setDescription(roomGroups.getGroupDescription());
-                group.setTotalRoom(roomsRepository.findAllRoomsByGroupId(roomGroups.getId()).size() + 1);
-                group.setTotalFloor(roomsRepository.findAllFloorByGroupId(roomGroups.getId()).size() + 1);
+                group.setTotalRoom(roomsRepository.findAllRoomsByGroupId(roomGroups.getId()).size());
+                group.setTotalFloor(roomsRepository.findAllFloorByGroupId(roomGroups.getId()).size());
                 group.setAddress(addressRepository.findById(roomGroups.getAddress()).get());
                 group.setListRooms(roomService.listRoom(roomGroups.getId(), null, null, null, null));
                 group.setListGeneralService(servicesService.listGeneralServiceByGroupId(roomGroups.getId()));
                 group.setListRoomLeaseContracted(roomService.listRoomLeaseContracted(roomGroups.getId()));
                 group.setListRoomNonLeaseContracted(roomService.listRoomLeaseNonContracted(roomGroups.getId()));
+                group.setGroupContracted(true);
                 result.add(group);
             }
         }
@@ -95,11 +95,12 @@ public class GroupServiceImpl implements GroupService {
                 group.setGroupId(roomGroups.getId());
                 group.setGroupName(roomGroups.getGroupName());
                 group.setDescription(roomGroups.getGroupDescription());
-                group.setTotalRoom(roomsRepository.findAllRoomsByGroupId(roomGroups.getId()).size() + 1);
-                group.setTotalFloor(roomsRepository.findAllFloorByGroupId(roomGroups.getId()).size() + 1);
+                group.setTotalRoom(roomsRepository.findAllRoomsByGroupId(roomGroups.getId()).size());
+                group.setTotalFloor(roomsRepository.findAllFloorByGroupId(roomGroups.getId()).size());
                 group.setAddress(addressRepository.findById(roomGroups.getAddress()).get());
                 group.setListRooms(roomService.listRoom(roomGroups.getId(), null, null, null, null));
                 group.setListGeneralService(servicesService.listGeneralServiceByGroupId(roomGroups.getId()));
+                group.setGroupContracted(false);
                 result.add(group);
             }
         }
