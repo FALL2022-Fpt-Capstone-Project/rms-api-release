@@ -28,9 +28,14 @@ public class RoomController {
     @GetMapping("/")
     @Operation(summary = "Danh sách các phòng")
     public ResponseEntity<BaseResponse<List<RoomsResponse>>> room(@RequestParam(required = false) Long groupId,
+                                                                  @RequestParam(required = false) Long groupContractId,
                                                                   @RequestParam(required = false) String name,
                                                                   @RequestParam(required = false) Long floor,
                                                                   @RequestParam(required = false) Integer available){
-        return AppResponse.success(roomService.listRoom(groupId, floor, available, name));
+        return AppResponse.success(roomService.listRoom(groupId,
+                groupContractId,
+                floor,
+                available,
+                name));
     }
 }

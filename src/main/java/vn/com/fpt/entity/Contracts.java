@@ -96,7 +96,7 @@ public class Contracts extends BaseEntity {
                 .groupId(request.getGroupId()).build();
     }
 
-    public static Contracts of(GroupContractRequest request, Long groupId) {
+    public static Contracts of(GroupContractRequest request) {
         return Contracts.builder()
                 .contractName(request.getContractName())
                 .contractPrice(request.getContractPrice())
@@ -106,12 +106,11 @@ public class Contracts extends BaseEntity {
                 .contractStartDate(parse(request.getContractStartDate(), DATE_FORMAT_3))
                 .contractEndDate(parse(request.getContractEndDate(), DATE_FORMAT_3))
                 .note(request.getContractNote())
-                .contractTerm(request.getContractTerm())
-                .groupId(groupId).build();
+                .groupId(request.getGroupId()).build();
     }
 
-    public static Contracts addForLease(GroupContractRequest request, Long groupId, Long operator) {
-        var renterContract = of(request, groupId);
+    public static Contracts addForLease(GroupContractRequest request, Long operator) {
+        var renterContract = of(request);
         renterContract.setContractType(LEASE_CONTRACT);
         renterContract.setCreatedBy(operator);
         renterContract.setCreatedAt(now());

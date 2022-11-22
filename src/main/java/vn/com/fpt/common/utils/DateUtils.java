@@ -56,6 +56,10 @@ public final class DateUtils {
         }
     }
 
+    public static Date parse(String date) {
+        return parse(date, DATE_FORMAT_3);
+    }
+
     public static LocalDateTime toLocalDateTime(Date dateToConvert) {
         return dateToConvert.toInstant()
                 .atZone(ZoneId.systemDefault())

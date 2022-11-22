@@ -1,8 +1,8 @@
 package vn.com.fpt.service.renter;
 
-import lombok.*;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +28,6 @@ import static vn.com.fpt.common.constants.ManagerConstants.REPRESENT;
 import static vn.com.fpt.common.constants.SearchOperation.*;
 
 @Service
-@RequiredArgsConstructor
 public class RenterServiceImpl implements RenterService {
     private final RenterRepository renterRepo;
 
@@ -36,11 +35,19 @@ public class RenterServiceImpl implements RenterService {
 
     private final RackRenterRepository rackRenterRepo;
 
+    public RenterServiceImpl(RenterRepository renterRepo,
+                             @Lazy RoomService roomService,
+                             RackRenterRepository rackRenterRepo) {
+        this.renterRepo = renterRepo;
+        this.roomService = roomService;
+        this.rackRenterRepo = rackRenterRepo;
+    }
+
     @Override
     public List<RentersResponse> listRenter(Long groupId, Boolean gender, String name, String phone, Long room) {
         BaseSpecification<Renters> specification = new BaseSpecification<>();
         if (ObjectUtils.allNotNull(groupId)) {
-            var roomId = roomService.listRoom(groupId, null, null, null).stream().map(RoomsResponse::getRoomId).toList();
+            var roomId = roomService.listRoom(groupId,null, null, null, null).stream().map(RoomsResponse::getRoomId).toList();
             specification.add(new SearchCriteria("roomId", roomId, IN));
         }
         if (ObjectUtils.isNotEmpty(room)) {

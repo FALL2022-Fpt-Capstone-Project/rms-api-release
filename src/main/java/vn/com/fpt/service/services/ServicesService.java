@@ -15,6 +15,8 @@ import java.util.List;
 public interface ServicesService {
     List<GeneralServiceDTO> listGeneralService(Long contractId);
 
+    List<GeneralServiceDTO> listGeneralServiceByGroupId(Long groupId);
+
     GeneralServiceDTO generalService(Long id);
 
     List<BasicServices> basicServices();
@@ -43,6 +45,8 @@ public interface ServicesService {
     List<GeneralService> quickAddGeneralService(Long contractId, Long operator);
 
     String removeGeneralService(Long id);
+
+    String removeGroupGeneralService(Long id);
 
 
 }

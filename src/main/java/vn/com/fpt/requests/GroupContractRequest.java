@@ -15,9 +15,9 @@ import java.util.List;
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class GroupContractRequest {
-    private String contractName;
-    private String groupName;
+    private Long groupId;
 
+    private String contractName;
     private Double contractPrice;
     private Double contractDeposit;
     private Integer contractBillCycle;
@@ -25,21 +25,10 @@ public class GroupContractRequest {
 
     private String contractStartDate;
     private String contractEndDate;
-    private Integer contractTerm;
 
     private String contractNote;
 
-    private String addressCity;
-    private String addressDistrict;
-    private String addressWards;
-    private String addressMoreDetails;
-
-    private Double generalPrice;
-    private Double generalArea;
-    private Integer generalLimitPeople;
-
-    private List<FloorAndRoomRequest> listFloorAndRoom;
+    private List<Long> listRoom;
     private List<HandOverAssetsRequest> listHandOverAsset;
-    private List<GeneralServiceRequest> listGeneralService;
 
 }

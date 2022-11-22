@@ -11,11 +11,11 @@ import java.util.List;
 public interface ContractService {
     RoomContractRequest addContract(RoomContractRequest request, Long operator);
 
-//    GroupContractRequest addContract(GroupContractRequest request, Long operator);
+    GroupContractRequest addContract(GroupContractRequest request, Long operator);
 
     RoomContractRequest updateContract(Long id, RoomContractRequest request, Long operator);
 
-    Contracts groupContract(Long groupId);
+    List<Contracts> listGroupContract(Long groupId);
 
     Contracts contract(Long id);
 
@@ -33,7 +33,10 @@ public interface ContractService {
                                              String identity,
                                              String name,
                                              Long groupId,
+                                             Long contractId,
                                              String startDate,
                                              String endDate,
                                              Boolean isDisable);
+
+    GroupContractDTO groupContract(Long contractId);
 }

@@ -1,20 +1,25 @@
 package vn.com.fpt.service.rooms;
 
-import lombok.*;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.common.utils.DateUtils;
+import vn.com.fpt.entity.Contracts;
 import vn.com.fpt.entity.Rooms;
 import vn.com.fpt.repositories.RoomsRepository;
 import vn.com.fpt.requests.RoomsRequest;
+import vn.com.fpt.responses.GroupContractedResponse;
 import vn.com.fpt.responses.RoomsResponse;
+import vn.com.fpt.service.assets.AssetService;
+import vn.com.fpt.service.contract.ContractService;
 import vn.com.fpt.specification.BaseSpecification;
 import vn.com.fpt.specification.SearchCriteria;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -24,27 +29,42 @@ import static vn.com.fpt.common.constants.ManagerConstants.NOT_RENTED_YET;
 import static vn.com.fpt.common.constants.SearchOperation.*;
 
 @Service
-@RequiredArgsConstructor
 public class RoomServiceImpl implements RoomService {
     private final RoomsRepository roomsRepository;
 
+    private final AssetService assetService;
+
+    private final ContractService contractService;
+
+    public RoomServiceImpl(RoomsRepository roomsRepository,
+                           AssetService assetService,
+                           @Lazy ContractService contractService) {
+        this.roomsRepository = roomsRepository;
+        this.assetService = assetService;
+        this.contractService = contractService;
+    }
+
     @Override
     public List<RoomsResponse> listRoom(Long groupId,
+                                        Long groupContractId,
                                         Long floor,
                                         Integer status,
                                         String name) {
         BaseSpecification<Rooms> specification = new BaseSpecification<>();
+        specification.add(new SearchCriteria("isDisable", false, EQUAL));
         if (ObjectUtils.isNotEmpty(groupId)) {
             specification.add(new SearchCriteria("groupId", groupId, EQUAL));
         }
         if (ObjectUtils.isNotEmpty(floor)) {
             specification.add(new SearchCriteria("roomFloor", floor, EQUAL));
         }
+        if (ObjectUtils.isNotEmpty(groupContractId)) {
+            specification.add(new SearchCriteria("groupContractId", groupContractId, EQUAL));
+        }
         if (ObjectUtils.isNotEmpty(status)) {
-            if(status == 1){
+            if (status == 1) {
                 specification.add(new SearchCriteria("contractId", null, EQUAL));
-            }
-            else {
+            } else {
                 specification.add(new SearchCriteria("contractId", null, NOT_EQUAL));
             }
         }
@@ -57,6 +77,47 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public Rooms room(Long id) {
         return roomChecker(id);
+    }
+
+    @Override
+    public List<Rooms> listRoom(List<Long> roomId) {
+        return roomsRepository.findAllById(roomId);
+    }
+
+    @Override
+    public List<GroupContractedResponse.RoomLeaseContracted> listRoomLeaseContracted(Long groupId) {
+        var listGroupContract = contractService.listGroupContract(groupId);
+
+        List<GroupContractedResponse.RoomLeaseContracted> result = new ArrayList<>(Collections.emptyList());
+        for (Contracts contracts : listGroupContract) {
+            var roomLeaseContracted = roomsRepository.findAllByGroupContractIdAndGroupId(contracts.getId(), groupId);
+            result.add(
+                    GroupContractedResponse.RoomLeaseContracted.of(
+                            contracts.getId(),
+                            contracts.getGroupId(),
+                            roomLeaseContracted,
+                            assetService.listHandOverAsset(contracts.getId()),
+                            roomLeaseContracted.size() + 1,
+                            roomsRepository.findAllFloorByGroupContractIdAndGroupId(contracts.getId(), groupId).size() + 1
+                    )
+            );
+        }
+        return result;
+    }
+
+    @Override
+    public List<GroupContractedResponse.RoomNonLeaseContracted> listRoomLeaseNonContracted(Long groupId) {
+        List<GroupContractedResponse.RoomNonLeaseContracted> result = new ArrayList<>(Collections.emptyList());
+        var listRoomNonLeaseContracted = roomsRepository.findAllByGroupContractIdNullAndGroupId(groupId);
+        result.add(
+                GroupContractedResponse.RoomNonLeaseContracted.of(
+                        groupId,
+                        listRoomNonLeaseContracted,
+                        listRoomNonLeaseContracted.size() + 1,
+                        roomsRepository.findAllFloorByGroupNonContractAndGroupId(groupId).size() + 1
+                )
+        );
+        return result;
     }
 
     @Override
@@ -117,8 +178,8 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public RoomsResponse removeRoom(Long id) {
-        return RoomsResponse.of(roomsRepository.findById(id).get());
+    public Rooms removeRoom(Long id, Long operator) {
+        return roomsRepository.save(Rooms.delete(room(id), operator));
     }
 
     @Override
@@ -130,6 +191,11 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public Rooms updateRoom(Rooms roomsRequest) {
         return roomsRepository.save(roomsRequest);
+    }
+
+    @Override
+    public List<Rooms> updateRoom(List<Rooms> rooms) {
+        return roomsRepository.saveAll(rooms);
     }
 
     @Override

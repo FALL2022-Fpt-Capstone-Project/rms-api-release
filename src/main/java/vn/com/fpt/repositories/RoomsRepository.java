@@ -14,9 +14,23 @@ import java.util.List;
 public interface RoomsRepository extends JpaRepository<Rooms, Long>, JpaSpecificationExecutor<Rooms> {
     List<Rooms> findAllByGroupId(Long groupId);
 
-    @Query("select DISTINCT (r.roomFloor) from Rooms r WHERE r.groupId = :groupId")
-    List<Integer> findAllFloorByGroupId(@Param("groupId") Long groupId);
+    List<Rooms> findAllByGroupContractIdAndGroupId(Long groupContractId, Long groupId);
+
+    List<Rooms> findAllByGroupContractIdNullAndGroupId(Long groupId);
+
+    @Query("select DISTINCT (r.roomFloor) from Rooms r WHERE r.groupContractId = :groupContractId AND r.groupId = :groupId")
+    List<Integer> findAllFloorByGroupContractIdAndGroupId(@Param("groupContractId") Long groupContractId,
+                                                          @Param("groupId") Long groupId);
+
+    @Query("select DISTINCT (r.roomFloor) from Rooms r WHERE r.groupContractId is NULL AND r.groupId = :groupId")
+    List<Integer> findAllFloorByGroupNonContractAndGroupId(@Param("groupId") Long groupId);
+
+    @Query("select distinct (r.roomName) from Rooms r where r.groupContractId = :groupContractId")
+    List<String> findAllRoomsByGroupContractId(@Param("groupContractId") Long groupContractId);
 
     @Query("select distinct (r.roomName) from Rooms r where r.groupId = :groupId")
     List<String> findAllRoomsByGroupId(@Param("groupId") Long groupId);
+
+    @Query("select DISTINCT (r.roomFloor) from Rooms r WHERE r.groupId = :groupId")
+    List<Integer> findAllFloorByGroupId(@Param("groupId") Long groupId);
 }

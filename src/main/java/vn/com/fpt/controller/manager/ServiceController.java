@@ -17,12 +17,9 @@ import vn.com.fpt.entity.ServiceTypes;
 import vn.com.fpt.model.GeneralServiceDTO;
 import vn.com.fpt.service.services.ServicesService;
 
-import javax.validation.constraints.NotBlank;
 import java.util.List;
 
-import static vn.com.fpt.configs.AppConfigs.V1_PATH;
-import static vn.com.fpt.configs.AppConfigs.MANAGER_PATH;
-import static vn.com.fpt.configs.AppConfigs.SERVICE_PATH;
+import static vn.com.fpt.configs.AppConfigs.*;
 
 @SecurityRequirement(name = "BearerAuth")
 @Tag(name = "Service Manager", description = "Quản lý dịch vụ chung")
@@ -48,9 +45,9 @@ public class ServiceController {
 
     @Operation(summary = "Danh sách thông tin dịch vụ chung của tòa")
     @GetMapping("/general")
-    public ResponseEntity<BaseResponse<List<GeneralServiceDTO>>> generalServices(@RequestParam(required = false) Long contractId) {
-        if (ObjectUtils.isEmpty(contractId)) throw new RuntimeException("contractId không được trống");
-        return AppResponse.success(servicesService.listGeneralService(contractId));
+    public ResponseEntity<BaseResponse<List<GeneralServiceDTO>>> generalServices(@RequestParam(required = false) Long groupId) {
+        if (ObjectUtils.isEmpty(groupId)) throw new RuntimeException("group_id không được trống");
+        return AppResponse.success(servicesService.listGeneralServiceByGroupId(groupId));
     }
 
     @Operation(summary = "Xem thông tin chi tiết của dich vụ chung")
