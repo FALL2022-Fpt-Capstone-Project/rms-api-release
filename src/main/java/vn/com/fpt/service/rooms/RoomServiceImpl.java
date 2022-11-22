@@ -3,6 +3,7 @@ package vn.com.fpt.service.rooms;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.com.fpt.common.BusinessException;
@@ -71,7 +72,7 @@ public class RoomServiceImpl implements RoomService {
         if (StringUtils.isNoneBlank(name)) {
             specification.add(new SearchCriteria("roomName", name, MATCH));
         }
-        return roomsRepository.findAll(specification).stream().map(RoomsResponse::of).toList();
+        return roomsRepository.findAll(specification, Sort.by("roomFloor").ascending()).stream().map(RoomsResponse::of).toList();
     }
 
     @Override
