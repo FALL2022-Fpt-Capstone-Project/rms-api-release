@@ -157,7 +157,7 @@ public class GroupServiceImpl implements GroupService {
                 request.getRoomNameConvention(),
                 group.getId(),
                 operator);
-
+        request.getListGeneralService().forEach(e->e.setServiceId(group.getId()));
         servicesService.addGeneralService(request.getListGeneralService(), operator);
 
         return request;
