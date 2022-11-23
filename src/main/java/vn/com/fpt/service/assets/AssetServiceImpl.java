@@ -6,6 +6,7 @@ import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.entity.AssetTypes;
 import vn.com.fpt.entity.BasicAssets;
 import vn.com.fpt.entity.HandOverAssets;
+import vn.com.fpt.model.BasicAssetDTO;
 import vn.com.fpt.model.HandOverAssetsDTO;
 import vn.com.fpt.repositories.AssetTypesRepository;
 import vn.com.fpt.repositories.BasicAssetRepository;
@@ -91,8 +92,26 @@ public class AssetServiceImpl implements AssetService {
     }
 
     @Override
-    public List<BasicAssets> listBasicAsset() {
-        return basicAssetRepository.findAll();
+    public List<BasicAssetDTO> listBasicAsset() {
+        StringBuilder selectBuild = new StringBuilder("SELECT ");
+        selectBuild.append("mba.asset_id, ");
+        selectBuild.append("mba.asset_name, ");
+        selectBuild.append("mba.asset_type_id, ");
+        selectBuild.append("mat.asset_type_name, ");
+        selectBuild.append("mat.asset_type_show_name ");
+
+        StringBuilder fromBuild = new StringBuilder("FROM ");
+        fromBuild.append("manager_basic_assets mba ");
+        fromBuild.append("INNER JOIN manager_asset_types mat ON mat.asset_types_id = mba.asset_type_id");
+
+        String queryBuild = new StringBuilder()
+                .append(selectBuild)
+                .append(fromBuild)
+                .toString();
+
+        Query query = entityManager.createNativeQuery(queryBuild, BasicAssetDTO.SQL_RESULT_SET_MAPPING);
+
+        return query.getResultList();
     }
 
     @Override

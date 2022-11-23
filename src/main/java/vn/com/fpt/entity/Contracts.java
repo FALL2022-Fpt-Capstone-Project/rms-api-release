@@ -101,7 +101,6 @@ public class Contracts extends BaseEntity {
                 .contractName(request.getContractName())
                 .contractPrice(request.getContractPrice())
                 .contractDeposit(request.getContractDeposit())
-                .contractBillCycle(request.getContractBillCycle())
                 .contractPaymentCycle(request.getContractPaymentCycle())
                 .contractStartDate(parse(request.getContractStartDate(), DATE_FORMAT_3))
                 .contractEndDate(parse(request.getContractEndDate(), DATE_FORMAT_3))

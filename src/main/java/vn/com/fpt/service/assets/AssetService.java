@@ -3,6 +3,7 @@ package vn.com.fpt.service.assets;
 import vn.com.fpt.entity.AssetTypes;
 import vn.com.fpt.entity.BasicAssets;
 import vn.com.fpt.entity.HandOverAssets;
+import vn.com.fpt.model.BasicAssetDTO;
 import vn.com.fpt.model.HandOverAssetsDTO;
 import vn.com.fpt.requests.BasicAssetsRequest;
 import vn.com.fpt.requests.HandOverAssetsRequest;
@@ -16,7 +17,7 @@ public interface AssetService {
 
     List<AssetTypes> listAssetType();
 
-    List<BasicAssets> listBasicAsset();
+    List<BasicAssetDTO> listBasicAsset();
 
     BasicAssets basicAssets(Long id);
 

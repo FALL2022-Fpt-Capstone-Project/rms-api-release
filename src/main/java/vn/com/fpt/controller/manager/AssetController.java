@@ -12,6 +12,7 @@ import vn.com.fpt.common.utils.Operator;
 import vn.com.fpt.entity.AssetTypes;
 import vn.com.fpt.entity.BasicAssets;
 import vn.com.fpt.entity.HandOverAssets;
+import vn.com.fpt.model.BasicAssetDTO;
 import vn.com.fpt.requests.BasicAssetsRequest;
 import vn.com.fpt.requests.HandOverAssetsRequest;
 import vn.com.fpt.service.assets.AssetService;
@@ -39,7 +40,7 @@ public class AssetController {
 
     @GetMapping("/")
     @Operation(summary = "Danh sách các trang thiết bị cơ bản, thiết yếu")
-    public ResponseEntity<BaseResponse<List<BasicAssets>>> list() {
+    public ResponseEntity<BaseResponse<List<BasicAssetDTO>>> list() {
         return AppResponse.success(assetService.listBasicAsset());
     }
 

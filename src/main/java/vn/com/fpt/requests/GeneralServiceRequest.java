@@ -2,6 +2,7 @@ package vn.com.fpt.requests;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class GeneralServiceRequest {
-    private Long contractId;
+    private Long groupId;
 
     private Long serviceId;
 
@@ -23,5 +24,6 @@ public class GeneralServiceRequest {
 
     private String note;
 
-    private Long groupId;
+    @Schema(hidden = true)
+    private Long contractId;
 }

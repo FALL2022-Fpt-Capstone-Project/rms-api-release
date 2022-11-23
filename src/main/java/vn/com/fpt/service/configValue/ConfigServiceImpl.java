@@ -1,6 +1,7 @@
-package vn.com.fpt.service.config_value;
+package vn.com.fpt.service.configValue;
 
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import vn.com.fpt.entity.config.Month;
@@ -12,14 +13,17 @@ import vn.com.fpt.repositories.RoomConfigRepository;
 import vn.com.fpt.repositories.config_repo.MonthConfigRepository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
-import static vn.com.fpt.common.constants.ManagerConstants.LEASE_CONTRACT;
 import static vn.com.fpt.model.DistrictDTO.SQL_RESULT_SET_MAPPING;
 
 @Service
+@Configurable
 @AllArgsConstructor
 public class ConfigServiceImpl implements ConfigService {
 
@@ -29,6 +33,7 @@ public class ConfigServiceImpl implements ConfigService {
 
     private final FloorConfigRepository floorRepo;
 
+    @PersistenceContext
     private final EntityManager entityManager;
 
     @Override
@@ -47,27 +52,25 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     @Override
-    public List<DistrictDTO> listAddedDistrict() {
+    public List<DistrictDTO> listAddedCity() {
         StringBuilder selectBuild = new StringBuilder("SELECT ");
-        selectBuild.append("SELECT DISTINCT a.address_city ");
-
+        selectBuild.append("DISTINCT c.address_city ");
 
         StringBuilder fromBuild = new StringBuilder("FROM ");
-        fromBuild.append("FROM manager_address a ");
-        fromBuild.append("JOIN manager_contracts c ON c.address_id = a.address_id ");
-
-        StringBuilder whereBuild = new StringBuilder("WHERE 1=1 ");
-        whereBuild.append("WHERE c.contract_type = :contractType");
+        fromBuild.append("manager_room_groups a ");
+        fromBuild.append("JOIN manager_address c ON c.address_id = a.address_id ");
 
         String queryBuild = new StringBuilder()
                 .append(selectBuild)
                 .append(fromBuild)
-                .append(whereBuild)
                 .toString();
 
         Query query = entityManager.createNativeQuery(queryBuild, SQL_RESULT_SET_MAPPING);
-        query.setParameter("contractType", LEASE_CONTRACT);
-
-        return new ArrayList<>(query.getResultList());
+        List<DistrictDTO> result = new ArrayList<>(query.getResultList());
+        AtomicLong i = new AtomicLong(1);
+        result.forEach(e->{
+            e.setId(i.getAndIncrement());
+        });
+        return result;
     }
 }

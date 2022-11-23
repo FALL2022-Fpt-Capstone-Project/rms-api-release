@@ -1,4 +1,4 @@
-package vn.com.fpt.service.config_value;
+package vn.com.fpt.service.configValue;
 
 import vn.com.fpt.entity.config.Month;
 import vn.com.fpt.entity.config.TotalFloor;
@@ -14,5 +14,5 @@ public interface ConfigService {
 
     List<TotalFloor> listConfigFloor();
 
-    List<DistrictDTO> listAddedDistrict();
+    List<DistrictDTO> listAddedCity();
 }
