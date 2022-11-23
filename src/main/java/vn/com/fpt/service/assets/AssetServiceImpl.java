@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import static vn.com.fpt.common.constants.ErrorStatusConstants.ASSET_OUT_OF_STOCK;
+import static vn.com.fpt.common.constants.ManagerConstants.SUBLEASE_CONTRACT;
 import static vn.com.fpt.common.utils.DateUtils.DATE_FORMAT_3;
 import static vn.com.fpt.common.utils.DateUtils.parse;
 import static vn.com.fpt.model.HandOverAssetsDTO.SQL_RESULT_SET_MAPPING;
@@ -142,35 +143,48 @@ public class AssetServiceImpl implements AssetService {
     @Override
     public HandOverAssets addAdditionalAsset(HandOverAssetsRequest request,
                                              Long contractId,
+                                             Integer contractType,
                                              Long operator) {
+        if (contractType.equals(SUBLEASE_CONTRACT)) {
+            var groupContractId = contractService.contract(contractId).getGroupId();
 
-        var groupContractId = contractService.contract(contractId).getGroupId();
+            add(BasicAssets.add(request.getAssetsAdditionalName(),
+                    request.getAssetsAdditionalType(),
+                    operator));
 
-        add(BasicAssets.add(request.getAssetsAdditionalName(),
-                            request.getAssetsAdditionalType(),
-                            operator));
+            //thêm tài sản chung cho tòa
+            addGeneralAsset(
+                    request,
+                    operator,
+                    groupContractId,
+                    parse(request.getHandOverDateDelivery(), DATE_FORMAT_3));
 
-        //thêm tài sản chung cho tòa
-        addGeneralAsset(
-                request,
-                operator,
-                groupContractId,
-                parse(request.getHandOverDateDelivery(), DATE_FORMAT_3));
+            //thêm tài sản bàn giao cho phòng
+            var response = addHandOverAsset(
+                    request,
+                    operator,
+                    contractId,
+                    parse(request.getHandOverDateDelivery(), DATE_FORMAT_3));
 
-        //thêm tài sản bàn giao cho phòng
-        var response = addHandOverAsset(
-                request,
-                operator,
-                contractId,
-                parse(request.getHandOverDateDelivery(), DATE_FORMAT_3));
+            //cập nhập số lượng tài sản của tòa
+            updateGeneralAssetQuantity(
+                    groupContractId,
+                    request.getAssetId(),
+                    request.getHandOverAssetQuantity());
 
-        //cập nhập số lượng tài sản của tòa
-        updateGeneralAssetQuantity(
-                groupContractId,
-                request.getAssetId(),
-                request.getHandOverAssetQuantity());
+            return response;
+        } else {
+            add(BasicAssets.add(request.getAssetsAdditionalName(),
+                    request.getAssetsAdditionalType(),
+                    operator));
 
-        return response;
+            addGeneralAsset(
+                    request,
+                    operator,
+                    contractId,
+                    parse(request.getHandOverDateDelivery()));
+        }
+        throw new BusinessException("Đã có lỗi xảy ra trong lúc add tài sản. Vui lòng kiểm tra lại!!");
     }
 
     @Override

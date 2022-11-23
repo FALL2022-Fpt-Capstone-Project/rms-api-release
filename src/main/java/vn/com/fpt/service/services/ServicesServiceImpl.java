@@ -124,7 +124,7 @@ public class ServicesServiceImpl implements ServicesService {
         fromBuild.append("INNER JOIN manager_service_types mst on mgs.service_type_id = mst.service_types_id ");
 
         StringBuilder whereBuild = new StringBuilder("WHERE 1=1 ");
-        whereBuild.append("AND mgs.group_id = :groupId");
+        whereBuild.append("AND mgs.group_id = :groupId ");
         whereBuild.append("AND mgs.contract_id = :contractId");
 
         String queryBuild = new StringBuilder()

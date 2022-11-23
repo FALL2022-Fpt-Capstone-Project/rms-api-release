@@ -19,6 +19,7 @@ import vn.com.fpt.service.assets.AssetService;
 
 import java.util.List;
 
+import static vn.com.fpt.common.constants.ManagerConstants.SUBLEASE_CONTRACT;
 import static vn.com.fpt.configs.AppConfigs.*;
 
 
@@ -60,7 +61,7 @@ public class AssetController {
     @Operation(summary = "Thêm trang thiết bị bàn giao cho hợp đồng")
     public ResponseEntity<BaseResponse<HandOverAssets>> add(@RequestBody HandOverAssetsRequest request,
                                                             @PathVariable Long contractId) {
-        return AppResponse.success(assetService.addAdditionalAsset(request, contractId, Operator.operator()));
+        return AppResponse.success(assetService.addAdditionalAsset(request, contractId, SUBLEASE_CONTRACT, Operator.operator()));
     }
 
 //    @PutMapping("/hand-over/update/{id}")

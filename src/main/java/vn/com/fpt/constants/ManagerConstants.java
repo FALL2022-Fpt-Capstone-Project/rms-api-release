@@ -13,14 +13,6 @@ public class ManagerConstants {
     int NONE_FILTER_DEACTIVATE = -1;
 
 
-    // permission
-    int PERMISSION_MATERIAL = 1;
-    int PERMISSION_MONEY = 2;
-    int PERMISSION_RECEIPT = 3;
-    int PERMISSION_CONTRACT = 4;
-
-    int[] PERMISSION_ALL = new int[]{PERMISSION_MATERIAL, PERMISSION_MONEY, PERMISSION_RECEIPT, PERMISSION_CONTRACT};
-
     //assets type
     public static final Long TYPE_BATH_ROOM = 1L;
     public static final Long TYPE_LIVING_ROOM = 2L;

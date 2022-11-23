@@ -189,7 +189,7 @@ class AssetServiceImplTest {
         when(handOverAssetsRepository.findByContractIdAndAndAssetId(groupContractId.getGroupId(), request.getAssetId()))
                 .thenReturn(toUpdate);
         //run test
-        HandOverAssets result = assetServiceTest.addAdditionalAsset(request, contractId, operator);
+        HandOverAssets result = assetServiceTest.addAdditionalAsset(request, contractId, 1, operator);
         //verify
         Assertions.assertEquals(2l, result.getAssetId());
     }

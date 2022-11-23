@@ -32,6 +32,7 @@ public interface AssetService {
 
     HandOverAssets addAdditionalAsset(HandOverAssetsRequest request,
                                       Long contractId,
+                                      Integer leaseType,
                                       Long operator);
 
     HandOverAssets updateHandOverAsset(HandOverAssets old,

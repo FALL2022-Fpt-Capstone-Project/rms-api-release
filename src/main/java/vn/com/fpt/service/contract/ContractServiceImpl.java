@@ -138,7 +138,7 @@ public class ContractServiceImpl implements ContractService {
             request.getListHandOverAssets().forEach(handOverAsset -> {
                 //kiểm tra những trang thiết bị không thuộc tòa (những tài sản không thuộc tòa thì id sẽ < 0)
                 if (Boolean.TRUE.equals(ADDITIONAL_ASSETS(handOverAsset.getAssetId()))) {
-                    assetService.addAdditionalAsset(handOverAsset, contractId,operator);
+                    assetService.addAdditionalAsset(handOverAsset, contractId, SUBLEASE_CONTRACT, operator);
                 }
                 // nếu không có tài sản mới thì sẽ chỉ thêm tài sản bàn giao cho phòng
                 else {
@@ -218,13 +218,18 @@ public class ContractServiceImpl implements ContractService {
         servicesService.addGeneralService(listGeneralServiceForLeaseContract, operator);
 
         if (!request.getListHandOverAsset().isEmpty()) {
-            request.getListHandOverAsset().forEach(e ->
-                    assetService.addGeneralAsset(
-                            e,
-                            operator,
-                            addedContract.getId(),
-                            parse(request.getContractStartDate())
-                    )
+            request.getListHandOverAsset().forEach(e -> {
+                        if (e.getAssetId() < 0) {
+                            assetService.addAdditionalAsset(e, contract.getId(), LEASE_CONTRACT, operator);
+                        } else {
+                            assetService.addGeneralAsset(
+                                    e,
+                                    operator,
+                                    addedContract.getId(),
+                                    parse(request.getContractStartDate())
+                            );
+                        }
+                    }
             );
         }
 
@@ -281,7 +286,7 @@ public class ContractServiceImpl implements ContractService {
             request.getListHandOverAssets().forEach(handOverAsset -> {
                 //kiểm tra những trang thiết bị không thuộc tòa (những tài sản không thuộc tòa thì id sẽ < 0)
                 if (Boolean.TRUE.equals(ADDITIONAL_ASSETS(handOverAsset.getAssetId()))) {
-                    assetService.addAdditionalAsset(handOverAsset, oldContract.getId() ,operator);
+                    assetService.addAdditionalAsset(handOverAsset, oldContract.getId(), SUBLEASE_CONTRACT, operator);
                 }
                 // nếu không có tài sản mới thì sẽ chỉ thêm tài sản bàn giao cho phòng
                 else {
