@@ -13,6 +13,7 @@ import vn.com.fpt.entity.AssetTypes;
 import vn.com.fpt.entity.BasicAssets;
 import vn.com.fpt.entity.Contracts;
 import vn.com.fpt.entity.HandOverAssets;
+import vn.com.fpt.model.BasicAssetDTO;
 import vn.com.fpt.model.HandOverAssetsDTO;
 import vn.com.fpt.repositories.AssetTypesRepository;
 import vn.com.fpt.repositories.BasicAssetRepository;
@@ -95,7 +96,7 @@ class AssetServiceImplTest {
         //mock result
         when(basicAssetRepository.findAll()).thenReturn(basicAssetsList);
         //run test
-        List<BasicAssets> result = assetServiceTest.listBasicAsset();
+        List<BasicAssetDTO> result = assetServiceTest.listBasicAsset();
         //verify result
         Assertions.assertEquals(1, result.size());
     }
