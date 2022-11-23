@@ -46,11 +46,11 @@ public class GeneralService extends BaseEntity {
     private String note;
 
     public GeneralService(Long serviceId,
-                          Long contractId,
+                          Long groupId,
                           Long serviceTypeMeter,
                           Double servicePrice) {
         this.serviceId = serviceId;
-        this.contractId = contractId;
+        this.groupId = groupId;
         this.serviceTypeId = serviceTypeMeter;
         this.servicePrice = servicePrice;
     }

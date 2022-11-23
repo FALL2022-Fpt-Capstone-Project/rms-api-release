@@ -63,9 +63,9 @@ public class ServiceController {
     }
 
     @Operation(summary = "Thêm nhanh các loại dịch vụ phổ biến vào tòa")
-    @PostMapping("/general/quick-add/{contractId}")
-    public ResponseEntity<BaseResponse<List<GeneralService>>> quickAddGeneralService(@PathVariable Long contractId) {
-        return AppResponse.success(servicesService.quickAddGeneralService(contractId, Operator.operator()));
+    @PostMapping("/general/quick-add/{groupId}")
+    public ResponseEntity<BaseResponse<List<GeneralService>>> quickAddGeneralService(@PathVariable Long groupId) {
+        return AppResponse.success(servicesService.quickAddGeneralService(groupId, Operator.operator()));
     }
 
     @Operation(summary = "Update thông tin của dịch vụ chung theo id")

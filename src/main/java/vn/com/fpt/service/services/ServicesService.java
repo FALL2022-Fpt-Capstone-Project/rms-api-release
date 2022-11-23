@@ -44,7 +44,7 @@ public interface ServicesService {
 
     List<HandOverGeneralServiceDTO> listHandOverGeneralService(Long contractId);
 
-    List<GeneralService> quickAddGeneralService(Long contractId, Long operator);
+    List<GeneralService> quickAddGeneralService(Long groupId, Long operator);
 
     String removeGeneralService(Long id);
 

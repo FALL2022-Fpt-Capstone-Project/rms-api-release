@@ -267,16 +267,16 @@ public class ServicesServiceImpl implements ServicesService {
 
 
     @Override
-    public List<GeneralService> quickAddGeneralService(Long contractId, Long operator) {
+    public List<GeneralService> quickAddGeneralService(Long groupId, Long operator) {
 
         GeneralService defaultElectric =
-                new GeneralService(ManagerConstants.SERVICE_ELECTRIC, contractId, ManagerConstants.SERVICE_TYPE_METER, ManagerConstants.ELECTRIC_DEFAULT_PRICE);
+                new GeneralService(ManagerConstants.SERVICE_ELECTRIC, groupId, ManagerConstants.SERVICE_TYPE_METER, ManagerConstants.ELECTRIC_DEFAULT_PRICE);
         GeneralService defaultWater =
-                new GeneralService(ManagerConstants.SERVICE_WATER, contractId, ManagerConstants.SERVICE_TYPE_METER, ManagerConstants.WATER_DEFAULT_PRICE);
+                new GeneralService(ManagerConstants.SERVICE_WATER, groupId, ManagerConstants.SERVICE_TYPE_METER, ManagerConstants.WATER_DEFAULT_PRICE);
         GeneralService defaultInternet =
-                new GeneralService(ManagerConstants.SERVICE_INTERNET, contractId, ManagerConstants.SERVICE_TYPE_MONTH, ManagerConstants.INTERNET_DEFAULT_PRICE);
+                new GeneralService(ManagerConstants.SERVICE_INTERNET, groupId, ManagerConstants.SERVICE_TYPE_MONTH, ManagerConstants.INTERNET_DEFAULT_PRICE);
         GeneralService defaultVehicles =
-                new GeneralService(ManagerConstants.SERVICE_VEHICLES, contractId, ManagerConstants.SERVICE_TYPE_PERSON, ManagerConstants.VEHICLES_DEFAULT_PRICE);
+                new GeneralService(ManagerConstants.SERVICE_VEHICLES, groupId, ManagerConstants.SERVICE_TYPE_PERSON, ManagerConstants.VEHICLES_DEFAULT_PRICE);
 
         List<GeneralService> defaultGeneralService = new ArrayList<>();
         defaultGeneralService.add(defaultElectric);
@@ -284,9 +284,9 @@ public class ServicesServiceImpl implements ServicesService {
         defaultGeneralService.add(defaultInternet);
         defaultGeneralService.add(defaultVehicles);
 
-        var currentGenralService = generalServiceRepository.findAllByContractId(contractId);
+        var currentGeneralService = generalServiceRepository.findAllByGroupId(groupId);
         Map<Long, GeneralService> map = new HashMap<>();
-        currentGenralService.forEach(e -> map.put(e.getServiceId(), e));
+        currentGeneralService.forEach(e -> map.put(e.getServiceId(), e));
 
         List<GeneralService> quickAddList = new ArrayList<>();
         // check duplicate
