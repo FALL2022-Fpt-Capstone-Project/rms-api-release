@@ -157,14 +157,14 @@ public class AssetServiceImpl implements AssetService {
                     request,
                     operator,
                     groupContractId,
-                    parse(request.getHandOverDateDelivery(), DATE_FORMAT_3));
+                    parse(request.getHandOverDateDelivery()));
 
             //thêm tài sản bàn giao cho phòng
             var response = addHandOverAsset(
                     request,
                     operator,
                     contractId,
-                    parse(request.getHandOverDateDelivery(), DATE_FORMAT_3));
+                    parse(request.getHandOverDateDelivery()));
 
             //cập nhập số lượng tài sản của tòa
             updateGeneralAssetQuantity(
@@ -178,13 +178,12 @@ public class AssetServiceImpl implements AssetService {
                     request.getAssetsAdditionalType(),
                     operator));
 
-            addGeneralAsset(
+            return addGeneralAsset(
                     request,
                     operator,
                     contractId,
                     parse(request.getHandOverDateDelivery()));
         }
-        throw new BusinessException("Đã có lỗi xảy ra trong lúc add tài sản. Vui lòng kiểm tra lại!!");
     }
 
     @Override
