@@ -185,16 +185,22 @@ public class ContractServiceImpl implements ContractService {
     @Override
     @Transactional
     public GroupContractRequest addContract(GroupContractRequest request, Long operator) {
-        var rackRenter = renterService.addRackRenter(
-                request.getRackRenterName(),
-                request.getRackRenterGender(),
-                request.getRackRenterPhone(),
-                request.getRackRenterIdentity(),
-                Address.add(null, null, null, request.getRackRenterAddress(), operator),
-                operator
-        );
+        var existedRackRenter = renterService.findRackRenter(request.getRackRenterIdentity());
+        Long rackRenterId;
+        if (Objects.isNull(existedRackRenter)) {
+            rackRenterId = renterService.addRackRenter(
+                    request.getRackRenterName(),
+                    request.getRackRenterGender(),
+                    request.getRackRenterPhone(),
+                    request.getRackRenterIdentity(),
+                    Address.add(null, null, null, request.getRackRenterAddress(), operator),
+                    operator
+            ).getId();
+        } else {
+            rackRenterId = existedRackRenter.getId();
+        }
         var contract = Contracts.addForLease(request, operator);
-        contract.setRackRenters(rackRenter.getId());
+        contract.setRackRenters(rackRenterId);
 
 
         var addedContract = contractRepository.save(contract);
@@ -234,6 +240,13 @@ public class ContractServiceImpl implements ContractService {
         }
 
         return request;
+    }
+
+    @Override
+    public GroupContractRequest updateContract(Long groupContractId, GroupContractRequest request, Long operator) {
+        var oldContract = contract(groupContractId);
+        return null;
+
     }
 
 

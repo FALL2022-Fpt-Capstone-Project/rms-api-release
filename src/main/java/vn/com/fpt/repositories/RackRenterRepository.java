@@ -7,4 +7,5 @@ import vn.com.fpt.entity.RackRenters;
 
 @Repository
 public interface RackRenterRepository extends JpaRepository<RackRenters, Long>, JpaSpecificationExecutor<RackRenters> {
+    RackRenters findByIdentityNumber(String identity);
 }

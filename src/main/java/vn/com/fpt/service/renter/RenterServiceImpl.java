@@ -175,6 +175,11 @@ public class RenterServiceImpl implements RenterService {
     }
 
     @Override
+    public RackRenters findRackRenter(String identity) {
+        return rackRenterRepo.findByIdentityNumber(identity);
+    }
+
+    @Override
     public Renters findRenter(String identity) {
         return renterRepo.findByIdentityNumber(identity);
     }

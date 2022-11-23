@@ -42,6 +42,8 @@ public interface RenterService {
 
     Renters findRenter(Long id);
 
+    RackRenters findRackRenter(String identity);
+
     Renters findRenter(String identity);
 
     RackRenters rackRenter(Long id);

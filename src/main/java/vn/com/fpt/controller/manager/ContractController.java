@@ -71,7 +71,14 @@ public class ContractController {
 
     @Operation(summary = "Thêm mới một hợp đồng cho nhóm phòng")
     @PostMapping("/group/add")
-    public ResponseEntity<BaseResponse<GroupContractRequest>> addContract(@RequestBody GroupContractRequest request) {
+    public ResponseEntity<BaseResponse<GroupContractRequest>> addLeaseContract(@RequestBody GroupContractRequest request) {
+        return AppResponse.success(contractService.addContract(request, Operator.operator()));
+    }
+
+    @Operation(summary = "Cập nhập hợp đồng cho nhóm phòng")
+    @PostMapping("/group/update/{groupContractId}")
+    public ResponseEntity<BaseResponse<GroupContractRequest>> updateLeaseContract(@RequestBody GroupContractRequest request,
+                                                                                  @PathVariable Long groupContractId) {
         return AppResponse.success(contractService.addContract(request, Operator.operator()));
     }
 

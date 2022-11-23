@@ -13,6 +13,8 @@ public interface ContractService {
 
     GroupContractRequest addContract(GroupContractRequest request, Long operator);
 
+    GroupContractRequest updateContract(Long groupContractId, GroupContractRequest request, Long operator);
+
     RoomContractRequest updateContract(Long id, RoomContractRequest request, Long operator);
 
     List<Contracts> listGroupContract(Long groupId);
