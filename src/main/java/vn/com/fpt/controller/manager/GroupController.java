@@ -36,37 +36,37 @@ public class GroupController {
     private final RoomService roomService;
 
     @GetMapping("/{groupId}")
-    @Operation(summary = "Lấy thông tin của nhóm phòng theo id")
+    @Operation(summary = "Lấy thông tin của chung cư mini theo id")
     public ResponseEntity<BaseResponse<Object>> group(@PathVariable Long groupId) {
         return AppResponse.success(groupService.group(groupId));
     }
 
     @GetMapping("/all/contracted")
-    @Operation(summary = "Lấy thông tin của tất cả nhóm phòng đã có hợp đồng")
+    @Operation(summary = "Lấy thông tin của tất cả chung cư mini đã có hợp đồng")
     public ResponseEntity<BaseResponse<List<GroupContractedResponse>>> listGroupContracted() {
         return AppResponse.success(groupService.listContracted());
     }
 
     @GetMapping("/all/non-contracted")
-    @Operation(summary = "Lấy thông tin của tất cả nhóm phòng đã có hợp đồng")
+    @Operation(summary = "Lấy thông tin của tất cả chung cư mini đã có hợp đồng")
     public ResponseEntity<BaseResponse<List<GroupNonContractedResponse>>> listGroupNonContracted() {
         return AppResponse.success(groupService.listNonContracted());
     }
 
     @GetMapping("/all")
-    @Operation(summary = "Lấy thông tin của tất cả nhóm phòng bao gồm có và chưa có hợp đồng")
+    @Operation(summary = "Lấy thông tin của tất cả chung cu mini bao gồm có và chưa có hợp đồng")
     public ResponseEntity<BaseResponse<GroupAllResponse>> listGroup() {
         return AppResponse.success(groupService.listGroup());
     }
 
     @PostMapping("/add")
-    @Operation(summary = "Tạo mới một nhóm phòng")
+    @Operation(summary = "Tạo mới một chung cư mini")
     public ResponseEntity<BaseResponse<Object>> add(@RequestBody AddGroupRequest request) {
         return AppResponse.success(groupService.add(request, Operator.operator()));
     }
 
     @DeleteMapping("/delete/{groupId}")
-    @Operation(summary = "Xóa một nhóm phòng")
+    @Operation(summary = "Xóa một chung cư mini")
     public ResponseEntity<BaseResponse<String>> delete(@PathVariable Long groupId){
         return AppResponse.success(groupService.delete(groupId, Operator.operator()));
     }

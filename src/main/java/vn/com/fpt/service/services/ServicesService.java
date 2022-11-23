@@ -17,6 +17,8 @@ public interface ServicesService {
 
     List<GeneralServiceDTO> listGeneralServiceByGroupId(Long groupId);
 
+    List<GeneralServiceDTO> listGeneralServiceByGroupIdAndContractId(Long groupId, Long contractId);
+
     GeneralServiceDTO generalService(Long id);
 
     List<BasicServices> basicServices();

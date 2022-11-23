@@ -9,9 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.common.utils.DateUtils;
 import vn.com.fpt.entity.*;
+import vn.com.fpt.model.GeneralServiceDTO;
 import vn.com.fpt.model.GroupContractDTO;
 import vn.com.fpt.model.RoomContractDTO;
 import vn.com.fpt.repositories.*;
+import vn.com.fpt.requests.GeneralServiceRequest;
 import vn.com.fpt.requests.GroupContractRequest;
 import vn.com.fpt.requests.RenterRequest;
 import vn.com.fpt.requests.RoomContractRequest;
@@ -47,7 +49,6 @@ public class ContractServiceImpl implements ContractService {
     private final ServicesService servicesService;
     private final AddressRepository addressRepository;
     private final GroupService groupService;
-
     private final RenterRepository renterRepository;
 
     public ContractServiceImpl(ContractRepository contractRepository,
@@ -83,14 +84,12 @@ public class ContractServiceImpl implements ContractService {
 
 
         //parse string to date
-        Date startDate = parse(request.getContractStartDate(), DATE_FORMAT_3);
-        Date endDate = parse(request.getContractEndDate(), DATE_FORMAT_3);
+        Date startDate = parse(request.getContractStartDate());
+        Date endDate = parse(request.getContractEndDate());
 
-        assert endDate != null;
-        assert startDate != null;
         // kiểm tra ngày bắt đầu và ngày kết thúc
         if (Boolean.TRUE.equals(VALIDATE_CONTRACT_TERM(startDate, endDate)))
-            throw new BusinessException(INVALID_TIME, "Ngày kết thúc không được trước ngày bắt đầu");
+            throw new BusinessException(INVALID_TIME, "Ngày kết thúc không được trước ngày bắt đầu!!");
         var checkRenter = renterService.findRenter(request.getRenterIdentityCard());
         if (Objects.isNull(checkRenter)) {
             var address = Address.add(
@@ -120,7 +119,7 @@ public class ContractServiceImpl implements ContractService {
         // lưu thành viên vào phòng
         if (ObjectUtils.isNotEmpty(request.getListRenter())) {
             if (request.getListRenter().size() + 1 > room.getRoomLimitPeople())
-                throw new BusinessException(RENTER_LIMIT, "Giới hạn thành viên trong phòng " + room.getRoomLimitPeople() + " số lượng thành viên hiện tại:" + (request.getListRenter().size() + 1));
+                throw new BusinessException(RENTER_LIMIT, "Giới hạn thành viên trong phòng " + room.getRoomLimitPeople() + " số lượng thành viên hiện tại: " + (request.getListRenter().size() + 1));
             request.getListRenter().forEach(e -> {
                 e.setRepresent(false);
                 e.setRoomId(roomId);
@@ -189,12 +188,27 @@ public class ContractServiceImpl implements ContractService {
 
         var addedContract = contractRepository.save(Contracts.addForLease(request, operator));
         var listRoom = roomService.listRoom(request.getListRoom());
-        listRoom.forEach(e -> e.setGroupContractId(addedContract.getId()));
 
+        listRoom.forEach(e -> e.setGroupContractId(addedContract.getId()));
         roomService.updateRoom(listRoom);
 
-        if(!request.getListHandOverAsset().isEmpty()){
-            request.getListHandOverAsset().forEach(e->
+        var listGeneralService = servicesService.listGeneralServiceByGroupIdAndContractId(request.getGroupId(), addedContract.getId());
+        List<GeneralServiceRequest> listGeneralServiceForLeaseContract = new ArrayList<>(Collections.emptyList());
+        for (GeneralServiceDTO generalServiceDTO : listGeneralService) {
+            listGeneralServiceForLeaseContract.add(new GeneralServiceRequest(
+                    addedContract.getId(),
+                    generalServiceDTO.getServiceId().longValue(),
+                    generalServiceDTO.getServicePrice(),
+                    generalServiceDTO.getServiceTypeId().longValue(),
+                    generalServiceDTO.getNote(),
+                    request.getGroupId()
+            ));
+        }
+        servicesService.addGeneralService(listGeneralServiceForLeaseContract, operator);
+
+
+        if (!request.getListHandOverAsset().isEmpty()) {
+            request.getListHandOverAsset().forEach(e ->
                     assetService.addGeneralAsset(
                             e,
                             operator,
@@ -231,10 +245,8 @@ public class ContractServiceImpl implements ContractService {
         roomService.updateRoom(Rooms.modify(oldRoom, newRoom, operator));
 
         // kiểm tra ngày bắt đầu và ngày kết thúc
-        Date startDate = parse(request.getContractStartDate(), DATE_FORMAT_3);
-        Date endDate = parse(request.getContractEndDate(), DATE_FORMAT_3);
-        assert endDate != null;
-        assert startDate != null;
+        Date startDate = parse(request.getContractStartDate());
+        Date endDate = parse(request.getContractEndDate());
 
         if (Boolean.TRUE.equals(VALIDATE_CONTRACT_TERM(startDate, endDate)))
             throw new BusinessException(INVALID_TIME, "Ngày kết thúc không được trước ngày bắt đầu");

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.entity.Address;
+import vn.com.fpt.entity.Contracts;
 import vn.com.fpt.entity.RoomGroups;
 import vn.com.fpt.repositories.AddressRepository;
 import vn.com.fpt.repositories.ContractRepository;
@@ -65,20 +66,23 @@ public class GroupServiceImpl implements GroupService {
         List<GroupContractedResponse> result = new ArrayList<>(Collections.emptyList());
 
         for (RoomGroups roomGroups : listContractedGroup) {
-            if (!contractRepository.findByGroupIdAndContractType(roomGroups.getId(), LEASE_CONTRACT).isEmpty() && !roomGroups.getIsDisable()) {
-                GroupContractedResponse group = new GroupContractedResponse();
-                group.setGroupId(roomGroups.getId());
-                group.setGroupName(roomGroups.getGroupName());
-                group.setDescription(roomGroups.getGroupDescription());
-                group.setTotalRoom(roomsRepository.findAllRoomsByGroupId(roomGroups.getId()).size());
-                group.setTotalFloor(roomsRepository.findAllFloorByGroupId(roomGroups.getId()).size());
-                group.setAddress(addressRepository.findById(roomGroups.getAddress()).get());
-                group.setListRooms(roomService.listRoom(roomGroups.getId(), null, null, null, null));
-                group.setListGeneralService(servicesService.listGeneralServiceByGroupId(roomGroups.getId()));
-                group.setListRoomLeaseContracted(roomService.listRoomLeaseContracted(roomGroups.getId()));
-                group.setListRoomNonLeaseContracted(roomService.listRoomLeaseNonContracted(roomGroups.getId()));
-                group.setGroupContracted(true);
-                result.add(group);
+            var contract = contractRepository.findByGroupIdAndContractType(roomGroups.getId(), LEASE_CONTRACT);
+            for (Contracts contracts : contract) {
+                if (!contract.isEmpty() && !roomGroups.getIsDisable()) {
+                    GroupContractedResponse group = new GroupContractedResponse();
+                    group.setGroupId(roomGroups.getId());
+                    group.setGroupName(roomGroups.getGroupName());
+                    group.setDescription(roomGroups.getGroupDescription());
+                    group.setTotalRoom(roomsRepository.findAllRoomsByGroupId(roomGroups.getId()).size());
+                    group.setTotalFloor(roomsRepository.findAllFloorByGroupId(roomGroups.getId()).size());
+                    group.setAddress(addressRepository.findById(roomGroups.getAddress()).get());
+                    group.setListRooms(roomService.listRoom(roomGroups.getId(), null, null, null, null));
+                    group.setListGeneralService(servicesService.listGeneralServiceByGroupIdAndContractId(roomGroups.getId(), contracts.getId()));
+                    group.setListRoomLeaseContracted(roomService.listRoomLeaseContracted(roomGroups.getId()));
+                    group.setListRoomNonLeaseContracted(roomService.listRoomLeaseNonContracted(roomGroups.getId()));
+                    group.setGroupContracted(true);
+                    result.add(group);
+                }
             }
         }
         return result;
@@ -146,7 +150,8 @@ public class GroupServiceImpl implements GroupService {
                 request.getGroupName(),
                 request.getDescription(),
                 addressId,
-                operator));
+                operator)
+        );
 
         //Tự động generate phòng
         roomService.generateRoom(
@@ -158,7 +163,9 @@ public class GroupServiceImpl implements GroupService {
                 request.getRoomNameConvention(),
                 group.getId(),
                 operator);
-        request.getListGeneralService().forEach(e->e.setServiceId(group.getId()));
+
+        //add general service
+        request.getListGeneralService().forEach(e -> e.setGroupId(e.getGroupId()));
         servicesService.addGeneralService(request.getListGeneralService(), operator);
 
         return request;

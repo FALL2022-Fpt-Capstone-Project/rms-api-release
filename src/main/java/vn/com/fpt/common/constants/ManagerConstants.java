@@ -51,6 +51,8 @@ public class ManagerConstants {
     }
 
     public static Boolean VALIDATE_CONTRACT_TERM(Date startDate, Date endDate) {
+        assert startDate != null;
+        assert endDate != null;
         return endDate.compareTo(startDate) < 0;
     }
 }
