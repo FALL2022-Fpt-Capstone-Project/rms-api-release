@@ -192,7 +192,7 @@ public class ContractServiceImpl implements ContractService {
         listRoom.forEach(e -> e.setGroupContractId(addedContract.getId()));
         roomService.updateRoom(listRoom);
 
-        var listGeneralService = servicesService.listGeneralServiceByGroupIdAndContractId(request.getGroupId(), addedContract.getId());
+        var listGeneralService = servicesService.listGeneralServiceByGroupId(request.getGroupId());
         List<GeneralServiceRequest> listGeneralServiceForLeaseContract = new ArrayList<>(Collections.emptyList());
         for (GeneralServiceDTO generalServiceDTO : listGeneralService) {
             listGeneralServiceForLeaseContract.add(new GeneralServiceRequest(
