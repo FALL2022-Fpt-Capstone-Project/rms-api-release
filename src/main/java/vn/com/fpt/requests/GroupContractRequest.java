@@ -1,5 +1,6 @@
 package vn.com.fpt.requests;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -18,6 +19,8 @@ import java.util.List;
 public class GroupContractRequest {
     private Long groupId;
 
+    @Schema(hidden = true)
+    @JsonIgnore
     private String contractName;
     private Double contractPrice;
     private Double contractDeposit;
@@ -28,6 +31,13 @@ public class GroupContractRequest {
     private String contractEndDate;
 
     private String contractNote;
+
+    private String rackRenterName;
+    private Boolean rackRenterGender;
+    private String rackRenterPhone;
+    private String rackRenterIdentity;
+    private String rackRenterAddress;
+    private String rackRenterNote;
 
     @Schema(description = "List id của phòng để lập hợp đồng", required = true, example = "[1,2,3,4,5]")
     private List<Long> listRoom;

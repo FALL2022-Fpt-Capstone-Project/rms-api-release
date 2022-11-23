@@ -185,13 +185,24 @@ public class ContractServiceImpl implements ContractService {
     @Override
     @Transactional
     public GroupContractRequest addContract(GroupContractRequest request, Long operator) {
+        var rackRenter = renterService.addRackRenter(
+                request.getRackRenterName(),
+                request.getRackRenterGender(),
+                request.getRackRenterPhone(),
+                request.getRackRenterIdentity(),
+                Address.add(null, null, null, request.getRackRenterAddress(), operator),
+                operator
+        );
+        var contract = Contracts.addForLease(request, operator);
+        contract.setRackRenters(rackRenter.getId());
 
-        var addedContract = contractRepository.save(Contracts.addForLease(request, operator));
+
+        var addedContract = contractRepository.save(contract);
         var listRoom = roomService.listRoom(request.getListRoom());
+
 
         listRoom.forEach(e -> e.setGroupContractId(addedContract.getId()));
         roomService.updateRoom(listRoom);
-
         var listGeneralService = servicesService.listGeneralServiceByGroupId(request.getGroupId());
         List<GeneralServiceRequest> listGeneralServiceForLeaseContract = new ArrayList<>(Collections.emptyList());
         for (GeneralServiceDTO generalServiceDTO : listGeneralService) {
@@ -206,7 +217,6 @@ public class ContractServiceImpl implements ContractService {
         }
         servicesService.addGeneralService(listGeneralServiceForLeaseContract, operator);
 
-
         if (!request.getListHandOverAsset().isEmpty()) {
             request.getListHandOverAsset().forEach(e ->
                     assetService.addGeneralAsset(
@@ -217,6 +227,7 @@ public class ContractServiceImpl implements ContractService {
                     )
             );
         }
+
         return request;
     }
 

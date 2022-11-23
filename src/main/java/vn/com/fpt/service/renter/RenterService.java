@@ -1,8 +1,10 @@
 package vn.com.fpt.service.renter;
 
 import org.springframework.data.jpa.domain.Specification;
+import vn.com.fpt.entity.Address;
 import vn.com.fpt.entity.RackRenters;
 import vn.com.fpt.entity.Renters;
+import vn.com.fpt.requests.Operator;
 import vn.com.fpt.requests.RenterRequest;
 import vn.com.fpt.responses.RentersResponse;
 
@@ -22,6 +24,13 @@ public interface RenterService {
     RentersResponse addRenter(RenterRequest addRenterRequest, Long operator);
 
     Renters addRenter(Renters renters);
+
+    RackRenters addRackRenter(String name,
+                              Boolean gender,
+                              String phone,
+                              String identity,
+                              Address address,
+                              Long operator);
 
     RentersResponse updateRenter(Long id, RenterRequest addRenterRequest, Long operator);
 

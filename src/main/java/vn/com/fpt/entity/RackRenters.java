@@ -8,6 +8,8 @@ import vn.com.fpt.configs.AppConfigs;
 
 import javax.persistence.*;
 
+import static vn.com.fpt.common.utils.DateUtils.now;
+
 @Entity
 @Table(name = RackRenters.TABLE_NAME)
 @DynamicUpdate
@@ -37,4 +39,29 @@ public class RackRenters extends BaseEntity{
     @JoinColumn(name = "address_id")
     @OneToOne(cascade = CascadeType.ALL)
     private Address address;
+
+    public static RackRenters of(String name,
+                                 Boolean gender,
+                                 String phone,
+                                 String identity,
+                                 Address address) {
+        return RackRenters.builder().
+                rackRenterFullName(name).
+                phoneNumber(phone).
+                gender(gender).
+                identityNumber(identity).
+                address(address).build();
+    }
+
+    public static RackRenters add(String name,
+                                  Boolean gender,
+                                  String phone,
+                                  String identity,
+                                  Address address,
+                                  Long operator) {        var rackRenter = of(name, gender, phone, identity, address);
+        rackRenter.setCreatedAt(now());
+        rackRenter.setCreatedBy(operator);
+
+        return rackRenter;
+    }
 }
