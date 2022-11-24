@@ -9,7 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.common.utils.DateUtils;
 import vn.com.fpt.entity.Contracts;
+import vn.com.fpt.entity.RackRenters;
 import vn.com.fpt.entity.Rooms;
+import vn.com.fpt.repositories.RackRenterRepository;
 import vn.com.fpt.repositories.RoomsRepository;
 import vn.com.fpt.requests.RoomsRequest;
 import vn.com.fpt.requests.UpdateRoomRequest;
@@ -17,6 +19,7 @@ import vn.com.fpt.responses.GroupContractedResponse;
 import vn.com.fpt.responses.RoomsResponse;
 import vn.com.fpt.service.assets.AssetService;
 import vn.com.fpt.service.contract.ContractService;
+import vn.com.fpt.service.group.GroupService;
 import vn.com.fpt.specification.BaseSpecification;
 import vn.com.fpt.specification.SearchCriteria;
 
@@ -35,12 +38,20 @@ public class RoomServiceImpl implements RoomService {
 
     private final ContractService contractService;
 
+    private final GroupService groupService;
+
+    private final RackRenterRepository rackRenters;
+
     public RoomServiceImpl(RoomsRepository roomsRepository,
                            AssetService assetService,
-                           @Lazy ContractService contractService) {
+                           @Lazy ContractService contractService,
+                           @Lazy GroupService service,
+                           RackRenterRepository rackRenters) {
         this.roomsRepository = roomsRepository;
         this.assetService = assetService;
         this.contractService = contractService;
+        this.groupService = service;
+        this.rackRenters = rackRenters;
     }
 
     @Override
@@ -86,14 +97,22 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public List<GroupContractedResponse.RoomLeaseContracted> listRoomLeaseContracted(Long groupId) {
         var listGroupContract = contractService.listGroupContract(groupId);
-
+        var group = groupService.getGroup(groupId);
         List<GroupContractedResponse.RoomLeaseContracted> result = new ArrayList<>(Collections.emptyList());
         for (Contracts contracts : listGroupContract) {
             var roomLeaseContracted = roomsRepository.findAllByGroupContractIdAndGroupId(contracts.getId(), groupId);
+            var rackRenter = rackRenters.findById(contracts.getRackRenters()).get();
             result.add(
                     GroupContractedResponse.RoomLeaseContracted.of(
                             contracts.getId(),
                             contracts.getGroupId(),
+                            group.getGroupName(),
+                            rackRenter.getRackRenterFullName(),
+                            rackRenter.getGender(),
+                            rackRenter.getPhoneNumber(),
+                            rackRenter.getIdentityNumber(),
+                            contracts.getContractPrice(),
+                            contracts.getContractDeposit(),
                             roomLeaseContracted,
                             assetService.listHandOverAsset(contracts.getId()),
                             roomLeaseContracted.size() + 1,
@@ -107,10 +126,12 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public List<GroupContractedResponse.RoomNonLeaseContracted> listRoomLeaseNonContracted(Long groupId) {
         List<GroupContractedResponse.RoomNonLeaseContracted> result = new ArrayList<>(Collections.emptyList());
+        var group = groupService.getGroup(groupId);
         var listRoomNonLeaseContracted = roomsRepository.findAllByGroupContractIdNullAndGroupId(groupId);
         result.add(
                 GroupContractedResponse.RoomNonLeaseContracted.of(
                         groupId,
+                        group.getGroupName(),
                         listRoomNonLeaseContracted,
                         listRoomNonLeaseContracted.size(),
                         roomsRepository.findAllFloorByGroupNonContractAndGroupId(groupId).size()

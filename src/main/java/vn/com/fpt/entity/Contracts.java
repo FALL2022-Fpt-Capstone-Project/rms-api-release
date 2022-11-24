@@ -111,6 +111,7 @@ public class Contracts extends BaseEntity {
     public static Contracts addForLease(GroupContractRequest request, Long operator) {
         var renterContract = of(request);
         renterContract.setContractType(LEASE_CONTRACT);
+        renterContract.setContractIsDisable(false);
         renterContract.setCreatedBy(operator);
         renterContract.setCreatedAt(now());
         return renterContract;

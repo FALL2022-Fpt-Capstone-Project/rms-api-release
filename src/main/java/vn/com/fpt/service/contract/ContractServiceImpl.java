@@ -57,7 +57,7 @@ public class ContractServiceImpl implements ContractService {
                                @Lazy RenterService renterService,
                                ServicesService servicesService,
                                AddressRepository addressRepository,
-                               GroupService groupService,
+                               @Lazy GroupService groupService,
                                @Lazy RenterRepository renterRepository) {
         this.contractRepository = contractRepository;
         this.assetService = assetService;

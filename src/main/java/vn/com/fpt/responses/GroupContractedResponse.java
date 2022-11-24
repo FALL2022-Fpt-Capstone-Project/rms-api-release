@@ -18,6 +18,14 @@ import java.util.List;
 public class GroupContractedResponse {
     private Long groupId;
 
+    private String rackRenterName;
+
+    private Boolean rackRenterGender;
+
+    private String rackRenterPhone;
+
+    private String rackRenterIdentity;
+
     private String groupName;
 
     private Integer totalRoom;
@@ -38,6 +46,10 @@ public class GroupContractedResponse {
 
     private Boolean groupContracted;
 
+    private Integer totalRoomLeaseContracted;
+
+    private Integer totalFloorLeaseContracted;
+
     @Getter
     @Setter
     @NoArgsConstructor
@@ -49,6 +61,20 @@ public class GroupContractedResponse {
 
         private Long groupContractId;
 
+        private String groupName;
+
+        private String rackRenterName;
+
+        private Boolean rackRenterGender;
+
+        private String rackRenterPhone;
+
+        private String rackRenterIdentity;
+
+        private Double contractPrice;
+
+        private Double contractDeposit;
+
         private List<Rooms> listRoom;
 
         private List<HandOverAssetsDTO> listHandOverAssets;
@@ -59,6 +85,13 @@ public class GroupContractedResponse {
 
         public static RoomLeaseContracted of(Long groupContractId,
                                              Long groupId,
+                                             String groupName,
+                                             String rackRenterName,
+                                             Boolean rackRenterGender,
+                                             String rackRenterPhone,
+                                             String rackRenterIdentity,
+                                             Double contractPrice,
+                                             Double contractDeposit,
                                              List<Rooms> listRoomsLeaseContracted,
                                              List<HandOverAssetsDTO> listHandOverAssets,
                                              Integer totalRoomLeaseContracted,
@@ -66,6 +99,13 @@ public class GroupContractedResponse {
             return RoomLeaseContracted.builder()
                     .groupContractId(groupContractId)
                     .groupId(groupId)
+                    .groupName(groupName)
+                    .rackRenterName(rackRenterName)
+                    .rackRenterGender(rackRenterGender)
+                    .rackRenterPhone(rackRenterPhone)
+                    .rackRenterIdentity(rackRenterIdentity)
+                    .contractPrice(contractPrice)
+                    .contractDeposit(contractDeposit)
                     .listRoom(listRoomsLeaseContracted)
                     .listHandOverAssets(listHandOverAssets)
                     .totalRoomLeaseContracted(totalRoomLeaseContracted)
@@ -85,6 +125,8 @@ public class GroupContractedResponse {
 
         private Long groupId;
 
+        private String groupName;
+
         private List<Rooms> listRoom;
 
         private Integer totalRoomNonLeaseContracted;
@@ -92,11 +134,13 @@ public class GroupContractedResponse {
         private Integer totalFloorNonLeaseContracted;
 
         public static RoomNonLeaseContracted of(Long groupId,
+                                                String groupName,
                                                 List<Rooms> listRoomsLeaseContracted,
                                                 Integer totalRoomNonLeaseContracted,
                                                 Integer totalFloor) {
             return RoomNonLeaseContracted.builder()
                     .groupId(groupId)
+                    .groupName(groupName)
                     .listRoom(listRoomsLeaseContracted)
                     .totalRoomNonLeaseContracted(totalRoomNonLeaseContracted)
                     .totalFloorNonLeaseContracted(totalFloor)

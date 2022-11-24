@@ -1,5 +1,7 @@
 package vn.com.fpt.service.group;
 
+import vn.com.fpt.entity.RoomGroups;
+import vn.com.fpt.entity.Rooms;
 import vn.com.fpt.requests.AddGroupRequest;
 import vn.com.fpt.requests.UpdateGroupRequest;
 import vn.com.fpt.responses.GroupAllResponse;
@@ -11,6 +13,8 @@ import java.util.Objects;
 
 public interface GroupService {
     Object group(Long groupId);
+
+    RoomGroups getGroup(Long groupId);
 
     List<GroupContractedResponse> listContracted();
 

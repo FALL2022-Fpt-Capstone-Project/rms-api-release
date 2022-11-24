@@ -7,14 +7,8 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
 import vn.com.fpt.common.BusinessException;
-import vn.com.fpt.entity.Address;
-import vn.com.fpt.entity.Contracts;
-import vn.com.fpt.entity.RoomGroups;
-import vn.com.fpt.entity.Rooms;
-import vn.com.fpt.repositories.AddressRepository;
-import vn.com.fpt.repositories.ContractRepository;
-import vn.com.fpt.repositories.GroupRepository;
-import vn.com.fpt.repositories.RoomsRepository;
+import vn.com.fpt.entity.*;
+import vn.com.fpt.repositories.*;
 import vn.com.fpt.requests.AddGroupRequest;
 import vn.com.fpt.requests.UpdateGroupRequest;
 import vn.com.fpt.responses.GroupAllResponse;
@@ -30,7 +24,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import static vn.com.fpt.common.constants.ErrorStatusConstants.CONTRACT_NOT_FOUND;
 import static vn.com.fpt.common.constants.ManagerConstants.LEASE_CONTRACT;
 
 @Service
@@ -47,6 +40,8 @@ public class GroupServiceImpl implements GroupService {
     private final ContractRepository contractRepository;
 
     private final AssetService assetService;
+
+    private final RackRenterRepository rackRenterRepo;
 
     private final AddressRepository addressRepository;
 
@@ -65,6 +60,11 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
+    public RoomGroups getGroup(Long groupId) {
+        return groupRepository.findById(groupId).get();
+    }
+
+    @Override
     public List<GroupContractedResponse> listContracted() {
         var listContractedGroup = groupRepository.findAll(Sort.by("id").descending());
         List<GroupContractedResponse> result = new ArrayList<>(Collections.emptyList());
@@ -74,16 +74,24 @@ public class GroupServiceImpl implements GroupService {
             for (Contracts contracts : contract) {
                 if (!contract.isEmpty() && !roomGroups.getIsDisable()) {
                     GroupContractedResponse group = new GroupContractedResponse();
+                    var roomLeaseContracted = roomService.listRoomLeaseContracted(roomGroups.getId());
+                    var rackRenter = rackRenterRepo.findById(contracts.getRackRenters()).get();
                     group.setGroupId(roomGroups.getId());
+                    group.setRackRenterName(rackRenter.getRackRenterFullName());
+                    group.setRackRenterPhone(rackRenter.getPhoneNumber());
+                    group.setRackRenterGender(rackRenter.getGender());
+                    group.setRackRenterIdentity(rackRenter.getIdentityNumber());
                     group.setGroupName(roomGroups.getGroupName());
                     group.setDescription(roomGroups.getGroupDescription());
                     group.setTotalRoom(roomsRepository.findAllRoomsByGroupId(roomGroups.getId()).size());
                     group.setTotalFloor(roomsRepository.findAllFloorByGroupId(roomGroups.getId()).size());
                     group.setAddress(addressRepository.findById(roomGroups.getAddress()).get());
                     group.setListRooms(roomService.listRoom(roomGroups.getId(), null, null, null, null));
-                    group.setListGeneralService(servicesService.listGeneralServiceByGroupIdAndContractId(roomGroups.getId(), contracts.getId()));
-                    group.setListRoomLeaseContracted(roomService.listRoomLeaseContracted(roomGroups.getId()));
+                    group.setListGeneralService(servicesService.listGeneralServiceByGroupId(roomGroups.getId()));
+                    group.setListRoomLeaseContracted(roomLeaseContracted);
                     group.setListRoomNonLeaseContracted(roomService.listRoomLeaseNonContracted(roomGroups.getId()));
+                    group.setTotalFloorLeaseContracted(roomsRepository.findAllFloorByGroupContractIdAndGroupId(group.getGroupId(), contracts.getId()).size());
+                    group.setTotalRoomLeaseContracted(roomLeaseContracted.size());
                     group.setGroupContracted(true);
                     result.add(group);
                 }

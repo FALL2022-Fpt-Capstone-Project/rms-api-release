@@ -10,10 +10,12 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.entity.Rooms;
+import vn.com.fpt.repositories.RackRenterRepository;
 import vn.com.fpt.repositories.RoomsRepository;
 import vn.com.fpt.requests.RoomsRequest;
 import vn.com.fpt.responses.RoomsResponse;
 import vn.com.fpt.service.contract.ContractService;
+import vn.com.fpt.service.group.GroupService;
 import vn.com.fpt.service.rooms.RoomService;
 import vn.com.fpt.service.rooms.RoomServiceImpl;
 import vn.com.fpt.specification.BaseSpecification;
@@ -39,6 +41,12 @@ public class RoomServiceImplTest {
     @Mock
     private ContractService contractService;
 
+    @Mock
+    private GroupService groupService;
+
+    @Mock
+    private RackRenterRepository renterRepository;
+
     private RoomService roomServiceTest;
 
 
@@ -47,7 +55,7 @@ public class RoomServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        roomServiceTest = new RoomServiceImpl(roomsRepository, assetService, contractService);
+        roomServiceTest = new RoomServiceImpl(roomsRepository, assetService, contractService, groupService, renterRepository);
     }
 
 //    @Test

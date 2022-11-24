@@ -8,6 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
+import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.security.domain.IUserDetailsAuth;
 
 import javax.servlet.FilterChain;
@@ -33,7 +34,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
             String token = authorizationHeaderValue.substring(7);
 
-            jwtUtils.validateJwtToken(token);
+                jwtUtils.validateJwtToken(token);
+
 
             String username = jwtUtils.getUserNameFromJwtToken(token);
 
