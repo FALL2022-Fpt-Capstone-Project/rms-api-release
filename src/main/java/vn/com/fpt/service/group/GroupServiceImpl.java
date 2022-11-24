@@ -207,7 +207,6 @@ public class GroupServiceImpl implements GroupService {
                     old.getRoomName(),
                     old.getRoomFloor(),
                     old.getRoomLimitPeople(),
-                    groupId,
                     old.getRoomPrice(),
                     old.getRoomArea(),
                     operator
