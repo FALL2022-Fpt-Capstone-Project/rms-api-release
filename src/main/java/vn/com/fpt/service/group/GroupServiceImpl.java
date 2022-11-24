@@ -2,6 +2,7 @@ package vn.com.fpt.service.group;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -9,14 +10,17 @@ import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.entity.Address;
 import vn.com.fpt.entity.Contracts;
 import vn.com.fpt.entity.RoomGroups;
+import vn.com.fpt.entity.Rooms;
 import vn.com.fpt.repositories.AddressRepository;
 import vn.com.fpt.repositories.ContractRepository;
 import vn.com.fpt.repositories.GroupRepository;
 import vn.com.fpt.repositories.RoomsRepository;
 import vn.com.fpt.requests.AddGroupRequest;
+import vn.com.fpt.requests.UpdateGroupRequest;
 import vn.com.fpt.responses.GroupAllResponse;
 import vn.com.fpt.responses.GroupContractedResponse;
 import vn.com.fpt.responses.GroupNonContractedResponse;
+import vn.com.fpt.responses.RoomsResponse;
 import vn.com.fpt.service.assets.AssetService;
 import vn.com.fpt.service.rooms.RoomService;
 import vn.com.fpt.service.services.ServicesService;
@@ -62,7 +66,7 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public List<GroupContractedResponse> listContracted() {
-        var listContractedGroup = groupRepository.findAll();
+        var listContractedGroup = groupRepository.findAll(Sort.by("id").descending());
         List<GroupContractedResponse> result = new ArrayList<>(Collections.emptyList());
 
         for (RoomGroups roomGroups : listContractedGroup) {
@@ -90,7 +94,7 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public List<GroupNonContractedResponse> listNonContracted() {
-        var listNonContractedGroup = groupRepository.findAll();
+        var listNonContractedGroup = groupRepository.findAll(Sort.by("id").descending());
         List<GroupNonContractedResponse> result = new ArrayList<>(Collections.emptyList());
 
         for (RoomGroups roomGroups : listNonContractedGroup) {
@@ -169,6 +173,49 @@ public class GroupServiceImpl implements GroupService {
         servicesService.addGeneralService(request.getListGeneralService(), operator);
 
         return request;
+    }
+
+    @Override
+    @Transactional
+    public String update(Long groupId,
+                         UpdateGroupRequest request,
+                         Long operator) {
+        var oldGroup = groupRepository.findById(groupId).get();
+
+        var oldAddress = addressRepository.findById(oldGroup.getAddress()).get();
+        var newAddress = new Address().modify(
+                oldAddress,
+                request.getAddressCity(),
+                request.getAddressDistrict(),
+                request.getAddressWard(),
+                request.getAddressMoreDetail(),
+                operator);
+        addressRepository.save(newAddress);
+
+        var newGroup = RoomGroups.modify(
+                oldGroup,
+                request.getGroupName(),
+                request.getDescription(),
+                operator);
+        groupRepository.save(newGroup);
+
+        var room = roomService.listRoom(groupId, null, null, null, null);
+        List<Rooms> newRoom = new ArrayList<>(Collections.emptyList());
+        for (RoomsResponse old : room) {
+            newRoom.add(Rooms.modify(
+                    roomsRepository.findById(old.getRoomId()).get(),
+                    old.getRoomName(),
+                    old.getRoomFloor(),
+                    old.getRoomLimitPeople(),
+                    groupId,
+                    old.getRoomPrice(),
+                    old.getRoomArea(),
+                    operator
+            ));
+        }
+        roomsRepository.saveAll(newRoom);
+
+        return "Cập nhập nhóm phòng thành công!!";
     }
 
 

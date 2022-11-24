@@ -1,6 +1,7 @@
 package vn.com.fpt.service.group;
 
 import vn.com.fpt.requests.AddGroupRequest;
+import vn.com.fpt.requests.UpdateGroupRequest;
 import vn.com.fpt.responses.GroupAllResponse;
 import vn.com.fpt.responses.GroupContractedResponse;
 import vn.com.fpt.responses.GroupNonContractedResponse;
@@ -20,5 +21,7 @@ public interface GroupService {
     String delete(Long id, Long operator);
 
     AddGroupRequest add(AddGroupRequest request, Long operator);
+
+    String update(Long groupId, UpdateGroupRequest request, Long operator);
 
 }

@@ -60,11 +60,10 @@ public class RoomGroups extends BaseEntity {
         return group;
     }
 
-    public static RoomGroups delete(RoomGroups old, Long operator){
+    public static RoomGroups delete(RoomGroups old, Long operator) {
         var delete = modify(
                 old,
                 old.getGroupName(),
-                old.getAddress(),
                 old.getGroupDescription(),
                 operator);
         delete.setIsDisable(true);
@@ -72,11 +71,10 @@ public class RoomGroups extends BaseEntity {
     }
 
     public static RoomGroups modify(RoomGroups old,
-                             String name,
-                             Long address,
-                             String description,
-                             Long operator) {
-        var group = of(name, description, address);
+                                    String name,
+                                    String description,
+                                    Long operator) {
+        var group = of(name, description, old.getAddress());
 
         //fetch
         group.setCreatedAt(old.getCreatedAt());

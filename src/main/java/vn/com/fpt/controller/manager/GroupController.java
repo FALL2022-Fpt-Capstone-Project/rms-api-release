@@ -13,6 +13,7 @@ import vn.com.fpt.common.response.BaseResponse;
 import vn.com.fpt.common.utils.Operator;
 import vn.com.fpt.entity.Rooms;
 import vn.com.fpt.requests.AddGroupRequest;
+import vn.com.fpt.requests.UpdateGroupRequest;
 import vn.com.fpt.responses.GroupAllResponse;
 import vn.com.fpt.responses.GroupContractedResponse;
 import vn.com.fpt.responses.GroupNonContractedResponse;
@@ -63,6 +64,14 @@ public class GroupController {
     @Operation(summary = "Tạo mới một chung cư mini")
     public ResponseEntity<BaseResponse<Object>> add(@RequestBody AddGroupRequest request) {
         return AppResponse.success(groupService.add(request, Operator.operator()));
+    }
+
+
+    @PostMapping("/update/{groupId}")
+    @Operation(summary = "Cập nhập thông tin chung cư mini")
+    public ResponseEntity<BaseResponse<String>> update(@RequestBody UpdateGroupRequest request,
+                                                       @PathVariable Long groupId) {
+        return AppResponse.success(groupService.update(groupId, request, Operator.operator()));
     }
 
     @DeleteMapping("/delete/{groupId}")

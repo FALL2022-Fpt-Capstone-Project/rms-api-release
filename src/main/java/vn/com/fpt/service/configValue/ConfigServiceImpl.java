@@ -17,7 +17,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static vn.com.fpt.model.DistrictDTO.SQL_RESULT_SET_MAPPING;
