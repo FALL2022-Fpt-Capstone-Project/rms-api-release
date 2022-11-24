@@ -103,14 +103,13 @@ public class Rooms extends BaseEntity {
     }
 
     public static Rooms modify(Rooms old,
-                        String name,
-                        Integer floor,
-                        Integer limit,
-                        Long groupId,
-                        Double price,
-                        Double area,
-                        Long operator) {
-        var room = of(name, floor, limit, groupId, old.getGroupContractId(), area, price);
+                               String name,
+                               Integer floor,
+                               Integer limit,
+                               Double price,
+                               Double area,
+                               Long operator) {
+        var room = of(name, floor, limit, old.getGroupId(), old.getGroupContractId(), area, price);
 
         //fetch
         room.setId(old.getId());
@@ -129,7 +128,6 @@ public class Rooms extends BaseEntity {
                 old.getRoomName(),
                 old.getRoomFloor(),
                 old.getRoomLimitPeople(),
-                old.getGroupId(),
                 old.getRoomPrice(),
                 old.getRoomArea(),
                 operator

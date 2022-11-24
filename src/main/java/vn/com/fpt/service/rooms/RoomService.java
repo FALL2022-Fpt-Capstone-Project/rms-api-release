@@ -2,6 +2,7 @@ package vn.com.fpt.service.rooms;
 
 import vn.com.fpt.entity.Rooms;
 import vn.com.fpt.requests.RoomsRequest;
+import vn.com.fpt.requests.UpdateRoomRequest;
 import vn.com.fpt.responses.GroupContractedResponse;
 import vn.com.fpt.responses.RoomsResponse;
 
@@ -48,6 +49,8 @@ public interface RoomService {
 
     Rooms removeRoom(Long id, Long operator);
 
+    List<Rooms> removeRoom(Long[] id, Long operator);
+
     Rooms updateRoom(Long id, RoomsRequest roomsRequest);
 
     Rooms updateRoom(Rooms roomsRequest);
@@ -63,4 +66,6 @@ public interface RoomService {
     Rooms emptyRoom(Long id);
 
     Rooms updateRoomStatus(Long id, Long contractId, Long operator);
+
+    List<Rooms> update(List<UpdateRoomRequest> requests, Long operator);
 }

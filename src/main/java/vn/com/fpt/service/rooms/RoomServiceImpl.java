@@ -12,6 +12,7 @@ import vn.com.fpt.entity.Contracts;
 import vn.com.fpt.entity.Rooms;
 import vn.com.fpt.repositories.RoomsRepository;
 import vn.com.fpt.requests.RoomsRequest;
+import vn.com.fpt.requests.UpdateRoomRequest;
 import vn.com.fpt.responses.GroupContractedResponse;
 import vn.com.fpt.responses.RoomsResponse;
 import vn.com.fpt.service.assets.AssetService;
@@ -19,10 +20,7 @@ import vn.com.fpt.service.contract.ContractService;
 import vn.com.fpt.specification.BaseSpecification;
 import vn.com.fpt.specification.SearchCriteria;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static vn.com.fpt.common.constants.ErrorStatusConstants.ROOM_NOT_AVAILABLE;
 import static vn.com.fpt.common.constants.ErrorStatusConstants.ROOM_NOT_FOUND;
@@ -114,8 +112,8 @@ public class RoomServiceImpl implements RoomService {
                 GroupContractedResponse.RoomNonLeaseContracted.of(
                         groupId,
                         listRoomNonLeaseContracted,
-                        listRoomNonLeaseContracted.size() + 1,
-                        roomsRepository.findAllFloorByGroupNonContractAndGroupId(groupId).size() + 1
+                        listRoomNonLeaseContracted.size(),
+                        roomsRepository.findAllFloorByGroupNonContractAndGroupId(groupId).size()
                 )
         );
         return result;
@@ -188,6 +186,13 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
+    public List<Rooms> removeRoom(Long[] id, Long operator) {
+        List<Rooms> toDelete = new ArrayList<>(Collections.emptyList());
+        Arrays.stream(id).toList().forEach(e -> toDelete.add(Rooms.delete(room(e), operator)));
+        return roomsRepository.saveAll(toDelete);
+    }
+
+    @Override
     public Rooms updateRoom(Long id, RoomsRequest roomsRequest) {
         // TODO
         return null;
@@ -239,6 +244,22 @@ public class RoomServiceImpl implements RoomService {
         room.setModifiedAt(DateUtils.now());
         room.setModifiedBy(operator);
         return room;
+    }
+
+    @Override
+    public List<Rooms> update(List<UpdateRoomRequest> requests, Long operator) {
+        List<Rooms> listRoomToUpdate = new ArrayList<>(Collections.emptyList());
+        requests.forEach(e -> listRoomToUpdate.add(
+                Rooms.modify(
+                        room(e.getRoomId()),
+                        e.getRoomName(),
+                        e.getRoomFloor(),
+                        e.getRoomLimitPeople(),
+                        e.getRoomPrice(),
+                        e.getRoomArea(),
+                        operator))
+        );
+        return roomsRepository.saveAll(listRoomToUpdate);
     }
 
 }

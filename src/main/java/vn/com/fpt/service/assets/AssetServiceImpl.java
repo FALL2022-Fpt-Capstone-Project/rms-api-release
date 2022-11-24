@@ -174,7 +174,8 @@ public class AssetServiceImpl implements AssetService {
 
             return response;
         } else {
-            add(BasicAssets.add(request.getAssetsAdditionalName(),
+            add(BasicAssets.add(
+                    request.getAssetsAdditionalName(),
                     request.getAssetsAdditionalType(),
                     operator));
 
