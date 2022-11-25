@@ -35,6 +35,7 @@ public class GroupContractRequest {
     private String rackRenterName;
     private Boolean rackRenterGender;
     private String rackRenterPhone;
+    private String rackRenterEmail;
     private String rackRenterIdentity;
     private String rackRenterAddress;
     private String rackRenterNote;

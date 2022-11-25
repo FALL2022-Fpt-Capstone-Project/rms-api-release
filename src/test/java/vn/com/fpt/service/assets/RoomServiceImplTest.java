@@ -18,6 +18,7 @@ import vn.com.fpt.service.contract.ContractService;
 import vn.com.fpt.service.group.GroupService;
 import vn.com.fpt.service.rooms.RoomService;
 import vn.com.fpt.service.rooms.RoomServiceImpl;
+import vn.com.fpt.service.services.ServicesService;
 import vn.com.fpt.specification.BaseSpecification;
 
 import java.util.ArrayList;
@@ -47,15 +48,15 @@ public class RoomServiceImplTest {
     @Mock
     private RackRenterRepository renterRepository;
 
+    @Mock
+    private ServicesService servicesService;
+
     private RoomService roomServiceTest;
-
-
-
 
 
     @BeforeEach
     void setUp() {
-        roomServiceTest = new RoomServiceImpl(roomsRepository, assetService, contractService, groupService, renterRepository);
+        roomServiceTest = new RoomServiceImpl(roomsRepository, assetService, contractService, groupService, servicesService, renterRepository);
     }
 
 //    @Test

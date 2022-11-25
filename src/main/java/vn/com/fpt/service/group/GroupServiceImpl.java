@@ -81,6 +81,8 @@ public class GroupServiceImpl implements GroupService {
                     group.setRackRenterPhone(rackRenter.getPhoneNumber());
                     group.setRackRenterGender(rackRenter.getGender());
                     group.setRackRenterIdentity(rackRenter.getIdentityNumber());
+                    group.setRackRenterEmail(rackRenter.getEmail());
+                    group.setRackRenterNote(rackRenter.getNote());
                     group.setGroupName(roomGroups.getGroupName());
                     group.setDescription(roomGroups.getGroupDescription());
                     group.setTotalRoom(roomsRepository.findAllRoomsByGroupId(roomGroups.getId()).size());

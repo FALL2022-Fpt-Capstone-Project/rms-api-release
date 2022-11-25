@@ -28,6 +28,10 @@ public class GroupContractedResponse {
 
     private String groupName;
 
+    private String rackRenterEmail;
+
+    private String rackRenterNote;
+
     private Integer totalRoom;
 
     private Integer totalFloor;
@@ -77,6 +81,8 @@ public class GroupContractedResponse {
 
         private List<Rooms> listRoom;
 
+        private List<GeneralServiceDTO> listGeneralService;
+
         private List<HandOverAssetsDTO> listHandOverAssets;
 
         private Integer totalRoomLeaseContracted;
@@ -93,6 +99,7 @@ public class GroupContractedResponse {
                                              Double contractPrice,
                                              Double contractDeposit,
                                              List<Rooms> listRoomsLeaseContracted,
+                                             List<GeneralServiceDTO> listGeneralService,
                                              List<HandOverAssetsDTO> listHandOverAssets,
                                              Integer totalRoomLeaseContracted,
                                              Integer totalFloorLeaseContracted) {
@@ -107,6 +114,7 @@ public class GroupContractedResponse {
                     .contractPrice(contractPrice)
                     .contractDeposit(contractDeposit)
                     .listRoom(listRoomsLeaseContracted)
+                    .listGeneralService(listGeneralService)
                     .listHandOverAssets(listHandOverAssets)
                     .totalRoomLeaseContracted(totalRoomLeaseContracted)
                     .totalFloorLeaseContracted(totalFloorLeaseContracted)
@@ -129,6 +137,8 @@ public class GroupContractedResponse {
 
         private List<Rooms> listRoom;
 
+        private List<GeneralServiceDTO> listGeneralService;
+
         private Integer totalRoomNonLeaseContracted;
 
         private Integer totalFloorNonLeaseContracted;
@@ -136,12 +146,14 @@ public class GroupContractedResponse {
         public static RoomNonLeaseContracted of(Long groupId,
                                                 String groupName,
                                                 List<Rooms> listRoomsLeaseContracted,
+                                                List<GeneralServiceDTO> listGeneralService,
                                                 Integer totalRoomNonLeaseContracted,
                                                 Integer totalFloor) {
             return RoomNonLeaseContracted.builder()
                     .groupId(groupId)
                     .groupName(groupName)
                     .listRoom(listRoomsLeaseContracted)
+                    .listGeneralService(listGeneralService)
                     .totalRoomNonLeaseContracted(totalRoomNonLeaseContracted)
                     .totalFloorNonLeaseContracted(totalFloor)
                     .build();

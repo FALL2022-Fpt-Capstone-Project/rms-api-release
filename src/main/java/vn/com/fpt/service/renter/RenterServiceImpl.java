@@ -115,15 +115,19 @@ public class RenterServiceImpl implements RenterService {
     public RackRenters addRackRenter(String name,
                                      Boolean gender,
                                      String phone,
+                                     String email,
                                      String identity,
                                      Address address,
+                                     String note,
                                      Long operator) {
         return rackRenterRepo.save(RackRenters.add(
                 name,
                 gender,
                 phone,
+                email,
                 identity,
                 address,
+                note,
                 operator)
         );
     }

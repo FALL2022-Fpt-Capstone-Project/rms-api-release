@@ -20,6 +20,7 @@ import vn.com.fpt.responses.RoomsResponse;
 import vn.com.fpt.service.assets.AssetService;
 import vn.com.fpt.service.contract.ContractService;
 import vn.com.fpt.service.group.GroupService;
+import vn.com.fpt.service.services.ServicesService;
 import vn.com.fpt.specification.BaseSpecification;
 import vn.com.fpt.specification.SearchCriteria;
 
@@ -42,18 +43,21 @@ public class RoomServiceImpl implements RoomService {
 
     private final RackRenterRepository rackRenters;
 
+    private final ServicesService servicesService;
+
     public RoomServiceImpl(RoomsRepository roomsRepository,
                            AssetService assetService,
                            @Lazy ContractService contractService,
                            @Lazy GroupService service,
+                           @Lazy ServicesService servicesService,
                            RackRenterRepository rackRenters) {
         this.roomsRepository = roomsRepository;
         this.assetService = assetService;
         this.contractService = contractService;
         this.groupService = service;
         this.rackRenters = rackRenters;
+        this.servicesService = servicesService;
     }
-
     @Override
     public List<RoomsResponse> listRoom(Long groupId,
                                         Long groupContractId,
@@ -114,9 +118,10 @@ public class RoomServiceImpl implements RoomService {
                             contracts.getContractPrice(),
                             contracts.getContractDeposit(),
                             roomLeaseContracted,
+                            servicesService.listGeneralServiceByGroupId(groupId),
                             assetService.listHandOverAsset(contracts.getId()),
-                            roomLeaseContracted.size() + 1,
-                            roomsRepository.findAllFloorByGroupContractIdAndGroupId(contracts.getId(), groupId).size() + 1
+                            roomLeaseContracted.size(),
+                            roomsRepository.findAllFloorByGroupContractIdAndGroupId(contracts.getId(), groupId).size()
                     )
             );
         }
@@ -133,6 +138,7 @@ public class RoomServiceImpl implements RoomService {
                         groupId,
                         group.getGroupName(),
                         listRoomNonLeaseContracted,
+                        servicesService.listGeneralServiceByGroupId(groupId),
                         listRoomNonLeaseContracted.size(),
                         roomsRepository.findAllFloorByGroupNonContractAndGroupId(groupId).size()
                 )

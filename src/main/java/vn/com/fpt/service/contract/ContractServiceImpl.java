@@ -192,8 +192,10 @@ public class ContractServiceImpl implements ContractService {
                     request.getRackRenterName(),
                     request.getRackRenterGender(),
                     request.getRackRenterPhone(),
+                    request.getRackRenterEmail(),
                     request.getRackRenterIdentity(),
                     Address.add(null, null, null, request.getRackRenterAddress(), operator),
+                    request.getRackRenterNote(),
                     operator
             ).getId();
         } else {
@@ -209,19 +211,19 @@ public class ContractServiceImpl implements ContractService {
 
         listRoom.forEach(e -> e.setGroupContractId(addedContract.getId()));
         roomService.updateRoom(listRoom);
-        var listGeneralService = servicesService.listGeneralServiceByGroupId(request.getGroupId());
-        List<GeneralServiceRequest> listGeneralServiceForLeaseContract = new ArrayList<>(Collections.emptyList());
-        for (GeneralServiceDTO generalServiceDTO : listGeneralService) {
-            listGeneralServiceForLeaseContract.add(new GeneralServiceRequest(
-                    addedContract.getId(),
-                    generalServiceDTO.getServiceId().longValue(),
-                    generalServiceDTO.getServicePrice(),
-                    generalServiceDTO.getServiceTypeId().longValue(),
-                    generalServiceDTO.getNote(),
-                    request.getGroupId()
-            ));
-        }
-        servicesService.addGeneralService(listGeneralServiceForLeaseContract, operator);
+//        var listGeneralService = servicesService.listGeneralServiceByGroupId(request.getGroupId());
+//        List<GeneralServiceRequest> listGeneralServiceForLeaseContract = new ArrayList<>(Collections.emptyList());
+//        for (GeneralServiceDTO generalServiceDTO : listGeneralService) {
+//            listGeneralServiceForLeaseContract.add(new GeneralServiceRequest(
+//                    addedContract.getId(),
+//                    generalServiceDTO.getServiceId().longValue(),
+//                    generalServiceDTO.getServicePrice(),
+//                    generalServiceDTO.getServiceTypeId().longValue(),
+//                    generalServiceDTO.getNote(),
+//                    request.getGroupId()
+//            ));
+//        }
+//        servicesService.addGeneralService(listGeneralServiceForLeaseContract, operator);
 
         if (!request.getListHandOverAsset().isEmpty()) {
             request.getListHandOverAsset().forEach(e -> {

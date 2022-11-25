@@ -28,8 +28,10 @@ public interface RenterService {
     RackRenters addRackRenter(String name,
                               Boolean gender,
                               String phone,
+                              String email,
                               String identity,
                               Address address,
+                              String note,
                               Long operator);
 
     RentersResponse updateRenter(Long id, RenterRequest addRenterRequest, Long operator);
