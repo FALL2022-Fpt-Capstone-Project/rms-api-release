@@ -49,9 +49,9 @@ public class RoomController {
         return AppResponse.success(String.format("Xóa phòng %s thành công", deletedRoom.getRoomName()));
     }
 
-    @DeleteMapping("/delete/list/{roomId}")
+    @DeleteMapping("/delete/list")
     @Operation(summary = "Xóa nhiều phòng")
-    public ResponseEntity<BaseResponse<String>> delete(@PathVariable List<Long> roomId) {
+    public ResponseEntity<BaseResponse<String>> delete(@RequestParam List<Long> roomId) {
         var deletedRoom = roomService.removeRoom(roomId, Operator.operator());
         String roomNameDeleted = String.join(", ", deletedRoom.stream().map(Rooms::getRoomName).toList());
         return AppResponse.success(String.format("Xóa phòng %s thành công", roomNameDeleted));
