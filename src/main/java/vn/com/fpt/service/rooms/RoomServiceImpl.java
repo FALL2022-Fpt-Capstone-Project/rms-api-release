@@ -213,9 +213,9 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public List<Rooms> removeRoom(Long[] id, Long operator) {
+    public List<Rooms> removeRoom(List<Long> id, Long operator) {
         List<Rooms> toDelete = new ArrayList<>(Collections.emptyList());
-        Arrays.stream(id).toList().forEach(e -> toDelete.add(Rooms.delete(room(e), operator)));
+        id.forEach(e -> toDelete.add(Rooms.delete(room(e), operator)));
         return roomsRepository.saveAll(toDelete);
     }
 

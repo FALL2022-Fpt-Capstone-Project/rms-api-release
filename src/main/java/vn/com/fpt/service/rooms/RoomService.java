@@ -49,7 +49,7 @@ public interface RoomService {
 
     Rooms removeRoom(Long id, Long operator);
 
-    List<Rooms> removeRoom(Long[] id, Long operator);
+    List<Rooms> removeRoom(List<Long> id, Long operator);
 
     Rooms updateRoom(Long id, RoomsRequest roomsRequest);
 

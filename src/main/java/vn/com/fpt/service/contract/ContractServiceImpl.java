@@ -76,6 +76,7 @@ public class ContractServiceImpl implements ContractService {
 
         var roomId = request.getRoomId();
         var groupContractId = roomService.getRoom(roomId).getGroupContractId();
+
         if (ObjectUtils.isEmpty(groupContractId))
             throw new BusinessException("Phòng này chưa có hợp đồng nhóm phòng. Vui lòng kiểm tra lại!!");
         var room = roomService.emptyRoom(roomId);
@@ -258,10 +259,10 @@ public class ContractServiceImpl implements ContractService {
         Contracts contractsInformation = Contracts.modifyForSublease(oldContract, request, operator);
 
 
-
         var roomId = oldContract.getRoomId(); //oldRoom
         var groupContractId = roomService.getRoom(roomId).getGroupContractId();
-        if (ObjectUtils.isEmpty(groupContractId)) throw new BusinessException("Phòng này chưa có hợp đồng nhóm phòng. Vui lòng kiểm tra lại!!");
+        if (ObjectUtils.isEmpty(groupContractId))
+            throw new BusinessException("Phòng này chưa có hợp đồng nhóm phòng. Vui lòng kiểm tra lại!!");
 
         if (!Objects.equals(request.getRoomId(), roomId)) { // nếu khác thì sẽ check r add
             roomId = roomService.emptyRoom(request.getRoomId()).getId();
@@ -328,6 +329,8 @@ public class ContractServiceImpl implements ContractService {
             AtomicInteger currentWater = new AtomicInteger(0);
 
             request.getListGeneralService().forEach(service -> {
+
+
                 var serviceId = servicesService.generalService(service.getGeneralServiceId()).getServiceId().longValue();
                 var serviceTypeId = servicesService.generalService(service.getGeneralServiceId()).getServiceTypeId().longValue();
 
@@ -337,13 +340,13 @@ public class ContractServiceImpl implements ContractService {
                 if (serviceId == SERVICE_ELECTRIC) {
                     currentElectric.set(service.getHandOverGeneralServiceIndex());
                 }
-
                 servicesService.updateHandOverGeneralService(
                         service.getHandOverGeneralServiceId(),
                         service,
                         oldContract.getId(),
                         startDate,
                         operator);
+
             });
             //cập nhập chỉ số điện nước cho phòng
             roomService.setServiceIndex(request.getRoomId(),
@@ -378,10 +381,10 @@ public class ContractServiceImpl implements ContractService {
         roomContract.setRoomName(roomService.getRoom(roomContract.getRoomId()).getRoomName());
         roomContract.setGroupName(((GroupContractedResponse) groupService.group(roomContract.getGroupId())).getGroupName());
         roomContract.setListRoom(roomService.listRoom(contract.getGroupId(),
-                                roomService.getRoom(roomContract.getRoomId()).getGroupContractId(),
-                                null,
-                                null,
-                                null));
+                roomService.getRoom(roomContract.getRoomId()).getGroupContractId(),
+                null,
+                null,
+                null));
         return roomContract;
     }
 
@@ -416,7 +419,7 @@ public class ContractServiceImpl implements ContractService {
             contractSpec.add(new SearchCriteria("groupId", groupId, EQUAL));
         }
 
-        if (StringUtils.isNoneBlank(startDate, endDate) ) {
+        if (StringUtils.isNoneBlank(startDate, endDate)) {
             contractSpec.add(new SearchCriteria("contractStartDate", DateUtils.parse(startDate, DATE_FORMAT_3), GREATER_THAN_EQUAL));
 
             contractSpec.add(new SearchCriteria("contractEndDate", DateUtils.parse(endDate, DATE_FORMAT_3), LESS_THAN_EQUAL));
@@ -519,7 +522,7 @@ public class ContractServiceImpl implements ContractService {
         if (Objects.nonNull(isDisable)) {
             contractsSpec.add(SearchCriteria.of("contractIsDisable", isDisable, EQUAL));
         }
-            contractsSpec.add(SearchCriteria.of("rackRenters", rackRenterIdToFilter, IN));
+        contractsSpec.add(SearchCriteria.of("rackRenters", rackRenterIdToFilter, IN));
 
         List<GroupContractDTO> listGroupContract = new ArrayList<>();
         var groupContracts = contractRepository.findAll(contractsSpec, Sort.by("contractStartDate").ascending());
@@ -528,12 +531,12 @@ public class ContractServiceImpl implements ContractService {
         groupContracts.forEach
                 (e ->
                         listGroupContract.add(GroupContractDTO.of(
-                                e,
-                                (GroupContractedResponse) groupService.group(e.getGroupId()),
-                                assetService.listHandOverAsset(e.getId()),
-                                servicesService.listGeneralService(e.getId()),
-                                roomService.listRoom(e.getGroupId(), e.getId(), null, null, null),
-                                renterService.rackRenter(e.getRackRenters())
+                                        e,
+                                        (GroupContractedResponse) groupService.group(e.getGroupId()),
+                                        assetService.listHandOverAsset(e.getId()),
+                                        servicesService.listGeneralService(e.getId()),
+                                        roomService.listRoom(e.getGroupId(), e.getId(), null, null, null),
+                                        renterService.rackRenter(e.getRackRenters())
                                 )
                         )
                 );
