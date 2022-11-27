@@ -154,7 +154,7 @@ public class GroupServiceImpl implements GroupService {
         var addressId = addressRepository.save(Address.add(
                 request.getAddressCity(),
                 request.getAddressDistrict(),
-                request.getAddressDistrict(),
+                request.getAddressWard(),
                 request.getAddressMoreDetail(),
                 operator)
         ).getId();
