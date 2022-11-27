@@ -209,11 +209,18 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public Rooms removeRoom(Long id, Long operator) {
+        if(Objects.nonNull(roomChecker(id).getContractId()))
+            throw new BusinessException(ROOM_NOT_AVAILABLE, "Phòng " + roomChecker(id).getRoomName() + " đã có người thuê. Không thể xóa!!");
         return roomsRepository.save(Rooms.delete(room(id), operator));
     }
 
     @Override
     public List<Rooms> removeRoom(List<Long> id, Long operator) {
+        var checkEmptyRoom = roomsRepository.findAllByIdInAndContractIdNotNull(id);
+        if (!checkEmptyRoom.isEmpty()) {
+            String var1 = String.join(", ", checkEmptyRoom.stream().map(Rooms::getRoomName).toList());
+            throw new BusinessException(ROOM_NOT_AVAILABLE, "Phòng " + var1 + " đã có người thuê. Không thể xóa!!");
+        }
         List<Rooms> toDelete = new ArrayList<>(Collections.emptyList());
         id.forEach(e -> toDelete.add(Rooms.delete(room(e), operator)));
         return roomsRepository.saveAll(toDelete);
