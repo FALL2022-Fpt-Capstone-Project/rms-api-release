@@ -79,6 +79,7 @@ public class RoomGroups extends BaseEntity {
         //fetch
         group.setCreatedAt(old.getCreatedAt());
         group.setCreatedBy(old.getCreatedBy());
+        group.setIsDisable(false);
 
         group.setId(old.getId());
         group.setModifiedAt(now());
