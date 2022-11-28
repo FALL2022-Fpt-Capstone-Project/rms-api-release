@@ -1,9 +1,11 @@
 package vn.com.fpt.service.rooms;
 
 import vn.com.fpt.entity.Rooms;
-import vn.com.fpt.requests.RoomsRequest;
+import vn.com.fpt.requests.RoomsPreviewRequest;
+import vn.com.fpt.requests.AddRoomsRequest;
 import vn.com.fpt.requests.UpdateRoomRequest;
 import vn.com.fpt.responses.GroupContractedResponse;
+import vn.com.fpt.responses.RoomsPreviewResponse;
 import vn.com.fpt.responses.RoomsResponse;
 
 import java.util.List;
@@ -11,7 +13,7 @@ import java.util.List;
 public interface RoomService {
     List<RoomsResponse> listRoom(Long groupId,
                                  Long groupContractId,
-                                 Long floor,
+                                 Integer floor,
                                  Integer status,
                                  String name);
 
@@ -51,7 +53,7 @@ public interface RoomService {
 
     List<Rooms> removeRoom(List<Long> id, Long operator);
 
-    Rooms updateRoom(Long id, RoomsRequest roomsRequest);
+    Rooms updateRoom(Long id, AddRoomsRequest roomsRequest);
 
     Rooms updateRoom(Rooms roomsRequest);
 
@@ -68,4 +70,6 @@ public interface RoomService {
     Rooms updateRoomStatus(Long id, Long contractId, Long operator);
 
     List<Rooms> update(List<UpdateRoomRequest> requests, Long operator);
+
+    List<RoomsPreviewResponse> preview(RoomsPreviewRequest request);
 }

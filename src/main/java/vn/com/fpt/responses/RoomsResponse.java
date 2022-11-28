@@ -37,6 +37,8 @@ public class RoomsResponse {
 
     private Double roomArea;
 
+    private Boolean isDisable;
+
     public static RoomsResponse of(Rooms rooms) {
         return RoomsResponse.builder()
                 .roomId(rooms.getId())
@@ -50,6 +52,7 @@ public class RoomsResponse {
                 .roomArea(rooms.getRoomArea())
                 .contractId(rooms.getContractId())
                 .groupContractId(rooms.getGroupContractId())
+                .isDisable(rooms.getIsDisable())
                 .build();
     }
 }

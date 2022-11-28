@@ -12,14 +12,12 @@ import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.entity.Rooms;
 import vn.com.fpt.repositories.RackRenterRepository;
 import vn.com.fpt.repositories.RoomsRepository;
-import vn.com.fpt.requests.RoomsRequest;
-import vn.com.fpt.responses.RoomsResponse;
+import vn.com.fpt.requests.AddRoomsRequest;
 import vn.com.fpt.service.contract.ContractService;
 import vn.com.fpt.service.group.GroupService;
 import vn.com.fpt.service.rooms.RoomService;
 import vn.com.fpt.service.rooms.RoomServiceImpl;
 import vn.com.fpt.service.services.ServicesService;
-import vn.com.fpt.specification.BaseSpecification;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -130,7 +128,7 @@ public class RoomServiceImplTest {
     @Test
     void testUpdateRoom() {
         long id = 1l;
-        RoomsRequest roomsRequest = new RoomsRequest();
+        AddRoomsRequest roomsRequest = new AddRoomsRequest();
         //verify
         Assertions.assertEquals(null, roomServiceTest.updateRoom(id, roomsRequest));
     }

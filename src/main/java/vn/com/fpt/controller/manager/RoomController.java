@@ -10,12 +10,18 @@ import vn.com.fpt.common.response.AppResponse;
 import vn.com.fpt.common.response.BaseResponse;
 import vn.com.fpt.common.utils.Operator;
 import vn.com.fpt.entity.Rooms;
+import vn.com.fpt.requests.RoomsPreviewRequest;
+import vn.com.fpt.requests.AddRoomsRequest;
 import vn.com.fpt.requests.UpdateRoomRequest;
+import vn.com.fpt.responses.RoomsPreviewResponse;
 import vn.com.fpt.responses.RoomsResponse;
 import vn.com.fpt.service.rooms.RoomService;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import static vn.com.fpt.common.constants.ManagerConstants.NOT_RENTED_YET;
 import static vn.com.fpt.configs.AppConfigs.*;
 
 @SecurityRequirement(name = "BearerAuth")
@@ -33,8 +39,8 @@ public class RoomController {
     public ResponseEntity<BaseResponse<List<RoomsResponse>>> room(@RequestParam(required = false) Long groupId,
                                                                   @RequestParam(required = false) Long groupContractId,
                                                                   @RequestParam(required = false) String name,
-                                                                  @RequestParam(required = false) Long floor,
-                                                                  @RequestParam(required = false) Integer available){
+                                                                  @RequestParam(required = false) Integer floor,
+                                                                  @RequestParam(required = false) Integer available) {
         return AppResponse.success(roomService.listRoom(groupId,
                 groupContractId,
                 floor,
@@ -63,6 +69,36 @@ public class RoomController {
         var updatedRoom = roomService.update(requests, Operator.operator());
         String roomNameUpdated = String.join(", ", updatedRoom.stream().map(Rooms::getRoomName).toList());
         return AppResponse.success(String.format("Cập nhập %s thành công", roomNameUpdated));
+    }
+
+    @PostMapping("/generate/preview")
+    @Operation(summary = "Xem trước list phòng trước khi gen tự động")
+    public ResponseEntity<BaseResponse<List<RoomsPreviewResponse>>> previewGenerate(@RequestBody RoomsPreviewRequest request) {
+        return AppResponse.success(roomService.preview(request));
+    }
+
+    @PostMapping("/add")
+    @Operation(summary = "Thêm một hoặc nhiều phòng")
+    public ResponseEntity<BaseResponse<String>> add(@RequestBody List<AddRoomsRequest> requests) {
+        List<Rooms> roomToAdd = new ArrayList<>(Collections.emptyList());
+        requests.forEach(e -> {
+                    if (e.getIsOld())
+                        roomToAdd.add(
+                                Rooms.add(
+                                        e.getRoomName(),
+                                        e.getRoomFloor(),
+                                        e.getRoomLimitPeople(),
+                                        e.getGroupId(),
+                                        NOT_RENTED_YET,
+                                        e.getRoomPrice(),
+                                        e.getRoomArea(),
+                                        Operator.operator()
+                                )
+                        );
+                }
+        );
+        String roomName = String.join(", ", roomService.add(roomToAdd).stream().map(Rooms::getRoomName).toList());
+        return AppResponse.success(String.format("Thêm phòng: %s thành công!!", roomName));
     }
 
 }

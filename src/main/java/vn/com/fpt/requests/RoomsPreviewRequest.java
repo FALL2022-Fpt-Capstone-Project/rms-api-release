@@ -14,25 +14,17 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class AddGroupRequest {
-    private String groupName;
+public class RoomsPreviewRequest {
+    private Long groupId;
 
-    private Integer totalFloor;
     private Integer totalRoomPerFloor;
     private String roomNameConvention;
     private Integer roomLimitedPeople;
     private Double roomPrice;
     private Double roomArea;
 
-    private String addressCity;
+    private List<Integer> listFloor;
 
-    private String addressDistrict;
 
-    private String addressWard;
 
-    private String addressMoreDetail;
-
-    private String description;
-
-    private List<GeneralServiceRequest> listGeneralService;
 }
