@@ -6,13 +6,16 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import vn.com.fpt.entity.Rooms;
-import vn.com.fpt.entity.authentication.Account;
 
 import java.util.List;
 
 @Repository
 public interface RoomsRepository extends JpaRepository<Rooms, Long>, JpaSpecificationExecutor<Rooms> {
     List<Rooms> findAllByGroupId(Long groupId);
+
+    List<Rooms> findAllByGroupIdAndIdNotIn(Long groupId, List<Long> roomId);
+
+    List<Rooms> findByGroupIdAndIdNot(Long groupId, Long roomId);
 
     List<Rooms> findAllByGroupContractIdAndGroupId(Long groupContractId, Long groupId);
 

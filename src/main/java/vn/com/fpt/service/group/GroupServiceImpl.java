@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import static vn.com.fpt.common.constants.ErrorStatusConstants.DUPLICATE_NAME;
 import static vn.com.fpt.common.constants.ManagerConstants.LEASE_CONTRACT;
 
 @Service
@@ -160,6 +161,9 @@ public class GroupServiceImpl implements GroupService {
         ).getId();
 
         //Thêm mới 1 nhóm
+        var existedGroup = groupRepository.findAll();
+        if (checkDuplicateGroupName(existedGroup, request.getGroupName()))
+            throw new BusinessException(DUPLICATE_NAME, "Tên tòa bị trùng: " + request.getGroupName());
         var group = groupRepository.save(RoomGroups.add(
                 request.getGroupName(),
                 request.getDescription(),
@@ -201,7 +205,8 @@ public class GroupServiceImpl implements GroupService {
                 request.getAddressMoreDetail(),
                 operator);
         addressRepository.save(newAddress);
-
+        if (checkDuplicateGroupName(groupRepository.findAllByIdNot(groupId), request.getGroupName()))
+            throw new BusinessException(DUPLICATE_NAME, "Tên tòa bị trùng: " + request.getGroupName());
         var newGroup = RoomGroups.modify(
                 oldGroup,
                 request.getGroupName(),
@@ -225,6 +230,13 @@ public class GroupServiceImpl implements GroupService {
         roomsRepository.saveAll(newRoom);
 
         return "Cập nhập nhóm phòng thành công!!";
+    }
+
+    private boolean checkDuplicateGroupName(List<RoomGroups> roomGroups, String groupName) {
+        for (RoomGroups roomGroup : roomGroups) {
+            if (roomGroup.getGroupName().equalsIgnoreCase(groupName)) return true;
+        }
+        return false;
     }
 
 

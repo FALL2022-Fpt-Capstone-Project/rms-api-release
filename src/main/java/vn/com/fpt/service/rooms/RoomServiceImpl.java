@@ -245,7 +245,7 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public Rooms updateRoom(Rooms roomsRequest) {
         if (checkDuplicateRoomName(
-                roomsRepository.findAllByGroupId(room(roomsRequest.getId()).getGroupId()),
+                roomsRepository.findByGroupIdAndIdNot(room(roomsRequest.getId()).getGroupId(), roomsRequest.getId()),
                 roomsRequest.getRoomName()))
             throw new BusinessException(DUPLICATE_NAME, "Tên phòng bị trùng: " + roomsRequest.getRoomName());
         return roomsRepository.save(roomsRequest);
@@ -304,9 +304,14 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public List<Rooms> update(List<UpdateRoomRequest> requests, Long operator) {
         List<Rooms> listRoomToUpdate = new ArrayList<>(Collections.emptyList());
+        var listExitedRoom = roomsRepository.findAllByGroupIdAndIdNotIn
+                (
+                        room(requests.get(0).getRoomId()).getGroupId(),
+                        requests.stream().map(UpdateRoomRequest::getRoomId).toList()
+                );
         requests.forEach(e -> {
                     if (checkDuplicateRoomName(
-                            roomsRepository.findAllByGroupId(room(e.getRoomId()).getGroupId()),
+                            listExitedRoom,
                             e.getRoomName()))
                         throw new BusinessException(DUPLICATE_NAME, "Tên phòng bị trùng: " + e.getRoomName());
                     listRoomToUpdate.add(
