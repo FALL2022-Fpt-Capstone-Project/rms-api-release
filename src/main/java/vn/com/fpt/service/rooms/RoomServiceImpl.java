@@ -160,7 +160,7 @@ public class RoomServiceImpl implements RoomService {
     public List<Rooms> add(List<Rooms> rooms) {
         rooms.forEach(e -> {
             if (checkDuplicateRoomName(
-                    roomsRepository.findAllByGroupIdAndIsDisableFalse(e.getGroupId()),
+                    roomsRepository.findAllByGroupIdAndIsDisableIsFalse(e.getGroupId()),
                     e.getRoomName()))
                 throw new BusinessException(DUPLICATE_NAME, "Tên phòng bị trùng: " + e.getRoomName());
         });
@@ -261,7 +261,7 @@ public class RoomServiceImpl implements RoomService {
     public List<Rooms> updateRoom(List<Rooms> rooms) {
         rooms.forEach(e -> {
             if (checkDuplicateRoomName(
-                    roomsRepository.findAllByGroupIdAndIsDisableFalse(room(e.getId()).getGroupId()),
+                    roomsRepository.findAllByGroupIdAndIsDisableIsFalse(room(e.getId()).getGroupId()),
                     e.getRoomName()))
                 throw new BusinessException(DUPLICATE_NAME, "Tên phòng bị trùng: " + e.getRoomName());
         });
@@ -310,7 +310,7 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public List<Rooms> update(List<UpdateRoomRequest> requests, Long operator) {
         List<Rooms> listRoomToUpdate = new ArrayList<>(Collections.emptyList());
-        var listExitedRoom = roomsRepository.findAllByGroupIdAndIdNotIn
+        var listExitedRoom = roomsRepository.findAllByGroupIdAndIdNotInAndIsDisableIsFalse
                 (
                         room(requests.get(0).getRoomId()).getGroupId(),
                         requests.stream().map(UpdateRoomRequest::getRoomId).toList()

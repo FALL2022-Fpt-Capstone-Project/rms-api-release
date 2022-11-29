@@ -11,9 +11,9 @@ import java.util.List;
 
 @Repository
 public interface RoomsRepository extends JpaRepository<Rooms, Long>, JpaSpecificationExecutor<Rooms> {
-    List<Rooms> findAllByGroupIdAndIsDisableFalse(Long groupId);
+    List<Rooms> findAllByGroupIdAndIsDisableIsFalse(Long groupId);
 
-    List<Rooms> findAllByGroupIdAndIdNotIn(Long groupId, List<Long> roomId);
+    List<Rooms> findAllByGroupIdAndIdNotInAndIsDisableIsFalse(Long groupId, List<Long> roomId);
 
     List<Rooms> findByGroupIdAndIdNot(Long groupId, Long roomId);
 
