@@ -154,7 +154,7 @@ public class RoomServiceImpl implements RoomService {
     public List<Rooms> add(List<Rooms> rooms) {
         rooms.forEach(e -> {
             if (checkDuplicateRoomName(
-                    roomsRepository.findAllByGroupId(room(e.getId()).getGroupId()),
+                    roomsRepository.findAllByGroupId(e.getGroupId()),
                     e.getRoomName()))
                 throw new BusinessException(DUPLICATE_NAME, "Tên phòng bị trùng: " + e.getRoomName());
         });
