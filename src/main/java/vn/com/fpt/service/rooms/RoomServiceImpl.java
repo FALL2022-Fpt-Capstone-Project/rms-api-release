@@ -89,7 +89,11 @@ public class RoomServiceImpl implements RoomService {
         if (StringUtils.isNoneBlank(name)) {
             specification.add(new SearchCriteria("roomName", name, MATCH));
         }
-        return roomsRepository.findAll(specification, Sort.by(Sort.Order.asc("roomFloor"), Sort.Order.desc("createdAt"))).stream().map(RoomsResponse::of).toList();
+        return roomsRepository.findAll(
+                        specification,
+                        Sort.by("roomFloor").ascending().and(Sort.by("createdAt").descending())
+                )
+                .stream().map(RoomsResponse::of).toList();
     }
 
     @Override
