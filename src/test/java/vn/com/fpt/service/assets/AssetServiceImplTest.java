@@ -18,6 +18,7 @@ import vn.com.fpt.model.HandOverAssetsDTO;
 import vn.com.fpt.repositories.AssetTypesRepository;
 import vn.com.fpt.repositories.BasicAssetRepository;
 import vn.com.fpt.repositories.HandOverAssetsRepository;
+import vn.com.fpt.repositories.RoomAssetRepository;
 import vn.com.fpt.requests.BasicAssetsRequest;
 import vn.com.fpt.requests.HandOverAssetsRequest;
 import vn.com.fpt.service.contract.ContractService;
@@ -51,11 +52,19 @@ class AssetServiceImplTest {
     @Mock
     private ContractService contractService;
 
+    @Mock
+    private RoomAssetRepository roomAssetRepository;
+
     private AssetService assetServiceTest;
 
     @BeforeEach
     void setUp() {
-        assetServiceTest = new AssetServiceImpl(entityManager, assetTypesRepository, basicAssetRepository, handOverAssetsRepository, contractService);
+        assetServiceTest = new AssetServiceImpl(entityManager,
+                assetTypesRepository,
+                basicAssetRepository,
+                handOverAssetsRepository,
+                contractService,
+                roomAssetRepository);
     }
 
     @Test

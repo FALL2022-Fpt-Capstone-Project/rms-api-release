@@ -3,10 +3,12 @@ package vn.com.fpt.service.assets;
 import vn.com.fpt.entity.AssetTypes;
 import vn.com.fpt.entity.BasicAssets;
 import vn.com.fpt.entity.HandOverAssets;
+import vn.com.fpt.entity.RoomAssets;
 import vn.com.fpt.model.BasicAssetDTO;
 import vn.com.fpt.model.HandOverAssetsDTO;
 import vn.com.fpt.requests.BasicAssetsRequest;
 import vn.com.fpt.requests.HandOverAssetsRequest;
+import vn.com.fpt.requests.RoomAssetsRequest;
 
 import java.util.Date;
 import java.util.List;
@@ -24,6 +26,10 @@ public interface AssetService {
     BasicAssets add(BasicAssetsRequest request, Long operator);
 
     BasicAssets add(BasicAssets request);
+
+    List<RoomAssets> add(List<RoomAssets> listRoomAssets);
+
+    List<RoomAssets> roomAdd(List<RoomAssetsRequest> request, Long operator);
 
     HandOverAssets addHandOverAsset(HandOverAssetsRequest request,
                                     Long operator,
@@ -55,4 +61,6 @@ public interface AssetService {
     String deleteBasicAsset(Long id);
 
     HandOverAssets handOverAsset(Long id);
+
+
 }

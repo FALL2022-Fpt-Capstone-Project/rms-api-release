@@ -1,30 +1,32 @@
 package vn.com.fpt.service.assets;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.entity.AssetTypes;
 import vn.com.fpt.entity.BasicAssets;
 import vn.com.fpt.entity.HandOverAssets;
+import vn.com.fpt.entity.RoomAssets;
 import vn.com.fpt.model.BasicAssetDTO;
 import vn.com.fpt.model.HandOverAssetsDTO;
 import vn.com.fpt.repositories.AssetTypesRepository;
 import vn.com.fpt.repositories.BasicAssetRepository;
 import vn.com.fpt.repositories.HandOverAssetsRepository;
+import vn.com.fpt.repositories.RoomAssetRepository;
 import vn.com.fpt.requests.BasicAssetsRequest;
 import vn.com.fpt.requests.HandOverAssetsRequest;
+import vn.com.fpt.requests.RoomAssetsRequest;
 import vn.com.fpt.service.contract.ContractService;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static vn.com.fpt.common.constants.ErrorStatusConstants.ASSET_OUT_OF_STOCK;
+import static vn.com.fpt.common.constants.ManagerConstants.DEFAULT_ASSET_QUANTITY;
 import static vn.com.fpt.common.constants.ManagerConstants.SUBLEASE_CONTRACT;
-import static vn.com.fpt.common.utils.DateUtils.DATE_FORMAT_3;
 import static vn.com.fpt.common.utils.DateUtils.parse;
 import static vn.com.fpt.model.HandOverAssetsDTO.SQL_RESULT_SET_MAPPING;
 
@@ -40,16 +42,19 @@ public class AssetServiceImpl implements AssetService {
 
     private final ContractService contractService;
 
+    private final RoomAssetRepository roomAssetRepository;
+
     public AssetServiceImpl(EntityManager entityManager,
                             AssetTypesRepository assetTypesRepository,
                             BasicAssetRepository basicAssetRepository,
                             HandOverAssetsRepository handOverAssetsRepository,
-                            @Lazy ContractService contractService) {
+                            @Lazy ContractService contractService, RoomAssetRepository roomAssetRepository) {
         this.entityManager = entityManager;
         this.assetTypesRepository = assetTypesRepository;
         this.basicAssetRepository = basicAssetRepository;
         this.handOverAssetsRepository = handOverAssetsRepository;
         this.contractService = contractService;
+        this.roomAssetRepository = roomAssetRepository;
     }
 
     @Override
@@ -128,6 +133,45 @@ public class AssetServiceImpl implements AssetService {
     @Override
     public BasicAssets add(BasicAssets request) {
         return basicAssetRepository.save(BasicAssets.add(request));
+    }
+
+    @Override
+    public List<RoomAssets> add(List<RoomAssets> listRoomAssets) {
+        return roomAssetRepository.saveAll(listRoomAssets);
+    }
+
+    @Override
+    public List<RoomAssets> roomAdd(List<RoomAssetsRequest> request, Long operator) {
+        Set<Long> roomIds = request.stream().map(RoomAssetsRequest::getRoomId).collect(Collectors.toSet());
+        var listAsset = new ArrayList<RoomAssets>(Collections.emptyList());
+        for (Long roomId : roomIds) {
+            var listExitedRoomAsset = roomAssetRepository.findAllByRoomId(roomId);
+            var room = roomAssetRepository.findById(roomId).get();
+            for (RoomAssetsRequest rar : request) {
+                listAsset.addAll(listExitedRoomAsset.stream().filter(e ->
+                        e.getAssetName().equalsIgnoreCase(rar.getAssetName())
+                ).map(e -> RoomAssets.modify(
+                        room,
+                        e.getAssetName(),
+                        room.getAssetQuantity() + 1,
+                        rar.getAssetTypeId(),
+                        roomId,
+                        operator
+                )).toList());
+
+                listAsset.addAll(listExitedRoomAsset.stream().filter(e ->
+                        !e.getAssetName().equalsIgnoreCase(rar.getAssetName())
+                ).map(e -> RoomAssets.modify(
+                        room,
+                        e.getAssetName(),
+                        ObjectUtils.isEmpty(rar.getAssetQuantity()) ? DEFAULT_ASSET_QUANTITY : rar.getAssetQuantity(),
+                        rar.getAssetTypeId(),
+                        roomId,
+                        operator
+                )).toList());
+            }
+        }
+        return roomAssetRepository.saveAll(listAsset);
     }
 
     @Override

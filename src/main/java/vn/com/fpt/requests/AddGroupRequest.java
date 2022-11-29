@@ -23,6 +23,8 @@ public class AddGroupRequest {
     private Integer roomLimitedPeople;
     private Double roomPrice;
     private Double roomArea;
+    private List<RoomAssetsRequest> listAsset;
+    private List<RoomAssetsRequest> listAdditionalAsset;
 
     private String addressCity;
 
@@ -35,4 +37,6 @@ public class AddGroupRequest {
     private String description;
 
     private List<GeneralServiceRequest> listGeneralService;
+
+
 }

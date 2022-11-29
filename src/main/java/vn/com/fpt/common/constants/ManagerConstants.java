@@ -17,6 +17,9 @@ public class ManagerConstants {
     public static final Long TYPE_BED_ROOM = 4L;
     public static final Long TYPE_ANOTHER = 5L;
     public static final Long TYPE_OFFICE = 6L;
+
+
+    public static final Integer DEFAULT_ASSET_QUANTITY = 1;
     //basic service
     public static final Long SERVICE_ELECTRIC = 1L;
     public static final Long SERVICE_WATER = 2L;

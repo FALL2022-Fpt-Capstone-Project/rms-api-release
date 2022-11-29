@@ -5,21 +5,21 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import vn.com.fpt.common.response.AppResponse;
 import vn.com.fpt.common.response.BaseResponse;
 import vn.com.fpt.common.utils.Operator;
 import vn.com.fpt.entity.AssetTypes;
 import vn.com.fpt.entity.BasicAssets;
-import vn.com.fpt.entity.HandOverAssets;
+import vn.com.fpt.entity.RoomAssets;
 import vn.com.fpt.model.BasicAssetDTO;
 import vn.com.fpt.requests.BasicAssetsRequest;
-import vn.com.fpt.requests.HandOverAssetsRequest;
+import vn.com.fpt.requests.RoomAssetsRequest;
 import vn.com.fpt.service.assets.AssetService;
 
 import java.util.List;
 
-import static vn.com.fpt.common.constants.ManagerConstants.SUBLEASE_CONTRACT;
 import static vn.com.fpt.configs.AppConfigs.*;
 
 
@@ -57,12 +57,18 @@ public class AssetController {
         return AppResponse.success(assetService.add(request, Operator.operator()));
     }
 
-    @PostMapping("/hand-over/add/{contractId}")
-    @Operation(summary = "Thêm trang thiết bị bàn giao cho hợp đồng")
-    public ResponseEntity<BaseResponse<HandOverAssets>> add(@RequestBody HandOverAssetsRequest request,
-                                                            @PathVariable Long contractId) {
-        return AppResponse.success(assetService.addAdditionalAsset(request, contractId, SUBLEASE_CONTRACT, Operator.operator()));
+    @PostMapping("/room/add")
+    @Operation(summary = "Thêm một hoặc nhiều trang thiết bị cho phòng")
+    public ResponseEntity<BaseResponse<List<RoomAssets>>> roomAdd(@Validated @RequestBody List<RoomAssetsRequest> request) {
+        return AppResponse.success(assetService.roomAdd(request, Operator.operator()));
     }
+
+//    @PostMapping("/hand-over/add/{contractId}")
+//    @Operation(summary = "Thêm trang thiết bị bàn giao cho hợp đồng")
+//    public ResponseEntity<BaseResponse<HandOverAssets>> add(@RequestBody HandOverAssetsRequest request,
+//                                                            @PathVariable Long contractId) {
+//        return AppResponse.success(assetService.addAdditionalAsset(request, contractId, SUBLEASE_CONTRACT, Operator.operator()));
+//    }
 
 //    @PutMapping("/hand-over/update/{id}")
 //    @Operation(summary = "Cập nhập trang thiết bị bàn gia")
@@ -72,13 +78,6 @@ public class AssetController {
     public ResponseEntity<BaseResponse<BasicAssets>> update(@PathVariable Long assetId,
                                                             @RequestBody BasicAssetsRequest request) {
         return AppResponse.success(assetService.update(assetId, request, Operator.operator()));
-    }
-
-    @DeleteMapping("/delete/{assetId}")
-    @Operation(summary = "Xóa trang thiết bị cơ bản, thiết yếu")
-    public ResponseEntity<BaseResponse<String>> delete(@PathVariable Long assetId) {
-        // TODO
-        return null;
     }
 
 }

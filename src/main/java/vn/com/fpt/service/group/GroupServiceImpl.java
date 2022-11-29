@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static vn.com.fpt.common.constants.ErrorStatusConstants.DUPLICATE_NAME;
+import static vn.com.fpt.common.constants.ManagerConstants.DEFAULT_ASSET_QUANTITY;
 import static vn.com.fpt.common.constants.ManagerConstants.LEASE_CONTRACT;
 
 @Service
@@ -172,7 +173,7 @@ public class GroupServiceImpl implements GroupService {
         );
 
         //Tự động generate phòng
-        roomService.generateRoom(
+        var listRoomId = roomService.generateRoom(
                 request.getTotalRoomPerFloor(),
                 request.getTotalFloor(),
                 request.getRoomLimitedPeople(),
@@ -180,8 +181,32 @@ public class GroupServiceImpl implements GroupService {
                 request.getRoomArea(),
                 request.getRoomNameConvention(),
                 group.getId(),
-                operator);
+                operator).stream().map(Rooms::getId).toList();
+        List<RoomAssets> listRoomAsset = new ArrayList<>(Collections.emptyList());
 
+        if (ObjectUtils.isNotEmpty(request.getListAdditionalAsset())) {
+            for (Long lri : listRoomId) {
+                request.getListAdditionalAsset().forEach(e ->
+                        listRoomAsset.add(RoomAssets.add(
+                                e.getAssetName(),
+                                ObjectUtils.isEmpty(e.getAssetQuantity()) ? DEFAULT_ASSET_QUANTITY : e.getAssetQuantity(),
+                                e.getAssetTypeId(),
+                                lri,
+                                operator)));
+            }
+        }
+        if (ObjectUtils.isNotEmpty(request.getListAsset())) {
+            for (Long lri : listRoomId) {
+                request.getListAsset().forEach(e ->
+                        listRoomAsset.add(RoomAssets.add(
+                                e.getAssetName(),
+                                ObjectUtils.isEmpty(e.getAssetQuantity()) ? DEFAULT_ASSET_QUANTITY : e.getAssetQuantity(),
+                                e.getAssetTypeId(),
+                                lri,
+                                operator)));
+            }
+        }
+        assetService.add(listRoomAsset);
         //add general service
         request.getListGeneralService().forEach(e -> e.setGroupId(group.getId()));
         servicesService.addGeneralService(request.getListGeneralService(), operator);
