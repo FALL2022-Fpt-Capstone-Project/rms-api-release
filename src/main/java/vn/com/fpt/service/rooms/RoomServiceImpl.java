@@ -91,8 +91,10 @@ public class RoomServiceImpl implements RoomService {
         }
         return roomsRepository.findAll(
                         specification,
-                        Sort.by("roomFloor").ascending().and(Sort.by("createdAt").descending())
-                )
+                        Sort.by(List.of(
+                                new Sort.Order(Sort.Direction.DESC, "createdAt"),
+                                new Sort.Order(Sort.Direction.ASC, "roomFloor")
+                        )))
                 .stream().map(RoomsResponse::of).toList();
     }
 

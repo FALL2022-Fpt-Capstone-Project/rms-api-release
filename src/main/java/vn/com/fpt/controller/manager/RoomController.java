@@ -79,7 +79,7 @@ public class RoomController {
 
     @PostMapping("/add")
     @Operation(summary = "Thêm một hoặc nhiều phòng")
-    public ResponseEntity<BaseResponse<String>> add(@RequestBody List<AddRoomsRequest> requests) {
+    public ResponseEntity<BaseResponse<List<Rooms>>> add(@RequestBody List<AddRoomsRequest> requests) {
         List<Rooms> roomToAdd = new ArrayList<>(Collections.emptyList());
         requests.forEach(e -> {
                     if (e.getIsOld())
@@ -97,8 +97,8 @@ public class RoomController {
                         );
                 }
         );
-        String roomName = String.join(", ", roomService.add(roomToAdd).stream().map(Rooms::getRoomName).toList());
-        return AppResponse.success(String.format("Thêm phòng: %s thành công!!", roomName));
+//        String roomName = String.join(", ", .stream().map(Rooms::getRoomName).toList());
+        return AppResponse.success(roomService.add(roomToAdd));
     }
 
 }
