@@ -186,24 +186,30 @@ public class GroupServiceImpl implements GroupService {
 
         if (ObjectUtils.isNotEmpty(request.getListAdditionalAsset())) {
             for (Long lri : listRoomId) {
-                request.getListAdditionalAsset().forEach(e ->
+                request.getListAdditionalAsset().forEach(e -> {
+                    if (ObjectUtils.isEmpty(e)) {
                         listRoomAsset.add(RoomAssets.add(
                                 e.getAssetName(),
                                 ObjectUtils.isEmpty(e.getAssetQuantity()) ? DEFAULT_ASSET_QUANTITY : e.getAssetQuantity(),
                                 e.getAssetTypeId(),
                                 lri,
-                                operator)));
+                                operator));
+                    }
+                });
             }
         }
         if (ObjectUtils.isNotEmpty(request.getListAsset())) {
             for (Long lri : listRoomId) {
-                request.getListAsset().forEach(e ->
+                request.getListAsset().forEach(e -> {
+                    if(ObjectUtils.isEmpty(e))
                         listRoomAsset.add(RoomAssets.add(
                                 e.getAssetName(),
                                 ObjectUtils.isEmpty(e.getAssetQuantity()) ? DEFAULT_ASSET_QUANTITY : e.getAssetQuantity(),
                                 e.getAssetTypeId(),
                                 lri,
-                                operator)));
+                                operator));
+
+                });
             }
         }
         if(!listRoomAsset.isEmpty()) assetService.add(listRoomAsset);
