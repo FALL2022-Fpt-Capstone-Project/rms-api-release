@@ -82,7 +82,7 @@ public class RoomController {
     public ResponseEntity<BaseResponse<List<Rooms>>> add(@RequestBody List<AddRoomsRequest> requests) {
         List<Rooms> roomToAdd = new ArrayList<>(Collections.emptyList());
         requests.forEach(e -> {
-                    if (e.getIsOld())
+                    if (e.getIsOld() != null && !e.getIsOld())
                         roomToAdd.add(
                                 Rooms.add(
                                         e.getRoomName(),
