@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
 import vn.com.fpt.entity.Rooms;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Builder
@@ -92,5 +94,15 @@ public class RoomsPreviewResponse {
         gen.setIsDuplicate(isDuplicate);
         gen.setIsDisable(false);
         return gen;
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    public static class SeparationRoomPreview{
+        private List<Rooms> listOldRoom;
+        private List<RoomsPreviewResponse> listGenerateRoom;
     }
 }

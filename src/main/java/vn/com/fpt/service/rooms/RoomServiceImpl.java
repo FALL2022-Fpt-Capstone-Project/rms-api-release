@@ -335,7 +335,7 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public List<RoomsPreviewResponse> preview(RoomsPreviewRequest request) {
+    public RoomsPreviewResponse.SeparationRoomPreview preview(RoomsPreviewRequest request) {
         Map<Integer, RoomsResponse[]> temp1 = new HashMap<>();
 
         for (Integer i : request.getListFloor()) {
@@ -487,7 +487,7 @@ public class RoomServiceImpl implements RoomService {
                 }
             }
         }
-        return ListUtils.union(oldRoom2, gen);
+        return new RoomsPreviewResponse.SeparationRoomPreview (oldRoom2, gen);
     }
 
     public boolean checkNoobRoomName(String roomName) {

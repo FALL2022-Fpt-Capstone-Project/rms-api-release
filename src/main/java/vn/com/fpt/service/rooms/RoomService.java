@@ -6,6 +6,7 @@ import vn.com.fpt.requests.AddRoomsRequest;
 import vn.com.fpt.requests.UpdateRoomRequest;
 import vn.com.fpt.responses.GroupContractedResponse;
 import vn.com.fpt.responses.RoomsPreviewResponse;
+import vn.com.fpt.responses.RoomsPreviewResponse.SeparationRoomPreview;
 import vn.com.fpt.responses.RoomsResponse;
 
 import java.util.List;
@@ -71,5 +72,5 @@ public interface RoomService {
 
     List<Rooms> update(List<UpdateRoomRequest> requests, Long operator);
 
-    List<RoomsPreviewResponse> preview(RoomsPreviewRequest request);
+    RoomsPreviewResponse.SeparationRoomPreview preview(RoomsPreviewRequest request);
 }

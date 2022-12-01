@@ -73,7 +73,7 @@ public class RoomController {
 
     @PostMapping("/generate/preview")
     @Operation(summary = "Xem trước list phòng trước khi gen tự động")
-    public ResponseEntity<BaseResponse<List<RoomsPreviewResponse>>> previewGenerate(@RequestBody RoomsPreviewRequest request) {
+    public ResponseEntity<BaseResponse<RoomsPreviewResponse.SeparationRoomPreview>> previewGenerate(@RequestBody RoomsPreviewRequest request) {
         return AppResponse.success(roomService.preview(request));
     }
 
