@@ -346,7 +346,7 @@ public class RoomServiceImpl implements RoomService {
                 for (RoomsResponse rs : listRoom(request.getGroupId(), null, i, null, null)) {
                     if (Objects.isNull(temp2)) temp2 = new RoomsResponse[99];
 
-                    String roomNumber = rs.getRoomName().split("(?<=\\D)(?=\\d)")[1]; //A201 -> 201
+                    String roomNumber = ObjectUtils.isEmpty(rs.getRoomName().split("(?<=\\D)(?=\\d)")[1]) ? rs.getRoomName().split("(?<=\\D)(?=\\d)")[0] : rs.getRoomName().split("(?<=\\D)(?=\\d)")[1];
                     if (checkNoobRoomName(roomNumber)) {
                         var temp3 = roomNumber.split("");
                         int index = Integer.parseInt(temp3[roomNumber.length() - 2] + temp3[roomNumber.length() - 1]);
