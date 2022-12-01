@@ -75,6 +75,7 @@ public class Rooms extends BaseEntity {
                     Long groupId,
                     Long groupContractId,
                     Double area,
+                    Long contractId,
                     Double price) {
         return Rooms.builder()
                 .roomName(name)
@@ -82,6 +83,7 @@ public class Rooms extends BaseEntity {
                 .roomLimitPeople(limit)
                 .groupId(groupId)
                 .groupContractId(groupContractId)
+                .contractId(contractId)
                 .roomPrice(price)
                 .roomArea(area)
                 .build();
@@ -95,7 +97,7 @@ public class Rooms extends BaseEntity {
                      Double price,
                      Double area,
                      Long operator) {
-        var room = of(name, floor, limit, groupId, groupContractId, area, price);
+        var room = of(name, floor, limit, groupId, groupContractId, area,null, price);
         room.setCreatedAt(DateUtils.now());
         room.setCreatedBy(operator);
         room.setIsDisable(false);
@@ -109,7 +111,7 @@ public class Rooms extends BaseEntity {
                                Double price,
                                Double area,
                                Long operator) {
-        var room = of(name, floor, limit, old.getGroupId(), old.getGroupContractId(), area, price);
+        var room = of(name, floor, limit, old.getGroupId(), old.getGroupContractId(), area, old.getContractId(), price);
 
         //fetch
         room.setId(old.getId());

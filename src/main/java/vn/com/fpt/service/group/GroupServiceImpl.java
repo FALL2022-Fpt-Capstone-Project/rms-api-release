@@ -206,7 +206,7 @@ public class GroupServiceImpl implements GroupService {
                                 operator)));
             }
         }
-        assetService.add(listRoomAsset);
+        if(!listRoomAsset.isEmpty()) assetService.add(listRoomAsset);
         //add general service
         request.getListGeneralService().forEach(e -> e.setGroupId(group.getId()));
         servicesService.addGeneralService(request.getListGeneralService(), operator);
