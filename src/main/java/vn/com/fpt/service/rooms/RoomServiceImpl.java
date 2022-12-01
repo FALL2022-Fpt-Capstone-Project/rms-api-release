@@ -346,7 +346,7 @@ public class RoomServiceImpl implements RoomService {
                 for (RoomsResponse rs : listRoom(request.getGroupId(), null, i, null, null)) {
                     if (Objects.isNull(temp2)) temp2 = new RoomsResponse[99];
 
-                    String roomNumber = ObjectUtils.isEmpty(rs.getRoomName().split("(?<=\\D)(?=\\d)")[1]) ? rs.getRoomName().split("(?<=\\D)(?=\\d)")[0] : rs.getRoomName().split("(?<=\\D)(?=\\d)")[1];
+                    String roomNumber = rs.getRoomName().split("(?<=\\D)(?=\\d)").length == 1 ? rs.getRoomName().split("(?<=\\D)(?=\\d)")[0] : rs.getRoomName().split("(?<=\\D)(?=\\d)")[1];
                     if (checkNoobRoomName(roomNumber)) {
                         var temp3 = roomNumber.split("");
                         int index = Integer.parseInt(temp3[roomNumber.length() - 2] + temp3[roomNumber.length() - 1]);
@@ -377,9 +377,23 @@ public class RoomServiceImpl implements RoomService {
         for (Integer i : request.getListFloor()) {
 
             var room = temp1.get(i);
-            if (ObjectUtils.isEmpty(temp1)) {
+            if (ObjectUtils.isEmpty(temp1.get(i))) {
                 for (int y = 1; y <= request.getTotalRoomPerFloor(); y++) {
-                    gen.add(new RoomsPreviewResponse());
+                    gen.add(new RoomsPreviewResponse(
+                            null,
+                            request.getRoomNameConvention() + i + String.format("%02d", y),
+                            i,
+                            request.getRoomLimitedPeople(),
+                            0,
+                            0,
+                            request.getGroupId(),
+                            null,
+                            null,
+                            request.getRoomPrice(),
+                            request.getRoomArea(),
+                            false,
+                            false,
+                            false));
                 }
             } else {
                 boolean flag = false;
