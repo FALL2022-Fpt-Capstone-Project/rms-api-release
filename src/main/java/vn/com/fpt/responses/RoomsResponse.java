@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import vn.com.fpt.entity.RoomAssets;
 import vn.com.fpt.entity.Rooms;
 import vn.com.fpt.service.assets.AssetService;
@@ -20,17 +21,18 @@ import java.util.List;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+@Component
 public class RoomsResponse {
 
-    private static AssetService roomService;
-
-    @Autowired
-    private AssetService autowireComponent;
-
-    @PostConstruct
-    private void init(){
-        roomService = this.autowireComponent;
-    }
+//    private static AssetService roomService;
+//
+////    @Autowired
+////    private AssetService autowireComponent;
+////
+////    @PostConstruct
+////    private void init(){
+////        roomService = this.autowireComponent;
+////    }
 
     private Long roomId;
 
@@ -72,7 +74,7 @@ public class RoomsResponse {
                 .contractId(rooms.getContractId())
                 .groupContractId(rooms.getGroupContractId())
                 .isDisable(rooms.getIsDisable())
-                .roomAssetsList(roomService.listRoomAsset(rooms.getId()))
+//                .roomAssetsList(roomService.listRoomAsset(rooms.getId()))
                 .build();
     }
 }
