@@ -58,7 +58,7 @@ public class AssetController {
         return AppResponse.success(assetService.add(request, Operator.operator()));
     }
 
-    @GetMapping("/")
+    @GetMapping("/room")
     @Operation(summary = "Tất cả các trang thiết bị theo filter")
     public ResponseEntity<BaseResponse<List<RoomAssets>>> roomAssets(@RequestParam(required = false) Long groupId,
                                                                      @RequestParam(required = false) Long assetType,
@@ -71,7 +71,7 @@ public class AssetController {
 
     @GetMapping("/{roomId}")
     @Operation(summary = "Xem các trang thiết bị trong phòng")
-    public ResponseEntity<BaseResponse<List<RoomAssets>>> roomAssets(@PathVariable Long roomId) {
+    public ResponseEntity<BaseResponse<List<RoomAssets>>> roomAsset(@PathVariable Long roomId) {
         return AppResponse.success(assetService.listRoomAsset(roomId));
     }
 
