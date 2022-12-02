@@ -358,6 +358,7 @@ public class RoomServiceImpl implements RoomService {
                             if (temp2[index] != null) {
                                 int var1 = 1;
                                 while (true) {
+                                    var1++;
                                     if (Objects.isNull(temp2[var1])) {
                                         temp2[var1] = rs;
                                         break;
