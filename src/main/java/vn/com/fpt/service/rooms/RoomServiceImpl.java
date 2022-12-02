@@ -445,7 +445,7 @@ public class RoomServiceImpl implements RoomService {
                                 }
                                 if (request.getTotalRoomPerFloor() - var2 == 0 || (double) var2 / request.getTotalRoomPerFloor() >= 0.5) {
                                     // check duplicate
-                                    for (int y1 = y0 - 1; y1 <= request.getTotalRoomPerFloor() + y0; y1++) {
+                                    for (int y1 = y0; y1 <= request.getTotalRoomPerFloor() + y0 - 1; y1++) {
                                         String roomName = request.getRoomNameConvention() + i + String.format("%02d", y1);
                                         gen.add(new RoomsPreviewResponse(
                                                 null,
