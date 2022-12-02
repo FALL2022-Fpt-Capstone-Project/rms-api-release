@@ -3,12 +3,12 @@ package vn.com.fpt.common.constants;
 import java.util.Date;
 import java.util.Objects;
 
-public class ManagerConstants {
+public abstract class ManagerConstants {
 
     // filter contract condition
-    public static final String ALMOST_EXPIRED_CONTRACT = "almostExpired";
-    public static final String LATEST_CONTRACT = "latest";
-    public static final String EXPIRED_CONTRACT = "expired";
+    public static final int ALMOST_EXPIRED_CONTRACT = 1;
+    public static final int LATEST_CONTRACT = 2;
+    public static final int EXPIRED_CONTRACT = 3;
 
     //assets type
     public static final Long TYPE_BATH_ROOM = 1L;

@@ -129,6 +129,7 @@ public class Contracts extends BaseEntity {
     public static Contracts modifyForSublease(Contracts old, RoomContractRequest neww, Long operator) {
         var renterContract = of(neww);
 
+        //fetch
         renterContract.setId(old.getId());
         renterContract.setContractType(SUBLEASE_CONTRACT);
         renterContract.setRenters(old.getRenters());
@@ -137,10 +138,29 @@ public class Contracts extends BaseEntity {
         renterContract.setCreatedAt(old.getCreatedAt());
         renterContract.setContractTerm(monthsBetween(neww.getContractStartDate(), neww.getContractEndDate()));
 
-        //fetch
+
         renterContract.setModifiedAt(now());
         renterContract.setModifiedBy(operator);
 
         return renterContract;
+    }
+
+    public static Contracts modifyForLease(Contracts old, GroupContractRequest neww, Long operator){
+        var leaseContract = of(neww);
+
+        //fetch
+        leaseContract.setId(old.getId());
+        leaseContract.setContractType(LEASE_CONTRACT);
+        leaseContract.setRenters(old.getRackRenters());
+        leaseContract.setContractIsDisable(false);
+        leaseContract.setCreatedBy(old.getCreatedBy());
+        leaseContract.setCreatedAt(old.getCreatedAt());
+        leaseContract.setContractTerm(monthsBetween(neww.getContractStartDate(), neww.getContractEndDate()));
+
+
+        leaseContract.setModifiedAt(now());
+        leaseContract.setModifiedBy(operator);
+
+        return leaseContract;
     }
 }

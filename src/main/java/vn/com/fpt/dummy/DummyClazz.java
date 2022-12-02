@@ -44,6 +44,9 @@ public class DummyClazz {
 
     @SuppressWarnings("incomplete-switch")
     public static void main(String[] args) {
+        for(int i = 1; i<=1 ; i++){
+            System.out.println("Ok");
+        }
     }
 }
 ////        int totalRoomFloor = 3;

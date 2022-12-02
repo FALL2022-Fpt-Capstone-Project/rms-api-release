@@ -58,6 +58,8 @@ public class ContractController {
                                                                                 @RequestParam(required = false) String renterName,
                                                                                 @RequestParam(required = false) String startDate,
                                                                                 @RequestParam(required = false) String endDate,
+                                                                                @RequestParam(required = false) Integer status,
+                                                                                @RequestParam(required = false, defaultValue = "1") Long duration,
                                                                                 @RequestParam(required = false, defaultValue = "false") Boolean isDisable) {
         return AppResponse.success(contractService.listRoomContract(groupId,
                                                                     phoneNumber,
@@ -65,7 +67,9 @@ public class ContractController {
                                                                     renterName,
                                                                     isDisable,
                                                                     startDate,
-                                                                    endDate));
+                                                                    endDate,
+                                                                    status,
+                                                                    duration));
     }
 
 
@@ -73,6 +77,13 @@ public class ContractController {
     @PostMapping("/group/add")
     public ResponseEntity<BaseResponse<GroupContractRequest>> addLeaseContract(@RequestBody GroupContractRequest request) {
         return AppResponse.success(contractService.addContract(request, Operator.operator()));
+    }
+
+    @Operation(summary = "Cập nhập hợp đồng cho nhóm phòng")
+    @PutMapping("/group/update/{contractId}")
+    public ResponseEntity<BaseResponse<GroupContractRequest>> updateLeaseContract(@RequestBody GroupContractRequest request,
+                                                                                  @PathVariable Long contractId){
+        return AppResponse.success(contractService.updateContract(contractId, request, Operator.operator()));
     }
 
 //    @Operation(summary = "Cập nhập hợp đồng cho nhóm phòng")

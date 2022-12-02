@@ -11,4 +11,6 @@ import java.util.List;
 @Repository
 public interface RoomAssetRepository extends JpaRepository<RoomAssets, Long>, JpaSpecificationExecutor<RoomAssets> {
     List<RoomAssets> findAllByRoomId(Long roomId);
+
+    List<RoomAssets> findAllByIdIn(List<Long> id);
 }

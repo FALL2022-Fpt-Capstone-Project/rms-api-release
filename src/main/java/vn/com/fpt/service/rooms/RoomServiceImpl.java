@@ -224,7 +224,9 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
+    @Transactional
     public Rooms removeRoom(Long id, Long operator) {
+        assetService.deleteRoomAsset(id);
         if (Objects.nonNull(roomChecker(id).getContractId()))
             throw new BusinessException(ROOM_NOT_AVAILABLE, "Phòng " + roomChecker(id).getRoomName() + " đã có người thuê. Không thể xóa!!");
         return roomsRepository.save(Rooms.delete(room(id), operator));
@@ -399,7 +401,7 @@ public class RoomServiceImpl implements RoomService {
                 boolean flag = false;
                 if (room[1] == null) {
                     int var2 = 1;
-                    for (int x = var2; x < request.getTotalRoomPerFloor() - 1; x++) {
+                    for (int x = var2; x < request.getTotalRoomPerFloor() ; x++) {
                         if (room[x] == null) {
                             var2++;
                         }
@@ -440,7 +442,7 @@ public class RoomServiceImpl implements RoomService {
                                 }
                                 if (request.getTotalRoomPerFloor() - var2 == 0 || (double) var2 / request.getTotalRoomPerFloor() >= 0.5) {
                                     // check duplicate
-                                    for (int y1 = y0; y1 < request.getTotalRoomPerFloor() + y0; y1++) {
+                                    for (int y1 = y0; y1 <= request.getTotalRoomPerFloor() + y0; y1++) {
                                         String roomName = request.getRoomNameConvention() + i + String.format("%02d", y1);
                                         gen.add(new RoomsPreviewResponse(
                                                 null,
@@ -465,7 +467,7 @@ public class RoomServiceImpl implements RoomService {
                         }
                     }
                     if (!flag) {
-                        for (int y4 = 1; y4 < request.getTotalRoomPerFloor(); y4++) {
+                        for (int y4 = 1; y4 <= request.getTotalRoomPerFloor(); y4++) {
                             String roomName = request.getRoomNameConvention() + i + String.format("%02d", y4);
                             gen.add(new RoomsPreviewResponse(
                                     null,

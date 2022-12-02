@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.common.response.AppResponse;
 import vn.com.fpt.common.response.BaseResponse;
 import vn.com.fpt.common.utils.Operator;
@@ -57,10 +58,40 @@ public class AssetController {
         return AppResponse.success(assetService.add(request, Operator.operator()));
     }
 
+    @GetMapping("/")
+    @Operation(summary = "Tất cả các trang thiết bị theo filter")
+    public ResponseEntity<BaseResponse<List<RoomAssets>>> roomAssets(@RequestParam(required = false) Long groupId,
+                                                                     @RequestParam(required = false) Long assetType,
+                                                                     @RequestParam(required = false) String assetName,
+                                                                     @RequestParam(required = false) Long roomId) {
+        //TODO
+        return null;
+    }
+
+
+    @GetMapping("/{roomId}")
+    @Operation(summary = "Xem các trang thiết bị trong phòng")
+    public ResponseEntity<BaseResponse<List<RoomAssets>>> roomAssets(@PathVariable Long roomId) {
+        return AppResponse.success(assetService.listRoomAsset(roomId));
+    }
+
     @PostMapping("/room/add")
     @Operation(summary = "Thêm một hoặc nhiều trang thiết bị cho phòng")
     public ResponseEntity<BaseResponse<List<RoomAssets>>> roomAdd(@Validated @RequestBody List<RoomAssetsRequest> request) {
         return AppResponse.success(assetService.roomAdd(request, Operator.operator()));
+    }
+
+    @PutMapping("/room/update")
+    @Operation(summary = "Cập nhập một hoặc nhiều trang thiết bị trong phòng")
+    public ResponseEntity<BaseResponse<List<RoomAssets>>> roomUpdate(@Validated @RequestBody List<RoomAssetsRequest> requests) {
+        return AppResponse.success(assetService.updateRoomAsset(requests, Operator.operator()));
+    }
+
+    @DeleteMapping("/room/delete")
+    @Operation(summary = "Xóa một hoặc nhiều trang thiết bị trong phòng")
+    public ResponseEntity<BaseResponse<List<RoomAssets>>> roomDelete(@RequestParam(required = false) List<Long> roomAssetId) {
+        if (roomAssetId.isEmpty()) throw new BusinessException("Id của trang thiết bị không được để trống");
+        return AppResponse.success(assetService.deleteRoomAsset(roomAssetId));
     }
 
 //    @PostMapping("/hand-over/add/{contractId}")

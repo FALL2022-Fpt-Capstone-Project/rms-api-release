@@ -29,7 +29,6 @@ public interface RoomService {
     List<Rooms> add(List<Rooms> rooms);
 
 
-
     List<Rooms> generateRoom(Integer totalRoom,
                              Integer totalFloor,
                              Integer generalLimitedPeople,

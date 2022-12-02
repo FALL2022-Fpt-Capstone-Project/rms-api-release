@@ -29,7 +29,9 @@ public interface ContractService {
                                            String renterName,
                                            Boolean isDisable,
                                            String startDate,
-                                           String endDate);
+                                           String endDate,
+                                           Integer status,
+                                           Long duration);
 
     List<GroupContractDTO> listGroupContract(String phoneNumber,
                                              String identity,

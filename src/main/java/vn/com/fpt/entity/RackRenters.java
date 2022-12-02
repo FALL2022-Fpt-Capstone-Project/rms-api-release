@@ -77,4 +77,29 @@ public class RackRenters extends BaseEntity{
 
         return rackRenter;
     }
+
+    public static RackRenters modify(RackRenters old,
+                                     String name,
+                                     Boolean gender,
+                                     String phone,
+                                     String email,
+                                     Address address,
+                                     String note,
+                                     Long operator) {
+        var rackRenter = of(
+                name,
+                gender,
+                phone,
+                old.getIdentityNumber(),
+                email,
+                note,
+                address);
+        rackRenter.setCreatedAt(old.getCreatedAt());
+        rackRenter.setCreatedBy(old.getCreatedBy());
+
+        rackRenter.setModifiedAt(now());
+        rackRenter.setModifiedBy(operator);
+
+        return rackRenter;
+    }
 }

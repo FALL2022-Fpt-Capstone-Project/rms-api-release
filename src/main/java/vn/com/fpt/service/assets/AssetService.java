@@ -60,6 +60,16 @@ public interface AssetService {
 
     String deleteBasicAsset(Long id);
 
+    void deleteRoomAsset(Long roomId);
+
+    List<RoomAssets> deleteRoomAsset(List<Long> roomAssets);
+
+    List<RoomAssets> listRoomAsset(Long roomId);
+
+    List<RoomAssets> updateRoomAsset(List<RoomAssetsRequest> roomAssetsRequests, Long operator);
+
+    List<RoomAssets> addRoomAsset(List<RoomAssetsRequest> roomAssetsRequests, Long operator);
+
     HandOverAssets handOverAsset(Long id);
 
 

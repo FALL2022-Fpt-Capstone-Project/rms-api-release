@@ -269,6 +269,74 @@ public class AssetServiceImpl implements AssetService {
     }
 
     @Override
+    public void deleteRoomAsset(Long roomId) {
+        var listRoomAsset = roomAssetRepository.findAllByRoomId(roomId);
+        roomAssetRepository.deleteAllById(listRoomAsset.stream().map(RoomAssets::getId).toList());
+    }
+
+    @Override
+    public List<RoomAssets> deleteRoomAsset(List<Long> roomAssets) {
+        roomAssetRepository.deleteAllById(roomAssets);
+        return roomAssetRepository.findAllByIdIn(roomAssets);
+    }
+
+    @Override
+    public List<RoomAssets> listRoomAsset(Long roomId) {
+        return roomAssetRepository.findAllByRoomId(roomId);
+    }
+
+    @Override
+    public List<RoomAssets> updateRoomAsset(List<RoomAssetsRequest> roomAssetsRequests, Long operator) {
+        List<RoomAssets> listRoomAssetToUpdate = new ArrayList<>(Collections.emptyList());
+        roomAssetsRequests.forEach(e -> listRoomAssetToUpdate.add(
+                RoomAssets.modify(
+                        roomAssetRepository.findById(e.getRoomAssetId()).get(),
+                        e.getAssetName(),
+                        e.getAssetQuantity(),
+                        e.getAssetTypeId(),
+                        e.getRoomId(),
+                        operator
+                ))
+        );
+        return roomAssetRepository.saveAll(listRoomAssetToUpdate);
+    }
+
+    @Override
+    public List<RoomAssets> addRoomAsset(List<RoomAssetsRequest> roomAssetsRequests, Long operator) {
+        List<RoomAssets> roomAssetToAdd = new ArrayList<>(Collections.emptyList());
+        for (RoomAssetsRequest assetsRequest : roomAssetsRequests) {
+            for (RoomAssets roomAssets : listRoomAsset(assetsRequest.getRoomId())) {
+                roomAssetToAdd.addAll(
+                        roomAssetsRequests
+                                .stream()
+                                .filter(e -> e.getAssetName().equalsIgnoreCase(roomAssets.getAssetName()))
+                                .map(e -> RoomAssets.modify(
+                                        roomAssets,
+                                        roomAssets.getAssetName(),
+                                        roomAssets.getAssetQuantity() + 1,
+                                        roomAssets.getAssetTypeId(),
+                                        roomAssets.getRoomId(),
+                                        operator
+                                )).toList());
+
+                roomAssetToAdd.addAll(
+                        roomAssetsRequests
+                                .stream()
+                                .filter(e -> !e.getAssetName().equalsIgnoreCase(roomAssets.getAssetName()))
+                                .map(e -> RoomAssets.add(
+                                        assetsRequest.getAssetName(),
+                                        ObjectUtils.isEmpty(assetsRequest.getAssetQuantity()) ? DEFAULT_ASSET_QUANTITY : assetsRequest.getAssetQuantity(),
+                                        assetsRequest.getAssetTypeId(),
+                                        assetsRequest.getRoomId(),
+                                        operator
+                                )).toList());
+
+            }
+        }
+        return roomAssetRepository.saveAll(roomAssetToAdd);
+    }
+
+    @Override
     public HandOverAssets handOverAsset(Long id) {
         return handOverAssetsRepository.findById(id).get();
     }

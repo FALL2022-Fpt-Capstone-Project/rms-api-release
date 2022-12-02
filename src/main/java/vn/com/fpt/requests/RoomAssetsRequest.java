@@ -13,6 +13,8 @@ import javax.validation.constraints.NotBlank;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class RoomAssetsRequest {
 
+    private Long roomAssetId;
+
     @NotBlank(message = "Tên tài sản không được để trống")
     private String assetName;
 

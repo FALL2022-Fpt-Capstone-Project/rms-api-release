@@ -9,11 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.common.utils.DateUtils;
 import vn.com.fpt.entity.*;
-import vn.com.fpt.model.GeneralServiceDTO;
 import vn.com.fpt.model.GroupContractDTO;
 import vn.com.fpt.model.RoomContractDTO;
 import vn.com.fpt.repositories.*;
-import vn.com.fpt.requests.GeneralServiceRequest;
 import vn.com.fpt.requests.GroupContractRequest;
 import vn.com.fpt.requests.RenterRequest;
 import vn.com.fpt.requests.RoomContractRequest;
@@ -51,6 +49,8 @@ public class ContractServiceImpl implements ContractService {
     private final GroupService groupService;
     private final RenterRepository renterRepository;
 
+    private final RackRenterRepository rackRenterRepository  ;
+
     public ContractServiceImpl(ContractRepository contractRepository,
                                AssetService assetService,
                                @Lazy RoomService roomService,
@@ -58,7 +58,8 @@ public class ContractServiceImpl implements ContractService {
                                ServicesService servicesService,
                                AddressRepository addressRepository,
                                @Lazy GroupService groupService,
-                               @Lazy RenterRepository renterRepository) {
+                               @Lazy RenterRepository renterRepository,
+                               RackRenterRepository rackRenters) {
         this.contractRepository = contractRepository;
         this.assetService = assetService;
         this.roomService = roomService;
@@ -67,6 +68,7 @@ public class ContractServiceImpl implements ContractService {
         this.addressRepository = addressRepository;
         this.groupService = groupService;
         this.renterRepository = renterRepository;
+        this.rackRenterRepository = rackRenters;
     }
 
     @Override
@@ -246,10 +248,31 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
+    @Transactional
     public GroupContractRequest updateContract(Long groupContractId, GroupContractRequest request, Long operator) {
         var oldContract = contract(groupContractId);
-        return null;
+        var oldRackRenter = renterService.rackRenter(oldContract.getRenters());
+        rackRenterRepository.save(RackRenters.modify(
+                oldRackRenter,
+                request.getRackRenterName(),
+                request.getRackRenterGender(),
+                request.getRackRenterPhone(),
+                request.getRackRenterEmail(),
+                addressRepository.save(
+                        new Address().modify(
+                                oldRackRenter.getAddress(),
+                                "",
+                                "", "",
+                                request.getRackRenterAddress(),
+                                operator)
+                ),
+                request.getRackRenterNote(),
+                operator
+        ));
+        var newContract = Contracts.modifyForLease(oldContract, request, operator);
+        contractRepository.save(newContract);
 
+        return request;
     }
 
 
@@ -380,11 +403,14 @@ public class ContractServiceImpl implements ContractService {
         roomContract.setRoom(roomService.getRoom(roomContract.getRoomId()));
         roomContract.setRoomName(roomService.getRoom(roomContract.getRoomId()).getRoomName());
         roomContract.setGroupName(((GroupContractedResponse) groupService.group(roomContract.getGroupId())).getGroupName());
-        roomContract.setListRoom(roomService.listRoom(contract.getGroupId(),
-                roomService.getRoom(roomContract.getRoomId()).getGroupContractId(),
-                null,
-                null,
-                null));
+        roomContract.setListRoom(
+                roomService.listRoom(
+                        contract.getGroupId(),
+                        roomService.getRoom(roomContract.getRoomId()).getGroupContractId(),
+                        null,
+                        null,
+                        null)
+        );
         return roomContract;
     }
 
@@ -395,7 +421,9 @@ public class ContractServiceImpl implements ContractService {
                                                   String renterName,
                                                   Boolean isDisable,
                                                   String startDate,
-                                                  String endDate) {
+                                                  String endDate,
+                                                  Integer status,
+                                                  Long duration) {
         List<RoomContractDTO> roomContracts = new ArrayList<>();
 
         BaseSpecification<Renters> renterSpec = new BaseSpecification<>();
@@ -420,12 +448,33 @@ public class ContractServiceImpl implements ContractService {
         }
 
         if (StringUtils.isNoneBlank(startDate, endDate)) {
-            contractSpec.add(new SearchCriteria("contractStartDate", DateUtils.parse(startDate, DATE_FORMAT_3), GREATER_THAN_EQUAL));
+            contractSpec.add(new SearchCriteria("contractStartDate", DateUtils.parse(startDate), GREATER_THAN_EQUAL));
 
-            contractSpec.add(new SearchCriteria("contractEndDate", DateUtils.parse(endDate, DATE_FORMAT_3), LESS_THAN_EQUAL));
+            contractSpec.add(new SearchCriteria("contractEndDate", DateUtils.parse(endDate), LESS_THAN_EQUAL));
         }
 
-        if (org.apache.commons.lang3.ObjectUtils.isNotEmpty(isDisable)) {
+        List<Contracts> listDisbaleContract = new ArrayList<>(Collections.emptyList());
+        BaseSpecification<Contracts> contractSpec2 = new BaseSpecification<>();
+        if (ObjectUtils.isNotEmpty(status)){
+
+            switch (status){
+                case LATEST_CONTRACT:
+                    contractSpec.add(SearchCriteria.of("contractStartDate", monthsCalculate(now(), -duration), GREATER_THAN_EQUAL));
+                    contractSpec.add(SearchCriteria.of("contractStartDate", now(), LESS_THAN_EQUAL));
+                    break;
+                case ALMOST_EXPIRED_CONTRACT:
+                    contractSpec.add(SearchCriteria.of("contractEndDate", now(), GREATER_THAN_EQUAL));
+                    contractSpec.add(SearchCriteria.of("contractEndDate", monthsCalculate(now(), duration), LESS_THAN_EQUAL));
+                    break;
+                case EXPIRED_CONTRACT:
+                    contractSpec.add(SearchCriteria.of("contractEndDate", now(), LESS_THAN_EQUAL));
+                    contractSpec2.add(SearchCriteria.of("contractIsDisable", true, EQUAL));
+                    listDisbaleContract.addAll(contractRepository.findAll(contractSpec2, Sort.by("contractStartDate").descending()));
+                    break;
+            }
+        }
+
+        if (org.apache.commons.lang3.ObjectUtils.isNotEmpty(isDisable) && status != EXPIRED_CONTRACT) {
             contractSpec.add(new SearchCriteria("contractIsDisable", isDisable, EQUAL));
         }
         if (!searchRenter.isEmpty()) {
@@ -433,6 +482,7 @@ public class ContractServiceImpl implements ContractService {
         }
 
         var listContract = contractRepository.findAll(contractSpec, Sort.by("contractStartDate").descending());
+        if(!listDisbaleContract.isEmpty()) listContract.addAll(listDisbaleContract);
 
         if (listContract.isEmpty()) return Collections.emptyList();
         listContract.forEach(e -> {
