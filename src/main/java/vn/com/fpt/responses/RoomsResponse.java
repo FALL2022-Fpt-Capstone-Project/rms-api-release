@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import vn.com.fpt.entity.RoomAssets;
 import vn.com.fpt.entity.Rooms;
+import vn.com.fpt.model.RoomAssetDTO;
 import vn.com.fpt.service.assets.AssetService;
 import vn.com.fpt.service.rooms.RoomService;
 
@@ -58,7 +59,7 @@ public class RoomsResponse {
 
     private Boolean isDisable;
 
-    private List<RoomAssets> roomAssetsList;
+    private List<RoomAssetDTO> roomAssetsList;
 
     public static RoomsResponse of(Rooms rooms) {
         return RoomsResponse.builder()
@@ -74,7 +75,6 @@ public class RoomsResponse {
                 .contractId(rooms.getContractId())
                 .groupContractId(rooms.getGroupContractId())
                 .isDisable(rooms.getIsDisable())
-//                .roomAssetsList(roomService.listRoomAsset(rooms.getId()))
                 .build();
     }
 }

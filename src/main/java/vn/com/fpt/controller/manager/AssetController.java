@@ -15,6 +15,7 @@ import vn.com.fpt.entity.AssetTypes;
 import vn.com.fpt.entity.BasicAssets;
 import vn.com.fpt.entity.RoomAssets;
 import vn.com.fpt.model.BasicAssetDTO;
+import vn.com.fpt.model.RoomAssetDTO;
 import vn.com.fpt.requests.BasicAssetsRequest;
 import vn.com.fpt.requests.RoomAssetsRequest;
 import vn.com.fpt.service.assets.AssetService;
@@ -58,21 +59,18 @@ public class AssetController {
         return AppResponse.success(assetService.add(request, Operator.operator()));
     }
 
-//    @GetMapping("/room")
-//    @Operation(summary = "Tất cả các trang thiết bị theo filter")
-//    public ResponseEntity<BaseResponse<List<RoomAssets>>> roomAssets(@RequestParam(required = false) Long groupId,
-//                                                                     @RequestParam(required = false) Long assetType,
-//                                                                     @RequestParam(required = false) String assetName,
-//                                                                     @RequestParam(required = false) Long roomId) {
-//        //TODO
-//        return null;
-//    }
+    @GetMapping("/room")
+    @Operation(summary = "Tất cả các trang thiết bị theo filter")
+    public ResponseEntity<BaseResponse<List<RoomAssetDTO>>> roomAssets(@RequestParam(required = false) Long assetType,
+                                                                       @RequestParam(required = false) Long roomId) {
+        return AppResponse.success(assetService.listRoomAsset(roomId, assetType));
+    }
 
 
     @GetMapping("/{roomId}")
     @Operation(summary = "Xem các trang thiết bị trong phòng")
-    public ResponseEntity<BaseResponse<List<RoomAssets>>> roomAsset(@PathVariable Long roomId) {
-        return AppResponse.success(assetService.listRoomAsset(roomId));
+    public ResponseEntity<BaseResponse<List<RoomAssetDTO>>> roomAsset(@PathVariable Long roomId) {
+        return AppResponse.success(assetService.listRoomAsset(roomId, null));
     }
 
     @PostMapping("/room/add")

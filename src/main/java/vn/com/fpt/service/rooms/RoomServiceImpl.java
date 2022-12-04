@@ -96,7 +96,7 @@ public class RoomServiceImpl implements RoomService {
                                 new Sort.Order(Sort.Direction.ASC, "roomFloor")
                         )))
                 .stream().map(RoomsResponse::of).toList();
-        rooms.forEach(e -> e.setRoomAssetsList(assetService.listRoomAsset(e.getRoomId())));
+        rooms.forEach(e -> e.setRoomAssetsList(assetService.listRoomAsset(e.getRoomId(), null)));
         return rooms;
     }
 

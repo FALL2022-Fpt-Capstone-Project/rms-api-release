@@ -8,8 +8,10 @@ import vn.com.fpt.entity.AssetTypes;
 import vn.com.fpt.entity.BasicAssets;
 import vn.com.fpt.entity.HandOverAssets;
 import vn.com.fpt.entity.RoomAssets;
+import vn.com.fpt.model.AccountDTO;
 import vn.com.fpt.model.BasicAssetDTO;
 import vn.com.fpt.model.HandOverAssetsDTO;
+import vn.com.fpt.model.RoomAssetDTO;
 import vn.com.fpt.repositories.AssetTypesRepository;
 import vn.com.fpt.repositories.BasicAssetRepository;
 import vn.com.fpt.repositories.HandOverAssetsRepository;
@@ -117,6 +119,47 @@ public class AssetServiceImpl implements AssetService {
 
         Query query = entityManager.createNativeQuery(queryBuild, BasicAssetDTO.SQL_RESULT_SET_MAPPING);
 
+        return query.getResultList();
+    }
+
+    @Override
+    public List<RoomAssetDTO> listRoomAsset(Long roomId, Long assetType) {
+        StringBuilder selectBuild = new StringBuilder("SELECT ");
+        selectBuild.append("mra.room_asset_id,");
+        selectBuild.append("mr.room_id,");
+        selectBuild.append("mr.group_id,");
+        selectBuild.append("mra.asset_name,");
+        selectBuild.append("mra.asset_quantity,");
+        selectBuild.append("mra.asset_type_id,");
+        selectBuild.append("mat.asset_type_name,");
+        selectBuild.append("mat.asset_type_show_name ");
+
+        StringBuilder fromBuild = new StringBuilder("FROM ");
+        fromBuild.append("manager_room_assets mra ");
+        fromBuild.append("INNER JOIN manager_rooms mr on mra.room_id = mr.room_id ");
+        fromBuild.append("INNER JOIN manager_asset_types mat on mra.asset_type_id = mat.asset_types_id ");
+
+        Map<String, Object> params = new HashMap<>();
+
+        StringBuilder whereBuild = new StringBuilder("WHERE 1=1 ");
+        if (ObjectUtils.isEmpty(roomId)) {
+            params.put("roomId", roomId);
+            whereBuild.append("AND mr.room_id = :roomId ");
+        }
+
+        if (ObjectUtils.isEmpty(assetType)) {
+            params.put("assetTypeId", assetType);
+            whereBuild.append("AND mra.asset_type_id = :assetTypeId ");
+        }
+
+        String queryBuild = new StringBuilder()
+                .append(selectBuild)
+                .append(fromBuild)
+                .append(whereBuild)
+                .toString();
+
+        Query query = entityManager.createNativeQuery(queryBuild, RoomAssetDTO.SQL_RESULT_SETS_MAPPING);
+        if (!params.isEmpty()) params.forEach(query::setParameter);
         return query.getResultList();
     }
 
