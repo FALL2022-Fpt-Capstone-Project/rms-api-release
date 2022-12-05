@@ -8,24 +8,17 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.entity.AssetTypes;
 import vn.com.fpt.entity.BasicAssets;
-import vn.com.fpt.entity.Contracts;
-import vn.com.fpt.entity.HandOverAssets;
 import vn.com.fpt.model.BasicAssetDTO;
-import vn.com.fpt.model.HandOverAssetsDTO;
 import vn.com.fpt.repositories.AssetTypesRepository;
 import vn.com.fpt.repositories.BasicAssetRepository;
-import vn.com.fpt.repositories.HandOverAssetsRepository;
 import vn.com.fpt.repositories.RoomAssetRepository;
 import vn.com.fpt.requests.BasicAssetsRequest;
-import vn.com.fpt.requests.HandOverAssetsRequest;
+
 import vn.com.fpt.service.contract.ContractService;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -47,9 +40,6 @@ class AssetServiceImplTest {
     private BasicAssetRepository basicAssetRepository;
 
     @Mock
-    private HandOverAssetsRepository handOverAssetsRepository;
-
-    @Mock
     private ContractService contractService;
 
     @Mock
@@ -62,29 +52,10 @@ class AssetServiceImplTest {
         assetServiceTest = new AssetServiceImpl(entityManager,
                 assetTypesRepository,
                 basicAssetRepository,
-                handOverAssetsRepository,
                 contractService,
                 roomAssetRepository);
     }
 
-    @Test
-    void testListHandOverAsset() {
-        HandOverAssetsDTO handOverAssetsDTO = new HandOverAssetsDTO();
-        handOverAssetsDTO.setAssetId(BigInteger.valueOf(1));
-        handOverAssetsDTO.setHandOverAssetQuantity(2);
-        List<HandOverAssetsDTO> handOverAssetsDTOList = new ArrayList<>();
-        handOverAssetsDTOList.add(handOverAssetsDTO);
-
-        //mock result
-        Query query = mock(Query.class);
-        when(entityManager.createNativeQuery(anyString(), anyString()))
-                .thenReturn(query);
-        when(query.getResultList()).thenReturn(handOverAssetsDTOList);
-        //run test
-        List<HandOverAssetsDTO> result = assetServiceTest.listHandOverAsset(1l);
-        //verify result
-        Assertions.assertEquals(1, result.size());
-    }
 
     @Test
     void testListAssetType() {
@@ -110,21 +81,6 @@ class AssetServiceImplTest {
         Assertions.assertEquals(1, result.size());
     }
 
-    @Test
-    void testUpdateHandOverAsset() {
-        HandOverAssets old = new HandOverAssets();
-        HandOverAssetsRequest request = new HandOverAssetsRequest();
-        Long operator = 1l;
-        Long contractId = 2l;
-        Date dateDelivery = new Date();
-
-        HandOverAssets mockHandOverAssets = HandOverAssets.builder().assetId(1l).build();
-        when(handOverAssetsRepository.save(any(HandOverAssets.class))).thenReturn(mockHandOverAssets);
-        //run test
-        var result = assetServiceTest.updateHandOverAsset(old, request, operator, contractId, dateDelivery);
-        //vefiry
-        Assertions.assertEquals(1l, result.getAssetId());
-    }
 
     @Test
     void testBasicAssets() {
@@ -151,109 +107,6 @@ class AssetServiceImplTest {
         BasicAssets result = assetServiceTest.add(request, operator);
         //verify
         Assertions.assertEquals("name", result.getAssetName());
-    }
-
-    @Test
-    void testAddHandOverAsset() {
-        HandOverAssetsRequest request = new HandOverAssetsRequest();
-        Long operator = 1l;
-        Long contractId = 1l;
-        Date dateDelivery = new Date();
-
-        HandOverAssets handOverAssets = HandOverAssets.builder().assetId(1l).build();
-
-        //mock result
-        when(handOverAssetsRepository.save(any(HandOverAssets.class)))
-                .thenReturn(handOverAssets);
-        //run test
-        HandOverAssets result = assetServiceTest.addHandOverAsset(request, operator, contractId, dateDelivery);
-        //verify
-        Assertions.assertEquals(1l, result.getAssetId());
-    }
-
-    @Test
-    void testAddAdditionalAsset() {
-        //set up
-        HandOverAssetsRequest request = HandOverAssetsRequest.builder()
-                .handOverAssetQuantity(100)
-                .assetId(1l)
-                .assetsAdditionalName("name")
-                .assetsAdditionalType(1l)
-                .handOverDateDelivery("2022-10-11")
-                .build();
-        Long contractId = 1l;
-        Long operator = 1l;
-
-        var groupContractId = new Contracts();
-        groupContractId.setGroupId(1l);
-
-        //mock result
-        HandOverAssets mockHandOverAssets = HandOverAssets.builder().assetId(2l).build();
-
-        when(contractService.contract(contractId)).thenReturn(groupContractId);
-        when(handOverAssetsRepository.save(any(HandOverAssets.class)))
-                .thenReturn(mockHandOverAssets);
-
-        var toUpdate = HandOverAssets.builder().quantity(200).build();
-        when(handOverAssetsRepository.findByContractIdAndAndAssetId(groupContractId.getGroupId(), request.getAssetId()))
-                .thenReturn(toUpdate);
-        //run test
-        HandOverAssets result = assetServiceTest.addAdditionalAsset(request, contractId, 1, operator);
-        //verify
-        Assertions.assertEquals(2l, result.getAssetId());
-    }
-
-    @Test
-    void testAddGeneralAsset() {
-        HandOverAssetsRequest request = new HandOverAssetsRequest();
-        Long operator = 1l;
-        Long contractId = 1l;
-        Date dateDelivery = new Date();
-
-        //mock result
-        HandOverAssets mockHandOverAssets = HandOverAssets.builder().assetId(1l).build();
-
-        when(handOverAssetsRepository.save(any(HandOverAssets.class)))
-                .thenReturn(mockHandOverAssets);
-        //run test
-        HandOverAssets result = assetServiceTest.addGeneralAsset(request, operator, contractId, dateDelivery);
-        //verify
-        Assertions.assertEquals(1l, result.getAssetId());
-    }
-
-    @Test
-    void testUpdateGeneralAssetQuantity() {
-        Long contractId = 1l;
-        Long assetId = 2l;
-        Integer quantity = 100;
-        //mock result
-        HandOverAssets toUpdate = HandOverAssets.builder().quantity(200).build();
-
-        when(handOverAssetsRepository.findByContractIdAndAndAssetId(contractId, assetId))
-                .thenReturn(toUpdate);
-        HandOverAssets mockHandOverAssets = HandOverAssets.builder().assetId(4l).build();
-        when(handOverAssetsRepository.save(toUpdate)).thenReturn(mockHandOverAssets);
-        //run test
-        HandOverAssets result = assetServiceTest.updateGeneralAssetQuantity(contractId, assetId, quantity);
-        //verify
-        Assertions.assertEquals(4L, result.getAssetId());
-
-    }
-
-    @Test
-    void testUpdateGeneralAssetQuantityThrowException() {
-        Long contractId = 1l;
-        Long assetId = 2l;
-        Integer quantity = 300;
-        //mock result
-        HandOverAssets toUpdate = HandOverAssets.builder().quantity(200).build();
-
-        when(handOverAssetsRepository.findByContractIdAndAndAssetId(contractId, assetId))
-                .thenReturn(toUpdate);
-
-        BusinessException businessException = Assertions.assertThrows(BusinessException.class,
-                () -> assetServiceTest.updateGeneralAssetQuantity(contractId, assetId, quantity));
-        Assertions.assertEquals(ASSET_OUT_OF_STOCK, businessException.getErrorStatus());
     }
 
     @Test
@@ -287,15 +140,4 @@ class AssetServiceImplTest {
         Assertions.assertNull(result);
     }
 
-    @Test
-    void testHandOverAsset() {
-        Long id = 1l;
-
-        HandOverAssets mockHandOverAssets = HandOverAssets.builder().assetId(1l).build();
-
-        when(handOverAssetsRepository.findById(id)).thenReturn(Optional.of(mockHandOverAssets));
-        var result = assetServiceTest.handOverAsset(id);
-        //verify
-        Assertions.assertEquals(1l, result.getAssetId());
-    }
 }

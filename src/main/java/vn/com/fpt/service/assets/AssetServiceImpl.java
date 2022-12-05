@@ -37,7 +37,8 @@ public class AssetServiceImpl implements AssetService {
     public AssetServiceImpl(EntityManager entityManager,
                             AssetTypesRepository assetTypesRepository,
                             BasicAssetRepository basicAssetRepository,
-                            @Lazy ContractService contractService, RoomAssetRepository roomAssetRepository) {
+                            @Lazy ContractService contractService,
+                            RoomAssetRepository roomAssetRepository) {
         this.entityManager = entityManager;
         this.assetTypesRepository = assetTypesRepository;
         this.basicAssetRepository = basicAssetRepository;

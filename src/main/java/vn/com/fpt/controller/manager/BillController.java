@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.common.response.AppResponse;
 import vn.com.fpt.common.response.BaseResponse;
-import vn.com.fpt.common.utils.Operator;
 import vn.com.fpt.requests.GenerateBillRequest;
 import vn.com.fpt.requests.RoomContractRequest;
 import vn.com.fpt.responses.NotBilledRoomResponse;
