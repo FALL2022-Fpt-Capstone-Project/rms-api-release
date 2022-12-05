@@ -51,8 +51,6 @@ public class AppConfigs {
     public static final String ASSET_PATH = "/asset";
     public static final String GROUP_PATH = "/group";
 
-    public static final String BILL_PATH = "/bill";
-
     public static final String STATISTICAL_PATH = "/statistical";
 
     //table name

@@ -6,7 +6,6 @@ import vn.com.fpt.entity.HandOverAssets;
 import vn.com.fpt.entity.RoomAssets;
 import vn.com.fpt.model.BasicAssetDTO;
 import vn.com.fpt.model.HandOverAssetsDTO;
-import vn.com.fpt.model.RoomAssetDTO;
 import vn.com.fpt.requests.BasicAssetsRequest;
 import vn.com.fpt.requests.HandOverAssetsRequest;
 import vn.com.fpt.requests.RoomAssetsRequest;
@@ -21,8 +20,6 @@ public interface AssetService {
     List<AssetTypes> listAssetType();
 
     List<BasicAssetDTO> listBasicAsset();
-
-    List<RoomAssetDTO> listRoomAsset(Long roomId, Long assetType);
 
     BasicAssets basicAssets(Long id);
 
