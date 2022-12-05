@@ -7,6 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @Getter
@@ -15,15 +18,29 @@ import java.util.List;
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class AddGroupRequest {
+    @NotBlank(message = "Tên chung cư mini/ nhóm căn hộ không được để trống")
     private String groupName;
 
+    @NotBlank(message = "Số tầng không được để trống")
+    @Min(value = 0, message = "Số tầng phải là số dương")
+    @Max(value = 0, message = "Số tầng không được lớn hơn 10")
     private Integer totalFloor;
+
+    @NotBlank(message = "Số phòng mỗi tầng không được để trống")
+    @Max(value = 0, message = "Số phòng mỗi tầng không được lớn hơn 10")
+    @Min(value = 0, message = "Số phòng mỗi tầng phải là số duơng")
     private Integer totalRoomPerFloor;
+
     private String roomNameConvention;
+
     private Integer roomLimitedPeople;
+
     private Double roomPrice;
+
     private Double roomArea;
+
     private List<RoomAssetsRequest> listAsset;
+
     private List<RoomAssetsRequest> listAdditionalAsset;
 
     private String addressCity;

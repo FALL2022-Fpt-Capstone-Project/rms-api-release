@@ -9,9 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.common.utils.DateUtils;
 import vn.com.fpt.entity.*;
+import vn.com.fpt.model.GeneralServiceDTO;
 import vn.com.fpt.model.GroupContractDTO;
 import vn.com.fpt.model.RoomContractDTO;
 import vn.com.fpt.repositories.*;
+import vn.com.fpt.requests.GeneralServiceRequest;
 import vn.com.fpt.requests.GroupContractRequest;
 import vn.com.fpt.requests.RenterRequest;
 import vn.com.fpt.requests.RoomContractRequest;
@@ -49,7 +51,7 @@ public class ContractServiceImpl implements ContractService {
     private final GroupService groupService;
     private final RenterRepository renterRepository;
 
-    private final RackRenterRepository rackRenterRepository  ;
+    private final RackRenterRepository rackRenterRepository;
 
     public ContractServiceImpl(ContractRepository contractRepository,
                                AssetService assetService,
@@ -132,32 +134,6 @@ public class ContractServiceImpl implements ContractService {
             });
         }
 
-        /* nếu có những tài sản mới không thuộc tài sản bàn giao với tòa ban đầu thì sẽ:
-        add thêm vào những tài sản cơ bản, thiết yếu -> add thêm vào tài sản chung của tòa -> add tài sản bàn giao cho phòng
-         */
-
-        // lưu tài sản bàn giao
-        if (ObjectUtils.isNotEmpty(request.getListHandOverAssets())) {
-            request.getListHandOverAssets().forEach(handOverAsset -> {
-                //kiểm tra những trang thiết bị không thuộc tòa (những tài sản không thuộc tòa thì id sẽ < 0)
-                if (Boolean.TRUE.equals(ADDITIONAL_ASSETS(handOverAsset.getAssetId()))) {
-                    assetService.addAdditionalAsset(handOverAsset, contractId, SUBLEASE_CONTRACT, operator);
-                }
-                // nếu không có tài sản mới thì sẽ chỉ thêm tài sản bàn giao cho phòng
-                else {
-                    assetService.addHandOverAsset(
-                            handOverAsset,
-                            operator,
-                            contractId,
-                            startDate);
-
-                    assetService.updateGeneralAssetQuantity(
-                            groupContractId,
-                            handOverAsset.getAssetId(),
-                            handOverAsset.getHandOverAssetQuantity());
-                }
-            });
-        }
         //lưu dịch vụ chung
         if (!request.getListGeneralService().isEmpty()) {
             AtomicInteger currentElectric = new AtomicInteger(0);
@@ -214,35 +190,20 @@ public class ContractServiceImpl implements ContractService {
 
         listRoom.forEach(e -> e.setGroupContractId(addedContract.getId()));
         roomService.updateRoom(listRoom);
-//        var listGeneralService = servicesService.listGeneralServiceByGroupId(request.getGroupId());
-//        List<GeneralServiceRequest> listGeneralServiceForLeaseContract = new ArrayList<>(Collections.emptyList());
-//        for (GeneralServiceDTO generalServiceDTO : listGeneralService) {
-//            listGeneralServiceForLeaseContract.add(new GeneralServiceRequest(
-//                    addedContract.getId(),
-//                    generalServiceDTO.getServiceId().longValue(),
-//                    generalServiceDTO.getServicePrice(),
-//                    generalServiceDTO.getServiceTypeId().longValue(),
-//                    generalServiceDTO.getNote(),
-//                    request.getGroupId()
-//            ));
-//        }
-//        servicesService.addGeneralService(listGeneralServiceForLeaseContract, operator);
 
-        if (!request.getListHandOverAsset().isEmpty()) {
-            request.getListHandOverAsset().forEach(e -> {
-                        if (e.getAssetId() < 0) {
-                            assetService.addAdditionalAsset(e, contract.getId(), LEASE_CONTRACT, operator);
-                        } else {
-                            assetService.addGeneralAsset(
-                                    e,
-                                    operator,
-                                    addedContract.getId(),
-                                    parse(request.getContractStartDate())
-                            );
-                        }
-                    }
-            );
+        var listGeneralService = servicesService.listGeneralServiceByGroupId(request.getGroupId());
+        List<GeneralServiceRequest> listGeneralServiceForLeaseContract = new ArrayList<>(Collections.emptyList());
+        for (GeneralServiceDTO generalServiceDTO : listGeneralService) {
+            listGeneralServiceForLeaseContract.add(new GeneralServiceRequest(
+                    addedContract.getId(),
+                    generalServiceDTO.getServiceId().longValue(),
+                    generalServiceDTO.getServicePrice(),
+                    generalServiceDTO.getServiceTypeId().longValue(),
+                    generalServiceDTO.getNote(),
+                    request.getGroupId()
+            ));
         }
+        servicesService.addGeneralService(listGeneralServiceForLeaseContract, operator);
 
         return request;
     }
@@ -319,32 +280,6 @@ public class ContractServiceImpl implements ContractService {
         /* nếu có những tài sản mới không thuộc tài sản bàn giao với tòa ban đầu thì sẽ:
         add thêm vào những tài sản cơ bản, thiết yếu -> add thêm vào tài sản chung của tòa -> add tài sản bàn giao cho phòng
         */
-
-        // lưu tài sản bàn giao
-        if (ObjectUtils.isNotEmpty(request.getListHandOverAssets())) {
-            request.getListHandOverAssets().forEach(handOverAsset -> {
-                //kiểm tra những trang thiết bị không thuộc tòa (những tài sản không thuộc tòa thì id sẽ < 0)
-                if (Boolean.TRUE.equals(ADDITIONAL_ASSETS(handOverAsset.getAssetId()))) {
-                    assetService.addAdditionalAsset(handOverAsset, oldContract.getId(), SUBLEASE_CONTRACT, operator);
-                }
-                // nếu không có tài sản mới thì sẽ chỉ thêm tài sản bàn giao cho phòng
-                else {
-                    var oldHandOverAsset = assetService.handOverAsset(handOverAsset.getHandOverAssetId());
-                    assetService.updateHandOverAsset(
-                            assetService.handOverAsset(handOverAsset.getHandOverAssetId()),
-                            handOverAsset,
-                            operator,
-                            oldContract.getId(),
-                            oldContract.getContractStartDate());
-
-                    //cập nhập số lượng tài sản của tòa
-                    assetService.updateGeneralAssetQuantity(
-                            groupContractId,
-                            handOverAsset.getAssetId(),
-                            handOverAsset.getHandOverAssetQuantity() - oldHandOverAsset.getQuantity());
-                }
-            });
-        }
         //cap nhap dịch vụ chung
         if (ObjectUtils.isNotEmpty(request.getListGeneralService())) {
 
@@ -352,7 +287,6 @@ public class ContractServiceImpl implements ContractService {
             AtomicInteger currentWater = new AtomicInteger(0);
 
             request.getListGeneralService().forEach(service -> {
-
 
                 var serviceId = servicesService.generalService(service.getGeneralServiceId()).getServiceId().longValue();
                 var serviceTypeId = servicesService.generalService(service.getGeneralServiceId()).getServiceTypeId().longValue();
@@ -398,7 +332,7 @@ public class ContractServiceImpl implements ContractService {
 
         var roomContract = RoomContractDTO.of(contract,
                 listRenter,
-                assetService.listHandOverAsset(id),
+                assetService.listRoomAsset(contract.getRoomId(), null),
                 servicesService.listHandOverGeneralService(id));
         roomContract.setRoom(roomService.getRoom(roomContract.getRoomId()));
         roomContract.setRoomName(roomService.getRoom(roomContract.getRoomId()).getRoomName());
@@ -423,7 +357,8 @@ public class ContractServiceImpl implements ContractService {
                                                   String startDate,
                                                   String endDate,
                                                   Integer status,
-                                                  Long duration) {
+                                                  Long duration,
+                                                  List<Long> roomId) {
         List<RoomContractDTO> roomContracts = new ArrayList<>();
 
         BaseSpecification<Renters> renterSpec = new BaseSpecification<>();
@@ -453,37 +388,41 @@ public class ContractServiceImpl implements ContractService {
             contractSpec.add(new SearchCriteria("contractEndDate", DateUtils.parse(endDate), LESS_THAN_EQUAL));
         }
 
+        if (ObjectUtils.isNotEmpty(roomId)) {
+            contractSpec.add(new SearchCriteria("roomId", roomId, IN));
+        }
+
         List<Contracts> listDisbaleContract = new ArrayList<>(Collections.emptyList());
         BaseSpecification<Contracts> contractSpec2 = new BaseSpecification<>();
-        if (ObjectUtils.isNotEmpty(status)){
+        if (ObjectUtils.isNotEmpty(status)) {
 
-            switch (status){
-                case LATEST_CONTRACT:
+            switch (status) {
+                case LATEST_CONTRACT -> {
                     contractSpec.add(SearchCriteria.of("contractStartDate", monthsCalculate(now(), -duration), GREATER_THAN_EQUAL));
                     contractSpec.add(SearchCriteria.of("contractStartDate", now(), LESS_THAN_EQUAL));
-                    break;
-                case ALMOST_EXPIRED_CONTRACT:
+                }
+                case ALMOST_EXPIRED_CONTRACT -> {
                     contractSpec.add(SearchCriteria.of("contractEndDate", now(), GREATER_THAN_EQUAL));
                     contractSpec.add(SearchCriteria.of("contractEndDate", monthsCalculate(now(), duration), LESS_THAN_EQUAL));
-                    break;
-                case EXPIRED_CONTRACT:
+                }
+                case EXPIRED_CONTRACT -> {
                     contractSpec.add(SearchCriteria.of("contractEndDate", now(), LESS_THAN_EQUAL));
                     contractSpec2.add(SearchCriteria.of("contractIsDisable", true, EQUAL));
                     listDisbaleContract.addAll(contractRepository.findAll(contractSpec2, Sort.by("contractStartDate").descending()));
-                    break;
+                }
             }
         }
 
         if (org.apache.commons.lang3.ObjectUtils.isNotEmpty(isDisable)) {
-            if ((ObjectUtils.isEmpty(status) ? 3 : status) != EXPIRED_CONTRACT)
-            contractSpec.add(new SearchCriteria("contractIsDisable", isDisable, EQUAL));
+            if ((ObjectUtils.isEmpty(status) ? EXPIRED_CONTRACT : status) != EXPIRED_CONTRACT)
+                contractSpec.add(new SearchCriteria("contractIsDisable", isDisable, EQUAL));
         }
         if (!searchRenter.isEmpty()) {
             contractSpec.add(new SearchCriteria("renters", searchRenter, IN));
         }
 
         var listContract = contractRepository.findAll(contractSpec, Sort.by("contractStartDate").descending());
-        if(!listDisbaleContract.isEmpty()) listContract.addAll(listDisbaleContract);
+        if (!listDisbaleContract.isEmpty()) listContract.addAll(listDisbaleContract);
 
         if (listContract.isEmpty()) return Collections.emptyList();
         listContract.forEach(e -> {
@@ -493,7 +432,7 @@ public class ContractServiceImpl implements ContractService {
             var group = (GroupContractedResponse) groupService.group(e.getGroupId());
             var roomContract = RoomContractDTO.of(e,
                     listRenter,
-                    assetService.listHandOverAsset(e.getId()),
+                    assetService.listRoomAsset(e.getRoomId(), null),
                     servicesService.listHandOverGeneralService(e.getId()));
             roomContract.setRoom(roomService.getRoom(e.getRoomId()));
             roomContract.setRoomName(roomService.getRoom(e.getRoomId()).getRoomName());
@@ -521,7 +460,6 @@ public class ContractServiceImpl implements ContractService {
                             listGroupContract.add(GroupContractDTO.of(
                                             e,
                                             (GroupContractedResponse) groupService.group(e.getGroupId()),
-                                            assetService.listHandOverAsset(e.getId()),
                                             servicesService.listGeneralService(e.getId()),
                                             roomService.listRoom(e.getGroupId(), e.getId(), null, null, null),
                                             renterService.rackRenter(e.getRackRenters())
@@ -539,7 +477,6 @@ public class ContractServiceImpl implements ContractService {
                             listGroupContract.add(GroupContractDTO.of(
                                             e,
                                             (GroupContractedResponse) groupService.group(e.getGroupId()),
-                                            assetService.listHandOverAsset(e.getId()),
                                             servicesService.listGeneralService(e.getId()),
                                             roomService.listRoom(e.getGroupId(), e.getId(), null, null, null),
                                             renterService.rackRenter(e.getRackRenters())
@@ -584,7 +521,6 @@ public class ContractServiceImpl implements ContractService {
                         listGroupContract.add(GroupContractDTO.of(
                                         e,
                                         (GroupContractedResponse) groupService.group(e.getGroupId()),
-                                        assetService.listHandOverAsset(e.getId()),
                                         servicesService.listGeneralService(e.getId()),
                                         roomService.listRoom(e.getGroupId(), e.getId(), null, null, null),
                                         renterService.rackRenter(e.getRackRenters())

@@ -131,7 +131,6 @@ public class RoomServiceImpl implements RoomService {
                             contracts.getContractDeposit(),
                             roomLeaseContracted,
                             servicesService.listGeneralServiceByGroupId(groupId),
-                            assetService.listHandOverAsset(contracts.getId()),
                             roomLeaseContracted.size(),
                             roomsRepository.findAllFloorByGroupContractIdAndGroupId(contracts.getId(), groupId).size()
                     )

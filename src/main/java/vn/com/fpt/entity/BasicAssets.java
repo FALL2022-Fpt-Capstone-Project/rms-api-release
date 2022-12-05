@@ -15,6 +15,8 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.util.Date;
 
+import static vn.com.fpt.common.utils.DateUtils.now;
+
 @Entity
 @Table(name = BasicAssets.TABLE_NAME)
 @DynamicUpdate
@@ -56,11 +58,11 @@ public class BasicAssets extends BaseEntity {
                 .build();
     }
 
-    public static BasicAssets add(BasicAssetsRequest request) {
+    public static BasicAssets add(BasicAssetsRequest request, Long operator) {
         var asset = of(request);
 
-        asset.setCreatedAt(request.getCreatedAt());
-        asset.setCreatedBy(request.getCreatedBy());
+        asset.setCreatedAt(now());
+        asset.setCreatedBy(operator);
 
         return asset;
     }
@@ -78,7 +80,7 @@ public class BasicAssets extends BaseEntity {
         var asset = of(assetName, assetTypeId);
 
         asset.setCreatedBy(operator);
-        asset.setCreatedAt(DateUtils.now());
+        asset.setCreatedAt(now());
 
         return asset;
     }
@@ -90,7 +92,7 @@ public class BasicAssets extends BaseEntity {
         asset.setCreatedAt(old.getCreatedAt());
         asset.setId(old.getId());
 
-        asset.setModifiedAt(DateUtils.now());
+        asset.setModifiedAt(now());
         asset.setModifiedBy(operator);
 
         return asset;

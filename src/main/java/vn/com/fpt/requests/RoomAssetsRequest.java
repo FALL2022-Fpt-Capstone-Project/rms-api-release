@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 
 @AllArgsConstructor
@@ -15,12 +16,12 @@ public class RoomAssetsRequest {
 
     private Long roomAssetId;
 
-    @NotBlank(message = "Tên tài sản không được để trống")
+    @NotBlank(message = "Tên trang thiết bị không được để trống")
     private String assetName;
 
-    @NotBlank(message = "Vị trí tài sản không được để trống")
     private Long assetTypeId;
 
+    @Min(value = 0, message = "Số lượng trang thiết bị không được để trống")
     private Integer assetQuantity;
 
     @NotBlank(message = "Phòng không được để trống")

@@ -15,9 +15,9 @@ import java.math.BigInteger;
 @NoArgsConstructor
 @Entity
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-@SqlResultSetMapping(name = HandOverGeneralServiceDTO.SQL_RESULT_SETS_MAPPING,
+@SqlResultSetMapping(name = RoomAssetDTO.SQL_RESULT_SETS_MAPPING,
         classes = @ConstructorResult(
-                targetClass = HandOverGeneralServiceDTO.class,
+                targetClass = RoomAssetDTO.class,
                 columns = {
                         @ColumnResult(name = "room_asset_id", type = BigInteger.class),
                         @ColumnResult(name = "room_id", type = BigInteger.class),

@@ -24,7 +24,6 @@ import java.util.*;
 
 import static vn.com.fpt.common.constants.ErrorStatusConstants.*;
 import static vn.com.fpt.model.GeneralServiceDTO.SQL_RESULT_SET_MAPPING;
-import static vn.com.fpt.model.HandOverGeneralServiceDTO.SQL_RESULT_SETS_MAPPING;
 
 
 @Service
@@ -204,7 +203,7 @@ public class ServicesServiceImpl implements ServicesService {
                 .append(whereBuild)
                 .toString();
 
-        Query query = entityManager.createNativeQuery(queryBuild, SQL_RESULT_SETS_MAPPING);
+        Query query = entityManager.createNativeQuery(queryBuild, HandOverGeneralServiceDTO.SQL_RESULT_SETS_MAPPING);
         query.setParameter("contractId", contractId);
 
         return query.getResultList();

@@ -9,6 +9,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @Getter
@@ -22,26 +25,37 @@ public class GroupContractRequest {
     @Schema(hidden = true)
     @JsonIgnore
     private String contractName;
+
+    @Min(value = 0, message = "Giá tiền không hợp lệ")
+    @NotBlank(message = "Giá trị hợp đồng không được để trống")
     private Double contractPrice;
+    @Min(value = 0, message = "Giá tiền không hợp lệ")
+    @NotBlank(message = "Tiền cọc không được để trống")
     private Double contractDeposit;
 
     private Integer contractPaymentCycle;
-
+    @NotBlank(message = "Thời gian bắt đầu lập hợp đồng không được để trống")
     private String contractStartDate;
+    @NotBlank(message = "Thời gian kết thúc hợp đồng không được để trống")
     private String contractEndDate;
 
     private String contractNote;
 
+    @NotBlank(message = "Tên chủ chung cư mini/nhóm căn hộ không được để trống")
     private String rackRenterName;
+    @NotBlank(message = "Giới tính chủ chung cư mini/nhóm căn hộ không được để trống")
     private Boolean rackRenterGender;
+    @NotBlank(message = "Số điện thoại chủ chung cư mini/nhóm căn hộ không được để trống")
     private String rackRenterPhone;
+    @Email(message = "Email không hợp lệ")
     private String rackRenterEmail;
+    @NotBlank(message = "Tên chủ chung cư mini/nhóm căn hộ không được để trống")
     private String rackRenterIdentity;
     private String rackRenterAddress;
     private String rackRenterNote;
 
     @Schema(description = "List id của phòng để lập hợp đồng", required = true, example = "[1,2,3,4,5]")
+    @Min(value = 1, message = "Số phòng thuê lại ít nhất phải là là 1")
+    @NotBlank(message = "Phòng thuê lại không được để trống")
     private List<Long> listRoom;
-    private List<HandOverAssetsRequest> listHandOverAsset;
-
 }

@@ -8,30 +8,17 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
-
+import javax.validation.constraints.Pattern;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class UpdateRoomRequest {
-    @NotBlank(message = "Id phòng không được để trống")
-    private Long roomId;
+public class GenerateBillRequest {
+    @NotBlank(message = "Hợp đồng nhóm phòng không được để trống")
+    private Long groupContractId;
 
-    private String roomName;
-
-    private Integer roomFloor;
-
-    private Integer roomLimitPeople;
-
-    private Integer roomCurrentWaterIndex;
-
-    private Integer roomCurrentElectricIndex;
-
-    private Double roomPrice;
-
-    private Double roomArea;
-
-    private Boolean isDisable;
+    @NotBlank(message = "Hạn thanh toán không được để trống")
+    private String paymentTerm;
 }

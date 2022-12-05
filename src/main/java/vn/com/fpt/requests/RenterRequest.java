@@ -4,6 +4,11 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -13,14 +18,19 @@ import lombok.*;
 public class RenterRequest {
     private Long id;
 
+    @NotBlank(message = "Tên khách thuê không được để trống")
     private String name;
 
+    @NotBlank(message = "Giới tính khách thuê không được để tróng")
     private Boolean gender;
 
+    @Email(message = "Email không hợp lệ")
     private String email;
 
+    @Pattern(regexp = "^[0-9]{10}$", message = "Số điện thoại không hợp lệ")
     private String phoneNumber;
 
+    @NotBlank(message = "CCCD/CMND của khách không được để trống")
     private String identityCard;
 
     private String licensePlates;

@@ -10,7 +10,6 @@ import vn.com.fpt.responses.RentersResponse;
 import vn.com.fpt.responses.RoomsResponse;
 
 import java.io.Serializable;
-import java.time.Duration;
 import java.util.List;
 
 import static vn.com.fpt.common.utils.DateUtils.monthsBetween;
@@ -62,7 +61,7 @@ public class RoomContractDTO implements Serializable {
 
     private List<RentersResponse> listRenter;
 
-    private List<HandOverAssetsDTO> listHandOverAsset;
+    private List<RoomAssetDTO> listRoomAsset;
 
     private List<HandOverGeneralServiceDTO> listHandOverGeneralService;
 
@@ -70,7 +69,7 @@ public class RoomContractDTO implements Serializable {
 
     public static RoomContractDTO of(Contracts contract,
                                      List<RentersResponse> listRenter,
-                                     List<HandOverAssetsDTO> listHandOverAsset,
+                                     List<RoomAssetDTO> listRoomAsset,
                                      List<HandOverGeneralServiceDTO> listHandOverGeneralService) {
         var response = RoomContractDTO.builder()
                 .contractId(contract.getId())
@@ -90,7 +89,7 @@ public class RoomContractDTO implements Serializable {
                 .contractType(contract.getContractType())
                 .build();
         response.setListRenter(listRenter);
-        response.setListHandOverAsset(listHandOverAsset);
+        response.setListRoomAsset(listRoomAsset);
         response.setListHandOverGeneralService(listHandOverGeneralService);
         return response;
     }

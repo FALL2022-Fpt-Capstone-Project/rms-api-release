@@ -6,7 +6,6 @@ import lombok.*;
 import vn.com.fpt.entity.Address;
 import vn.com.fpt.entity.Rooms;
 import vn.com.fpt.model.GeneralServiceDTO;
-import vn.com.fpt.model.HandOverAssetsDTO;
 
 import java.util.List;
 
@@ -83,8 +82,6 @@ public class GroupContractedResponse {
 
         private List<GeneralServiceDTO> listGeneralService;
 
-        private List<HandOverAssetsDTO> listHandOverAssets;
-
         private Integer totalRoomLeaseContracted;
 
         private Integer totalFloorLeaseContracted;
@@ -100,7 +97,6 @@ public class GroupContractedResponse {
                                              Double contractDeposit,
                                              List<Rooms> listRoomsLeaseContracted,
                                              List<GeneralServiceDTO> listGeneralService,
-                                             List<HandOverAssetsDTO> listHandOverAssets,
                                              Integer totalRoomLeaseContracted,
                                              Integer totalFloorLeaseContracted) {
             return RoomLeaseContracted.builder()
@@ -115,7 +111,6 @@ public class GroupContractedResponse {
                     .contractDeposit(contractDeposit)
                     .listRoom(listRoomsLeaseContracted)
                     .listGeneralService(listGeneralService)
-                    .listHandOverAssets(listHandOverAssets)
                     .totalRoomLeaseContracted(totalRoomLeaseContracted)
                     .totalFloorLeaseContracted(totalFloorLeaseContracted)
                     .build();

@@ -6,7 +6,6 @@ import vn.com.fpt.requests.AddRoomsRequest;
 import vn.com.fpt.requests.UpdateRoomRequest;
 import vn.com.fpt.responses.GroupContractedResponse;
 import vn.com.fpt.responses.RoomsPreviewResponse;
-import vn.com.fpt.responses.RoomsPreviewResponse.SeparationRoomPreview;
 import vn.com.fpt.responses.RoomsResponse;
 
 import java.util.List;

@@ -16,11 +16,13 @@ public class RegisterRequest {
     @NotBlank(message = "Thiếu thông tin tên tài khoản")
     private String userName;
 
+    @NotBlank(message = "Mật khẩu không được để trống")
     private String password;
 
     @NotBlank(message = "Thiếu thông tin quyền")
     private String roles;
 
+    @NotBlank(message = "Tên không được để trống")
     private String fullName;
 
     private String phoneNumber;

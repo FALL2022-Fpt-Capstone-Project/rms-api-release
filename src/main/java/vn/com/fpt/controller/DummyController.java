@@ -22,11 +22,6 @@ public class DummyController {
     private final ServicesService servicesService;
     private final AssetService assetService;
 
-    @GetMapping("/assets/{contractId}")
-    public ResponseEntity<BaseResponse<List<HandOverAssetsDTO>>> assets(@PathVariable Long contractId) {
-        return AppResponse.success(assetService.listHandOverAsset(contractId));
-    }
-
     @GetMapping("/services/{contractId}")
     public ResponseEntity<BaseResponse<List<GeneralServiceDTO>>> services(@PathVariable Long contractId) {
         return AppResponse.success(servicesService.listGeneralService(contractId));

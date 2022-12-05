@@ -1,6 +1,8 @@
 package vn.com.fpt.dummy;
 
 import org.apache.commons.lang3.ObjectUtils;
+import vn.com.fpt.entity.BaseEntity;
+import vn.com.fpt.entity.ServiceBill;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -44,9 +46,7 @@ public class DummyClazz {
 
     @SuppressWarnings("incomplete-switch")
     public static void main(String[] args) {
-        for(int i = 1; i<=1 ; i++){
-            System.out.println("Ok");
-        }
+        BaseEntity baseEntity = new ServiceBill();
     }
 }
 ////        int totalRoomFloor = 3;

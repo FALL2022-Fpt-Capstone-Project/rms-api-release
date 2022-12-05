@@ -4,7 +4,6 @@ import org.springframework.data.jpa.domain.Specification;
 import vn.com.fpt.entity.Address;
 import vn.com.fpt.entity.RackRenters;
 import vn.com.fpt.entity.Renters;
-import vn.com.fpt.requests.Operator;
 import vn.com.fpt.requests.RenterRequest;
 import vn.com.fpt.responses.RentersResponse;
 

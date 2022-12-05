@@ -42,4 +42,7 @@ public class RoomBill extends BaseEntity {
     @Column(name = "bill_cycle")
     private Integer billCycle;
 
+    @Column(name = "note")
+    private String note;
+
 }

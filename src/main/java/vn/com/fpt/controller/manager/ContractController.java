@@ -60,7 +60,8 @@ public class ContractController {
                                                                                 @RequestParam(required = false) String endDate,
                                                                                 @RequestParam(required = false) Integer status,
                                                                                 @RequestParam(required = false, defaultValue = "1") Long duration,
-                                                                                @RequestParam(required = false, defaultValue = "false") Boolean isDisable) {
+                                                                                @RequestParam(required = false, defaultValue = "false") Boolean isDisable,
+                                                                                @RequestParam(required = false) List<Long> roomId) {
         return AppResponse.success(contractService.listRoomContract(groupId,
                                                                     phoneNumber,
                                                                     identity,
@@ -69,7 +70,8 @@ public class ContractController {
                                                                     startDate,
                                                                     endDate,
                                                                     status,
-                                                                    duration));
+                                                                    duration,
+                                                                    roomId));
     }
 
 

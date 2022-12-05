@@ -31,7 +31,8 @@ public interface ContractService {
                                            String startDate,
                                            String endDate,
                                            Integer status,
-                                           Long duration);
+                                           Long duration,
+                                           List<Long> roomId);
 
     List<GroupContractDTO> listGroupContract(String phoneNumber,
                                              String identity,

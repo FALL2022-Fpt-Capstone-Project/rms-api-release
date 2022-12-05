@@ -46,13 +46,11 @@ public class GroupContractDTO implements Serializable {
 
     private Integer contractType;
 
-    private List<HandOverAssetsDTO> listHandOverAsset;
     private List<GeneralServiceDTO> listGeneralService;
     private List<RoomsResponse> listLeaseContractedRoom;
 
     public static GroupContractDTO of(Contracts contract,
                                       GroupContractedResponse groupContracted,
-                                      List<HandOverAssetsDTO> handOverAssets,
                                       List<GeneralServiceDTO> generalServices,
                                       List<RoomsResponse> listLeaseContractedRoom,
                                       RackRenters rackRenters) {
@@ -81,7 +79,6 @@ public class GroupContractDTO implements Serializable {
                 .phoneNumber(rackRenters.getPhoneNumber())
                 .identityNumber(rackRenters.getIdentityNumber())
                 .build();
-        response.setListHandOverAsset(handOverAssets);
         response.setListGeneralService(generalServices);
         return response;
     }
