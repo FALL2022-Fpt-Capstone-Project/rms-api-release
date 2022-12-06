@@ -144,6 +144,13 @@ public class AssetServiceImpl implements AssetService {
         for (Long roomId : roomIds) {
             var listExitedRoomAsset = roomAssetRepository.findAllByRoomId(roomId);
             var room = roomAssetRepository.findAllByRoomId(roomId);
+            if (listExitedRoomAsset.isEmpty())
+                return roomAssetRepository.saveAll(request.stream().map(e -> RoomAssets.add(
+                        e.getAssetName(),
+                        e.getAssetQuantity(),
+                        e.getAssetTypeId(),
+                        roomId,
+                        operator)).toList());
             for (RoomAssetsRequest rar : request) {
                 listAsset.addAll(listExitedRoomAsset.stream().filter(e ->
                         e.getAssetName().trim().replaceAll(" +", "\\s").equalsIgnoreCase(rar.getAssetName().trim().replaceAll(" +", "\\s"))

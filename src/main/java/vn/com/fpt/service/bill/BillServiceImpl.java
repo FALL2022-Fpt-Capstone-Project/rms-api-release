@@ -69,42 +69,51 @@ public class BillServiceImpl implements BillService {
                 null,
                 null,
                 listRoomId);
+        List<RoomContractDTO> var1;
+        if (billCircle.equals(0)) {
+            var1 = listRoomContract;
+        } else {
+            var1 = listRoomContract.stream().filter(e -> e.getContractBillCycle().equals(billCircle)).toList();
+        }
+
         List<BillRoomStatusResponse> responses = new LinkedList<>(Collections.emptyList());
-        for (RoomContractDTO rcd : listRoomContract) {
-            var room = roomService.room(rcd.getRoomId());
-            var renter = renterService.listRenter(room.getId());
-            var generalService = servicesService.listGeneralServiceByGroupId(rcd.getGroupId());
-            BillRoomStatusResponse response = new BillRoomStatusResponse();
-            response.setGroupId(room.getGroupId());
-            response.setContractId(rcd.getContractId());
-            response.setRoomName(room.getRoomName());
-            response.setGroupContractId(room.getGroupContractId());
-            response.setRoomFloor(room.getRoomFloor());
-            response.setRoomLimitPeople(room.getRoomLimitPeople());
-            response.setRoomCurrentWaterIndex(room.getRoomCurrentWaterIndex() == null ? 0 : room.getRoomCurrentWaterIndex());
-            response.setRoomCurrentElectricIndex(room.getRoomCurrentElectricIndex() == null ? 0 : room.getRoomCurrentElectricIndex());
-            response.setRoomPrice(room.getRoomPrice());
-            response.setTotalRenter(renter.size());
-            response.setListGeneralService(generalService);
-            response.setContractPaymentCycle(rcd.getContractPaymentCycle());
-            if (DateUtils.monthsBetween(now(), parse(rcd.getContractStartDate())) / rcd.getContractPaymentCycle() == 0) {
-                response.setIsInPaymentCycle(true);
-                response.setTotalMoneyRoomPrice(room.getRoomPrice() * rcd.getContractPaymentCycle());
-            } else {
-                response.setIsInPaymentCycle(false);
-                response.setTotalMoneyRoomPrice((double) 0);
+        for (RoomContractDTO rcd : var1) {
+            if (billCircle == 0) {
+                var room = roomService.room(rcd.getRoomId());
+                var renter = renterService.listRenter(room.getId());
+                var generalService = servicesService.listGeneralServiceByGroupId(rcd.getGroupId());
+                BillRoomStatusResponse response = new BillRoomStatusResponse();
+                response.setGroupId(room.getGroupId());
+                response.setContractId(rcd.getContractId());
+                response.setRoomName(room.getRoomName());
+                response.setGroupContractId(room.getGroupContractId());
+                response.setRoomFloor(room.getRoomFloor());
+                response.setRoomLimitPeople(room.getRoomLimitPeople());
+                response.setRoomCurrentWaterIndex(room.getRoomCurrentWaterIndex() == null ? 0 : room.getRoomCurrentWaterIndex());
+                response.setRoomCurrentElectricIndex(room.getRoomCurrentElectricIndex() == null ? 0 : room.getRoomCurrentElectricIndex());
+                response.setRoomPrice(room.getRoomPrice());
+                response.setTotalRenter(renter.size());
+                response.setListGeneralService(generalService);
+                response.setContractPaymentCycle(rcd.getContractPaymentCycle());
+                if (DateUtils.monthsBetween(now(), parse(rcd.getContractStartDate())) / rcd.getContractPaymentCycle() == 0) {
+                    response.setIsInPaymentCycle(true);
+                    response.setTotalMoneyRoomPrice(room.getRoomPrice() * rcd.getContractPaymentCycle());
+                } else {
+                    response.setIsInPaymentCycle(false);
+                    response.setTotalMoneyRoomPrice((double) 0);
+                }
+                response.setIsBilled(
+                        !rcd.getContractBillCycle().equals(billCircle)
+                                ||
+                                !ObjectUtils.isEmpty(
+                                        recurringBillRepo.findByContractIdAndCreatedAt(
+                                                rcd.getContractId(),
+                                                toLocalDate(now()).getMonth().getValue(), toLocalDate(now()).getYear()
+                                        )
+                                )
+                );
+                responses.add(response);
             }
-            response.setIsBilled(
-                    !rcd.getContractBillCycle().equals(billCircle)
-                            ||
-                            !ObjectUtils.isEmpty(
-                                    recurringBillRepo.findByContractIdAndCreatedAt(
-                                            rcd.getContractId(),
-                                            toLocalDate(now()).getMonth().getValue(), toLocalDate(now()).getYear()
-                                    )
-                            )
-            );
-            responses.add(response);
         }
         return responses;
     }

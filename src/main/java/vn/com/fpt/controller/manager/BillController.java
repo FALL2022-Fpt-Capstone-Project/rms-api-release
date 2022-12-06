@@ -29,19 +29,20 @@ public class BillController {
 
     private final BillService billService;
 
-    @Operation(summary = "Tạo tự động hợp đồng theo kỳ")
-    @PostMapping("/room/generate")
-    public ResponseEntity<BaseResponse<RoomContractRequest>> addContract(@RequestBody GenerateBillRequest request) {
-//        return AppResponse.success(contractService.addContract(request, Operator.operator()));
-        return null;
-    }
+//    @Operation(summary = "Tạo tự động hợp đồng theo kỳ")
+//    @PostMapping("/room/generate")
+//    public ResponseEntity<BaseResponse<RoomContractRequest>> addContract(@RequestBody GenerateBillRequest request) {
+////        return AppResponse.success(contractService.addContract(request, Operator.operator()));
+//        return null;
+//    }
 
     @Operation(summary = "Trang thái hóa đơn các phòng trong tháng và theo kỳ")
     @GetMapping("/room/not-billed")
     public ResponseEntity<BaseResponse<List<BillRoomStatusResponse>>> listNotBilled(@RequestParam Long groupContractId,
-                                                                                    @RequestParam Integer billCircle){
+                                                                                    @RequestParam Integer billCircle) {
         Pattern pattern = Pattern.compile("(0|15|30)", Pattern.CASE_INSENSITIVE);
-        if (!pattern.matcher(billCircle.toString()).matches()) throw new BusinessException("Kỳ hạn thanh toán hóa đơn không hợp lệ");
+        if (!pattern.matcher(billCircle.toString()).matches())
+            throw new BusinessException("Kỳ hạn thanh toán hóa đơn không hợp lệ");
         return AppResponse.success(billService.listBillRoomStatus(groupContractId, billCircle));
     }
 
