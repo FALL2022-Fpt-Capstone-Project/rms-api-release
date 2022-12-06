@@ -20,7 +20,6 @@ public class AdjustRoomPriceResponse {
 
     private Long groupContractId;
     private Double number;
-    private Double percent;
     private Boolean increase;
 
     private List<Long> listRoomAdjust;
