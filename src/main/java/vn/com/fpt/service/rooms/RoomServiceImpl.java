@@ -1,6 +1,5 @@
 package vn.com.fpt.service.rooms;
 
-import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Lazy;
@@ -256,7 +255,7 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public Rooms updateRoom(Rooms roomsRequest) {
         if (checkDuplicateRoomName(
-                roomsRepository.findByGroupIdAndIdNot(room(roomsRequest.getId()).getGroupId(), roomsRequest.getId()),
+                roomsRepository.findByGroupIdAndIdNotAndIsDisableIsFalse(room(roomsRequest.getId()).getGroupId(), roomsRequest.getId()),
                 roomsRequest.getRoomName()))
             throw new BusinessException(DUPLICATE_NAME, "Tên phòng bị trùng: " + roomsRequest.getRoomName());
         return roomsRepository.save(roomsRequest);
