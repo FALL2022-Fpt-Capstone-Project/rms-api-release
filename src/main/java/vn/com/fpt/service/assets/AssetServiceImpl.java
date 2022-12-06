@@ -151,23 +151,22 @@ public class AssetServiceImpl implements AssetService {
                         roomId,
                         operator)).toList());
             for (RoomAssetsRequest rar : request) {
-                for (RoomAssets ra : listExitedRoomAsset) {
-                    if (ra.getAssetName().trim().replaceAll(" +", "\\s").equalsIgnoreCase(rar.getAssetName().trim().replaceAll(" +", "\\s"))) {
-                        listAsset.add(RoomAssets.modify(
-                                ra,
-                                ra.getAssetName(),
-                                ra.getAssetQuantity() + 1,
-                                rar.getAssetTypeId(),
-                                roomId,
-                                operator));
-                    } else {
-                        listAsset.add(RoomAssets.add(rar.getAssetName(),
-                                ObjectUtils.isEmpty(rar.getAssetQuantity()) ? DEFAULT_ASSET_QUANTITY : rar.getAssetQuantity(),
-                                rar.getAssetTypeId(),
-                                roomId,
-                                operator
-                        ));
-                    }
+                var var1 = roomAssetRepository.findByAssetNameLikeIgnoreCaseAndAssetTypeId(rar.getAssetName(), rar.getAssetTypeId());
+                if (ObjectUtils.isNotEmpty(var1)) {
+                    listAsset.add(RoomAssets.modify(
+                            var1,
+                            var1.getAssetName(),
+                            var1.getAssetQuantity() + rar.getAssetQuantity(),
+                            rar.getAssetTypeId(),
+                            roomId,
+                            operator));
+                } else {
+                    listAsset.add(RoomAssets.add(rar.getAssetName(),
+                            ObjectUtils.isEmpty(rar.getAssetQuantity()) ? DEFAULT_ASSET_QUANTITY : rar.getAssetQuantity(),
+                            rar.getAssetTypeId(),
+                            roomId,
+                            operator
+                    ));
                 }
             }
         }

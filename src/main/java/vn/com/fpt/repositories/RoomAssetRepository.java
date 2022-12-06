@@ -13,4 +13,6 @@ public interface RoomAssetRepository extends JpaRepository<RoomAssets, Long>, Jp
     List<RoomAssets> findAllByRoomId(Long roomId);
 
     List<RoomAssets> findAllByIdIn(List<Long> id);
+
+    RoomAssets findByAssetNameLikeIgnoreCaseAndAssetTypeId(String name, Long assetTypeId);
 }
