@@ -3,6 +3,7 @@ package vn.com.fpt.service.bill;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
+import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.common.utils.DateUtils;
 import vn.com.fpt.model.RoomContractDTO;
 import vn.com.fpt.repositories.*;
@@ -75,6 +76,7 @@ public class BillServiceImpl implements BillService {
         } else {
             var1 = listRoomContract.stream().filter(e -> e.getContractBillCycle().equals(billCircle)).toList();
         }
+        if (var1.isEmpty()) throw new BusinessException("Tòa này chưa có phòng có hợp đồng");
 
         List<BillRoomStatusResponse> responses = new LinkedList<>(Collections.emptyList());
         for (RoomContractDTO rcd : var1) {

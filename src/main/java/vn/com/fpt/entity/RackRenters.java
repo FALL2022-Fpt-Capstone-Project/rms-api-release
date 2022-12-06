@@ -71,7 +71,7 @@ public class RackRenters extends BaseEntity{
                                   Address address,
                                   String note,
                                   Long operator) {
-        var rackRenter = of(name, gender, phone, identity, email, note, address);
+        var rackRenter = of(name, gender, phone, email, identity, note, address);
         rackRenter.setCreatedAt(now());
         rackRenter.setCreatedBy(operator);
 
@@ -90,8 +90,8 @@ public class RackRenters extends BaseEntity{
                 name,
                 gender,
                 phone,
-                old.getIdentityNumber(),
                 email,
+                old.getIdentityNumber(),
                 note,
                 address);
         rackRenter.setCreatedAt(old.getCreatedAt());
