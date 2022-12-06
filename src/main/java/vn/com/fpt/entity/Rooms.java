@@ -97,7 +97,17 @@ public class Rooms extends BaseEntity {
                      Double price,
                      Double area,
                      Long operator) {
-        var room = of(name, floor, limit, groupId, groupContractId, area,null, price);
+        var room = of(
+                name,
+                floor,
+                limit,
+                groupId,
+                groupContractId,
+                area,
+                null,
+                price);
+        room.setRoomCurrentWaterIndex(0);
+        room.setRoomCurrentElectricIndex(0);
         room.setCreatedAt(DateUtils.now());
         room.setCreatedBy(operator);
         room.setIsDisable(false);

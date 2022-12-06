@@ -26,14 +26,13 @@ public class TableLogComponent {
                          Long tableId,
                          String property,
                          String newValue,
-                         Authentication authentication) throws JsonProcessingException {
-        var operator = (AccountAuthenticationDetail) authentication.getPrincipal();
+                         String userName) throws JsonProcessingException {
         var logs = TableChangeLog.add(
                 property,
                 null,
                 newValue,
                 tableName,
-                operator.getUsername(),
+                userName,
                 tableId,
                 INSERT);
         log.info(objectMapper.writeValueAsString(billChangeLogRepo.save(logs)));

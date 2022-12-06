@@ -1,5 +1,6 @@
 package vn.com.fpt.service.contract;
 
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Lazy;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.common.utils.DateUtils;
+import vn.com.fpt.common.utils.Operator;
 import vn.com.fpt.entity.*;
 import vn.com.fpt.model.GeneralServiceDTO;
 import vn.com.fpt.model.GroupContractDTO;
@@ -19,6 +21,7 @@ import vn.com.fpt.requests.RenterRequest;
 import vn.com.fpt.requests.RoomContractRequest;
 import vn.com.fpt.responses.GroupContractedResponse;
 import vn.com.fpt.responses.RentersResponse;
+import vn.com.fpt.service.TableLogComponent;
 import vn.com.fpt.service.assets.AssetService;
 import vn.com.fpt.service.group.GroupService;
 import vn.com.fpt.service.renter.RenterService;
@@ -53,6 +56,11 @@ public class ContractServiceImpl implements ContractService {
 
     private final RackRenterRepository rackRenterRepository;
 
+    private final MoneySourceRepository moneySourceRepository;
+    private final TableLogComponent tableLogComponent;
+
+    private final RoomBillRepository roomBillRepository;
+
     public ContractServiceImpl(ContractRepository contractRepository,
                                AssetService assetService,
                                @Lazy RoomService roomService,
@@ -61,7 +69,9 @@ public class ContractServiceImpl implements ContractService {
                                AddressRepository addressRepository,
                                @Lazy GroupService groupService,
                                @Lazy RenterRepository renterRepository,
-                               RackRenterRepository rackRenters) {
+                               RackRenterRepository rackRenters,
+                               MoneySourceRepository moneySourceRepository,
+                               TableLogComponent tableLogComponent, RoomBillRepository roomBillRepository) {
         this.contractRepository = contractRepository;
         this.assetService = assetService;
         this.roomService = roomService;
@@ -71,10 +81,14 @@ public class ContractServiceImpl implements ContractService {
         this.groupService = groupService;
         this.renterRepository = renterRepository;
         this.rackRenterRepository = rackRenters;
+        this.moneySourceRepository = moneySourceRepository;
+        this.tableLogComponent = tableLogComponent;
+        this.roomBillRepository = roomBillRepository;
     }
 
     @Override
     @Transactional
+    @SneakyThrows
     public RoomContractRequest addContract(RoomContractRequest request, Long operator) {
         Contracts contractsInformation = Contracts.addForSubLease(request, operator);
 
@@ -123,8 +137,8 @@ public class ContractServiceImpl implements ContractService {
 
         // lưu thành viên vào phòng
         if (ObjectUtils.isNotEmpty(request.getListRenter())) {
-            if (request.getListRenter().size() + 1 > room.getRoomLimitPeople())
-                throw new BusinessException(RENTER_LIMIT, "Giới hạn thành viên trong phòng " + room.getRoomLimitPeople() + " số lượng thành viên hiện tại: " + (request.getListRenter().size() + 1));
+            if (request.getListRenter().size() > room.getRoomLimitPeople())
+                throw new BusinessException(RENTER_LIMIT, "Giới hạn thành viên trong phòng " + room.getRoomLimitPeople() + " số lượng thành viên hiện tại: " + (request.getListRenter().size()));
             request.getListRenter().forEach(e -> {
                 e.setRepresent(false);
                 e.setRoomId(roomId);
@@ -158,6 +172,96 @@ public class ContractServiceImpl implements ContractService {
                     currentWater.get(),
                     operator);
         }
+
+
+        var var1 = moneySourceRepository.save(MoneySource.of(
+                        "Tiền cọc hợp đồng phòng " + room.getRoomName(),
+                        request.getContractDeposit(),
+                        IN_MONEY,
+                        now()
+                )
+        );
+        // lưu vết
+        tableLogComponent.addEvent(
+                MoneySource.TABLE_NAME,
+                var1.getId(),
+                "money_source_description",
+                String.valueOf(var1.getDescription()),
+                Operator.operatorName());
+        tableLogComponent.addEvent(
+                MoneySource.TABLE_NAME,
+                var1.getId(),
+                "money_source_total_money",
+                String.valueOf(var1.getTotalMoney()),
+                Operator.operatorName());
+        tableLogComponent.addEvent(
+                MoneySource.TABLE_NAME,
+                var1.getId(),
+                "money_source_type",
+                String.valueOf(var1.getMoneyType()),
+                Operator.operatorName());
+        tableLogComponent.addEvent(
+                MoneySource.TABLE_NAME,
+                var1.getId(),
+                "money_source_time",
+                String.valueOf(var1.getMoneySourceTime()),
+                Operator.operatorName());
+
+
+        var var2 = roomBillRepository.save(RoomBill.add(
+                addedContract.getId(),
+                room.getGroupContractId(),
+                room.getGroupId(),
+                room.getId(),
+                request.getContractPrice() * request.getContractPaymentCycle(),
+                request.getContractPaymentCycle(),
+                "Tiền phòng cho hợp lần lập hợp đồng đầu tiên phòng " + room.getRoomName() + "ở " + contract(room.getGroupContractId()).getContractName()
+        ));
+
+        //lưu vết
+        tableLogComponent.addEvent(
+                RoomBill.TABLE_NAME,
+                var1.getId(),
+                "contract_id",
+                String.valueOf(var2.getId()),
+                Operator.operatorName());
+        tableLogComponent.addEvent(
+                RoomBill.TABLE_NAME,
+                var1.getId(),
+                "group_contract_id",
+                String.valueOf(var2.getGroupContractId()),
+                Operator.operatorName());
+        tableLogComponent.addEvent(
+                RoomBill.TABLE_NAME,
+                var1.getId(),
+                "group_id",
+                String.valueOf(var2.getGroupId()),
+                Operator.operatorName());
+        tableLogComponent.addEvent(
+                RoomBill.TABLE_NAME,
+                var1.getId(),
+                "room_id",
+                String.valueOf(var2.getId()),
+                Operator.operatorName());
+        tableLogComponent.addEvent(
+                RoomBill.TABLE_NAME,
+                var1.getId(),
+                "room_total_money",
+                String.valueOf(var2.getContractTotalMoney()),
+                Operator.operatorName());
+        tableLogComponent.addEvent(
+                RoomBill.TABLE_NAME,
+                var1.getId(),
+                "payment_cycle",
+                String.valueOf(var2.getPaymentCycle()),
+                Operator.operatorName());
+        tableLogComponent.addEvent(
+                RoomBill.TABLE_NAME,
+                var1.getId(),
+                "note",
+                var2.getNote(),
+                Operator.operatorName());
+
         return request;
     }
 

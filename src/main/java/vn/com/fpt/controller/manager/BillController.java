@@ -36,7 +36,7 @@ public class BillController {
 //        return null;
 //    }
 
-    @Operation(summary = "Trang thái hóa đơn các phòng trong tháng và theo kỳ")
+    @Operation(summary = "Trạng thái hóa đơn các phòng trong tháng và theo kỳ")
     @GetMapping("/room/not-billed")
     public ResponseEntity<BaseResponse<List<BillRoomStatusResponse>>> listNotBilled(@RequestParam Long groupContractId,
                                                                                     @RequestParam Integer billCircle) {

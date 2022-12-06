@@ -11,8 +11,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import static vn.com.fpt.common.utils.DateUtils.now;
+
 @Entity
-@Table(name = RecurringBill.TABLE_NAME)
+@Table(name = RoomBill.TABLE_NAME)
 @DynamicUpdate
 @NoArgsConstructor
 @AllArgsConstructor
@@ -39,10 +41,45 @@ public class RoomBill extends BaseEntity {
     @Column(name = "room_total_money")
     private Double contractTotalMoney;
 
-    @Column(name = "bill_cycle")
-    private Integer billCycle;
+    @Column(name = "payment_cycle")
+    private Integer paymentCycle;
 
     @Column(name = "note")
     private String note;
 
+    public static RoomBill of(Long contractId,
+                              Long groupContractId,
+                              Long groupId,
+                              Long roomId,
+                              Double contractTotalMoney,
+                              Integer paymentCycle,
+                              String note) {
+        return RoomBill.builder()
+                .contractId(contractId)
+                .groupContractId(groupContractId)
+                .groupId(groupId)
+                .roomId(roomId)
+                .contractTotalMoney(contractTotalMoney)
+                .paymentCycle(paymentCycle)
+                .note(note).build();
+    }
+
+    public static RoomBill add(Long contractId,
+                               Long groupContractId,
+                               Long groupId,
+                               Long roomId,
+                               Double contractTotalMoney,
+                               Integer paymentCycle,
+                               String note) {
+        var add = of(
+                contractId,
+                groupContractId,
+                groupId,
+                roomId,
+                contractTotalMoney,
+                paymentCycle,
+                note);
+        add.setCreatedAt(now());
+        return add;
+    }
 }

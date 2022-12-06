@@ -21,6 +21,9 @@ public abstract class ManagerConstants {
     public static final Boolean INCREASE_ROOM_PRICE = true;
     public static final Boolean DECREASE_ROOM_PRICE = false;
 
+    public static final String IN_MONEY = "IN";
+    public static final String OUT_MONEY = "OUT";
+
 
     public static final Integer DEFAULT_ASSET_QUANTITY = 1;
     //basic service

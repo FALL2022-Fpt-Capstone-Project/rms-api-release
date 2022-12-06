@@ -14,6 +14,11 @@ public class Operator {
             return -1L;
         return ((AccountAuthenticationDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
     }
+    public static String operatorName() {
+        if (Objects.isNull((SecurityContextHolder.getContext().getAuthentication())))
+            return "undefied";
+        return ((AccountAuthenticationDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+    }
 
     public static Date time() {
         return DateUtils.now();
