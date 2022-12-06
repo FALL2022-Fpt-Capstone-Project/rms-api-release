@@ -118,7 +118,7 @@ public class RoomServiceImpl implements RoomService {
         var group = groupService.getGroup(groupId);
         List<GroupContractedResponse.RoomLeaseContracted> result = new ArrayList<>(Collections.emptyList());
         for (Contracts contracts : listGroupContract) {
-            var roomLeaseContracted = roomsRepository.findAllByGroupContractIdAndGroupId(contracts.getId(), groupId);
+            var roomLeaseContracted = roomsRepository.findAllByGroupContractIdAndGroupIdAndIsDisableIsFalse(contracts.getId(), groupId);
             var rackRenter = rackRenters.findById(contracts.getRackRenters()).get();
             result.add(
                     GroupContractedResponse.RoomLeaseContracted.of(
@@ -145,7 +145,7 @@ public class RoomServiceImpl implements RoomService {
     public List<GroupContractedResponse.RoomNonLeaseContracted> listRoomLeaseNonContracted(Long groupId) {
         List<GroupContractedResponse.RoomNonLeaseContracted> result = new ArrayList<>(Collections.emptyList());
         var group = groupService.getGroup(groupId);
-        var listRoomNonLeaseContracted = roomsRepository.findAllByGroupContractIdNullAndGroupId(groupId);
+        var listRoomNonLeaseContracted = roomsRepository.findAllByGroupContractIdNullAndGroupIdAndIsDisableIsFalse(groupId);
         result.add(
                 GroupContractedResponse.RoomNonLeaseContracted.of(
                         groupId,

@@ -115,7 +115,7 @@ public class GroupServiceImpl implements GroupService {
                 group.setGroupId(roomGroups.getId());
                 group.setGroupName(roomGroups.getGroupName());
                 group.setDescription(roomGroups.getGroupDescription());
-                group.setTotalRoom(roomsRepository.findAllRoomsByGroupId(roomGroups.getId()).size());
+                group.setTotalRoom(roomsRepository.findAllByGroupIdAndIsDisableIsFalse(roomGroups.getId()).size());
                 group.setTotalFloor(roomsRepository.findAllFloorByGroupId(roomGroups.getId()).size());
                 group.setAddress(addressRepository.findById(roomGroups.getAddress()).get());
                 group.setListRooms(roomService.listRoom(roomGroups.getId(), null, null, null, null));

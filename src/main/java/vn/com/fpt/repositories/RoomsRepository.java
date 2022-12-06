@@ -17,9 +17,9 @@ public interface RoomsRepository extends JpaRepository<Rooms, Long>, JpaSpecific
 
     List<Rooms> findByGroupIdAndIdNot(Long groupId, Long roomId);
 
-    List<Rooms> findAllByGroupContractIdAndGroupId(Long groupContractId, Long groupId);
+    List<Rooms> findAllByGroupContractIdAndGroupIdAndIsDisableIsFalse(Long groupContractId, Long groupId);
 
-    List<Rooms> findAllByGroupContractIdNullAndGroupId(Long groupId);
+    List<Rooms> findAllByGroupContractIdNullAndGroupIdAndIsDisableIsFalse(Long groupId);
 
     List<Rooms> findAllByRoomFloorInAndGroupIdAndIsDisableIs(List<Integer> floor, Long groupId, Boolean isDisable);
 
@@ -27,13 +27,13 @@ public interface RoomsRepository extends JpaRepository<Rooms, Long>, JpaSpecific
     List<Integer> findAllFloorByGroupContractIdAndGroupId(@Param("groupContractId") Long groupContractId,
                                                           @Param("groupId") Long groupId);
 
-    @Query("select DISTINCT (r.roomFloor) from Rooms r WHERE r.groupContractId is NULL AND r.groupId = :groupId")
+    @Query("select DISTINCT (r.roomFloor) from Rooms r WHERE r.groupContractId is NULL AND r.groupId = :groupId AND r.isDisable = false")
     List<Integer> findAllFloorByGroupNonContractAndGroupId(@Param("groupId") Long groupId);
 
     @Query("select distinct (r.roomName) from Rooms r where r.groupContractId = :groupContractId")
     List<String> findAllRoomsByGroupContractId(@Param("groupContractId") Long groupContractId);
 
-    @Query("select distinct (r.roomName) from Rooms r where r.groupId = :groupId")
+    @Query("select distinct (r.roomName) from Rooms r where r.groupId = :groupId and r.isDisable = false")
     List<String> findAllRoomsByGroupId(@Param("groupId") Long groupId);
 
     @Query("select DISTINCT (r.roomFloor) from Rooms r WHERE r.groupId = :groupId")

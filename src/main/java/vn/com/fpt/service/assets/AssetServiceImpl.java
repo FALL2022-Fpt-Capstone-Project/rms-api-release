@@ -96,12 +96,12 @@ public class AssetServiceImpl implements AssetService {
         Map<String, Object> params = new HashMap<>();
 
         StringBuilder whereBuild = new StringBuilder("WHERE 1=1 ");
-        if (ObjectUtils.isEmpty(roomId)) {
+        if (ObjectUtils.isNotEmpty(roomId)) {
             params.put("roomId", roomId);
             whereBuild.append("AND mr.room_id = :roomId ");
         }
 
-        if (ObjectUtils.isEmpty(assetType)) {
+        if (ObjectUtils.isNotEmpty(assetType)) {
             params.put("assetTypeId", assetType);
             whereBuild.append("AND mra.asset_type_id = :assetTypeId ");
         }
@@ -146,7 +146,7 @@ public class AssetServiceImpl implements AssetService {
             var room = roomAssetRepository.findAllByRoomId(roomId);
             for (RoomAssetsRequest rar : request) {
                 listAsset.addAll(listExitedRoomAsset.stream().filter(e ->
-                        e.getAssetName().equalsIgnoreCase(rar.getAssetName())
+                        e.getAssetName().trim().replaceAll(" +", "\\s").equalsIgnoreCase(rar.getAssetName().trim().replaceAll(" +", "\\s"))
                 ).map(e -> RoomAssets.modify(
                         e,
                         e.getAssetName(),
@@ -157,7 +157,7 @@ public class AssetServiceImpl implements AssetService {
                 )).toList());
 
                 listAsset.addAll(listExitedRoomAsset.stream().filter(e ->
-                        !e.getAssetName().equalsIgnoreCase(rar.getAssetName())
+                        !e.getAssetName().trim().replaceAll(" +", "\\s").equalsIgnoreCase(rar.getAssetName().trim().replaceAll(" +", "\\s"))
                 ).map(e -> RoomAssets.modify(
                         e,
                         e.getAssetName(),
