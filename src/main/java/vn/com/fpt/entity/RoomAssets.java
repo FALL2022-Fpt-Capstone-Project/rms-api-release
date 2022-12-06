@@ -63,6 +63,7 @@ public class RoomAssets extends BaseEntity {
                                     Long roomId,
                                     Long operator) {
         var modify = of(assetName, assetQuantity, assetTypeId, roomId);
+        modify.setId(old.getId());
         modify.setCreatedAt(old.getCreatedAt());
         modify.setCreatedBy(old.getCreatedBy());
 

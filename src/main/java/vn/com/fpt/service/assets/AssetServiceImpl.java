@@ -165,9 +165,8 @@ public class AssetServiceImpl implements AssetService {
 
                 listAsset.addAll(listExitedRoomAsset.stream().filter(e ->
                         !e.getAssetName().trim().replaceAll(" +", "\\s").equalsIgnoreCase(rar.getAssetName().trim().replaceAll(" +", "\\s"))
-                ).map(e -> RoomAssets.modify(
-                        e,
-                        e.getAssetName(),
+                ).map(e -> RoomAssets.add(
+                        rar.getAssetName(),
                         ObjectUtils.isEmpty(rar.getAssetQuantity()) ? DEFAULT_ASSET_QUANTITY : rar.getAssetQuantity(),
                         rar.getAssetTypeId(),
                         roomId,
