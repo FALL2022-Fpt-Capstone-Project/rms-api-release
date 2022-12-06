@@ -154,9 +154,9 @@ public class AssetServiceImpl implements AssetService {
                 var var1 = roomAssetRepository.findByAssetNameEqualsIgnoreCaseAndAssetTypeId(rar.getAssetName(), rar.getAssetTypeId());
                 if (ObjectUtils.isNotEmpty(var1)) {
                     listAsset.add(RoomAssets.modify(
-                            var1,
-                            var1.getAssetName(),
-                            var1.getAssetQuantity() + rar.getAssetQuantity(),
+                            var1.get(0),
+                            var1.get(0).getAssetName(),
+                            var1.get(0).getAssetQuantity() + rar.getAssetQuantity(),
                             rar.getAssetTypeId(),
                             roomId,
                             operator));
