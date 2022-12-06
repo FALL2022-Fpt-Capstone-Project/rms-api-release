@@ -16,9 +16,9 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AdjustRoomPriceResponse {
 
-    private String groupContractName;
+    private String groupName;
 
-    private Long groupContractId;
+    private Long groupId;
     private Double number;
     private Boolean increase;
 

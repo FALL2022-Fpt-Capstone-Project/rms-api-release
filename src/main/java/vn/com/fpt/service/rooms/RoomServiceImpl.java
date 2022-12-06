@@ -10,6 +10,7 @@ import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.common.utils.DateUtils;
 import vn.com.fpt.entity.Contracts;
 import vn.com.fpt.entity.Rooms;
+import vn.com.fpt.repositories.ContractRepository;
 import vn.com.fpt.repositories.RackRenterRepository;
 import vn.com.fpt.repositories.RoomsRepository;
 import vn.com.fpt.requests.AdjustRoomPriceRequest;
@@ -49,18 +50,21 @@ public class RoomServiceImpl implements RoomService {
 
     private final ServicesService servicesService;
 
+    private final ContractRepository contractRepo;
+
     public RoomServiceImpl(RoomsRepository roomsRepository,
                            AssetService assetService,
                            @Lazy ContractService contractService,
                            @Lazy GroupService service,
                            @Lazy ServicesService servicesService,
-                           RackRenterRepository rackRenters) {
+                           RackRenterRepository rackRenters, ContractRepository contractRepo) {
         this.roomsRepository = roomsRepository;
         this.assetService = assetService;
         this.contractService = contractService;
         this.groupService = service;
         this.rackRenters = rackRenters;
         this.servicesService = servicesService;
+        this.contractRepo = contractRepo;
     }
 
     @Override
@@ -501,12 +505,11 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public AdjustRoomPriceResponse adjustRoomPrice(AdjustRoomPriceRequest request, Long operator) {
         var listRoom = listRoom(
+                request.getGroupId(),
                 null,
-                request.getGroupContractId(),
                 null,
                 null,
                 null);
-
         List<Rooms> updatePrice = new ArrayList<>(Collections.emptyList());
         for (RoomsResponse rs : listRoom) {
             if (request.getIncrease().equals(INCREASE_ROOM_PRICE)) {
@@ -531,12 +534,19 @@ public class RoomServiceImpl implements RoomService {
             }
         }
         roomsRepository.saveAll(updatePrice);
-        var contractInfor = contractService.contract(request.getGroupContractId());
+
+        var listContractToUpdate = contractRepo.findAllByGroupIdAndContractType(request.getGroupId(), SUBLEASE_CONTRACT);
+        if (!listContractToUpdate.isEmpty()) {
+            listContractToUpdate.forEach(e -> e.setContractPrice(room(e.getRoomId()).getRoomPrice()));
+            contractRepo.saveAll(listContractToUpdate);
+        }
+
+        var groupInfor = groupService.getGroup(request.getGroupId());
         AdjustRoomPriceResponse response = new AdjustRoomPriceResponse();
         response.setIncrease(request.getIncrease());
         response.setNumber(request.getNumber());
-        response.setGroupContractName(contractInfor.getContractName());
-        response.setGroupContractId(request.getGroupContractId());
+        response.setGroupName(groupInfor.getGroupName());
+        response.setGroupId(groupInfor.getId());
         response.setListRoomAdjust(listRoom.stream().map(RoomsResponse::getRoomId).toList());
         response.setListRoomNameAdjust(String.join(", ", listRoom.stream().map(RoomsResponse::getRoomName).toList()));
         return response;

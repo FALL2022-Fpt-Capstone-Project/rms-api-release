@@ -23,5 +23,5 @@ public class AdjustRoomPriceRequest {
     private Boolean increase;
 
     @NotBlank(message = "Nhóm phòng thuê lại không được để trống")
-    private Long groupContractId;
+    private Long groupId;
 }

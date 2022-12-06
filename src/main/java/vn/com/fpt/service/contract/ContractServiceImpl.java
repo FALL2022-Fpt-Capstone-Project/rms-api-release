@@ -658,7 +658,7 @@ public class ContractServiceImpl implements ContractService {
         servicesService.deleteGeneralHandOverService(listHandOverService);
         if (request.getTotalMoney() < 0) {
             var var1 = moneySourceRepository.save(MoneySource.of(
-                    "Tiền phát sinh nghiệm thu " + room.getRoomName(),
+                    "Tiền phát sinh nghiệm thu " + room.getRoomName() + " kết thúc hợp đồng",
                     request.getTotalMoney(),
                     IN_MONEY,
                     now()));
