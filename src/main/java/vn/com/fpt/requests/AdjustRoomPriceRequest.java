@@ -16,14 +16,11 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class AdjustRoomPriceRequest {
-    @Schema(description = "Lựa chọn một trong 1 trong 2 option tăng hoặc giảm giá phòng: number|percent", example = "0.1")
-    private Double percent;
-
-    @Schema(description = "Lựa chọn một trong 1 trong 2 option tăng hoặc giảm giá phòng: number|percent", example = "100000")
+    @Schema(description = "Tăng hoặc giảm giá phòng", example = "100000")
     private Double number;
 
-    @Schema(description = "Tăng hoặc giảm giá phòng: increase|decrease", example = "up")
-    private String type;
+    @Schema(description = "Tăng hoặc giảm giá phòng: true | false", example = "true")
+    private Boolean increase;
 
     @NotBlank(message = "Nhóm phòng thuê lại không được để trống")
     private Long groupContractId;

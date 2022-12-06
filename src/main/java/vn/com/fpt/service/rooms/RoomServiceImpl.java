@@ -508,67 +508,34 @@ public class RoomServiceImpl implements RoomService {
                 null,
                 null);
 
-        switch (request.getType()) {
-            case INCREASE_ROOM_PRICE -> {
-                List<Rooms> updatePrice = new ArrayList<>(Collections.emptyList());
-                if (ObjectUtils.isNotEmpty(request.getNumber())) {
-                    for (RoomsResponse rs : listRoom) {
-                        updatePrice.add(Rooms.modify(
-                                room(rs.getRoomId()),
-                                rs.getRoomName(),
-                                rs.getRoomFloor(),
-                                rs.getRoomLimitPeople(),
-                                rs.getRoomPrice() + request.getNumber(),
-                                rs.getRoomArea(),
-                                operator));
-                    }
-                } else if (ObjectUtils.isNotEmpty(request.getPercent())) {
-                    for (RoomsResponse rs : listRoom) {
-                        updatePrice.add(Rooms.modify(
-                                room(rs.getRoomId()),
-                                rs.getRoomName(),
-                                rs.getRoomFloor(),
-                                rs.getRoomLimitPeople(),
-                                rs.getRoomPrice() + (rs.getRoomPrice() * request.getPercent()),
-                                rs.getRoomArea(),
-                                operator));
-                    }
-                }
-                roomsRepository.saveAll(updatePrice);
+        List<Rooms> updatePrice = new ArrayList<>(Collections.emptyList());
+        for (RoomsResponse rs : listRoom) {
+            if (request.getIncrease().equals(INCREASE_ROOM_PRICE)) {
+                updatePrice.add(Rooms.modify(
+                        room(rs.getRoomId()),
+                        rs.getRoomName(),
+                        rs.getRoomFloor(),
+                        rs.getRoomLimitPeople(),
+                        rs.getRoomPrice() + request.getNumber(),
+                        rs.getRoomArea(),
+                        operator));
             }
-            case DECREASE_ROOM_PRICE -> {
-                List<Rooms> updatePrice = new ArrayList<>(Collections.emptyList());
-                if (ObjectUtils.isNotEmpty(request.getNumber())) {
-                    for (RoomsResponse rs : listRoom) {
-                        updatePrice.add(Rooms.modify(
-                                room(rs.getRoomId()),
-                                rs.getRoomName(),
-                                rs.getRoomFloor(),
-                                rs.getRoomLimitPeople(),
-                                rs.getRoomPrice() - request.getNumber(),
-                                rs.getRoomArea(),
-                                operator));
-                    }
-                } else if (ObjectUtils.isNotEmpty(request.getPercent())) {
-                    for (RoomsResponse rs : listRoom) {
-                        updatePrice.add(Rooms.modify(
-                                room(rs.getRoomId()),
-                                rs.getRoomName(),
-                                rs.getRoomFloor(),
-                                rs.getRoomLimitPeople(),
-                                rs.getRoomPrice() - (rs.getRoomPrice() * request.getPercent()),
-                                rs.getRoomArea(),
-                                operator));
-                    }
-                }
-                roomsRepository.saveAll(updatePrice);
+            else {
+                updatePrice.add(Rooms.modify(
+                        room(rs.getRoomId()),
+                        rs.getRoomName(),
+                        rs.getRoomFloor(),
+                        rs.getRoomLimitPeople(),
+                        rs.getRoomPrice() - request.getNumber(),
+                        rs.getRoomArea(),
+                        operator));
             }
         }
+        roomsRepository.saveAll(updatePrice);
         var contractInfor = contractService.contract(request.getGroupContractId());
         AdjustRoomPriceResponse response = new AdjustRoomPriceResponse();
-        response.setType(response.getType());
-        response.setPercent(request.getPercent());
-        response.setNumber(response.getNumber());
+        response.setIncrease(request.getIncrease());
+        response.setNumber(request.getNumber());
         response.setGroupContractName(contractInfor.getContractName());
         response.setGroupContractId(request.getGroupContractId());
         response.setListRoomAdjust(listRoom.stream().map(RoomsResponse::getRoomId).toList());

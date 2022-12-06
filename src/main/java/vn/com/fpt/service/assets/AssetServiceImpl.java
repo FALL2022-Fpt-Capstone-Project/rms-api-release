@@ -11,7 +11,8 @@ import vn.com.fpt.model.RoomAssetDTO;
 import vn.com.fpt.repositories.AssetTypesRepository;
 import vn.com.fpt.repositories.BasicAssetRepository;
 import vn.com.fpt.repositories.RoomAssetRepository;
-import vn.com.fpt.requests.BasicAssetsRequest;import vn.com.fpt.requests.RoomAssetsRequest;
+import vn.com.fpt.requests.BasicAssetsRequest;
+import vn.com.fpt.requests.RoomAssetsRequest;
 import vn.com.fpt.service.contract.ContractService;
 
 import javax.persistence.EntityManager;
@@ -45,7 +46,6 @@ public class AssetServiceImpl implements AssetService {
         this.contractService = contractService;
         this.roomAssetRepository = roomAssetRepository;
     }
-
 
 
     @Override
@@ -143,7 +143,6 @@ public class AssetServiceImpl implements AssetService {
         var listAsset = new ArrayList<RoomAssets>(Collections.emptyList());
         for (Long roomId : roomIds) {
             var listExitedRoomAsset = roomAssetRepository.findAllByRoomId(roomId);
-            var room = roomAssetRepository.findAllByRoomId(roomId);
             if (listExitedRoomAsset.isEmpty())
                 return roomAssetRepository.saveAll(request.stream().map(e -> RoomAssets.add(
                         e.getAssetName(),
@@ -152,26 +151,24 @@ public class AssetServiceImpl implements AssetService {
                         roomId,
                         operator)).toList());
             for (RoomAssetsRequest rar : request) {
-                listAsset.addAll(listExitedRoomAsset.stream().filter(e ->
-                        e.getAssetName().trim().replaceAll(" +", "\\s").equalsIgnoreCase(rar.getAssetName().trim().replaceAll(" +", "\\s"))
-                ).map(e -> RoomAssets.modify(
-                        e,
-                        e.getAssetName(),
-                        e.getAssetQuantity() + 1,
-                        rar.getAssetTypeId(),
-                        roomId,
-                        operator
-                )).toList());
-
-                listAsset.addAll(listExitedRoomAsset.stream().filter(e ->
-                        !e.getAssetName().trim().replaceAll(" +", "\\s").equalsIgnoreCase(rar.getAssetName().trim().replaceAll(" +", "\\s"))
-                ).map(e -> RoomAssets.add(
-                        rar.getAssetName(),
-                        ObjectUtils.isEmpty(rar.getAssetQuantity()) ? DEFAULT_ASSET_QUANTITY : rar.getAssetQuantity(),
-                        rar.getAssetTypeId(),
-                        roomId,
-                        operator
-                )).toList());
+                for (RoomAssets ra : listExitedRoomAsset) {
+                    if (ra.getAssetName().trim().replaceAll(" +", "\\s").equalsIgnoreCase(rar.getAssetName().trim().replaceAll(" +", "\\s"))) {
+                        listAsset.add(RoomAssets.modify(
+                                ra,
+                                ra.getAssetName(),
+                                ra.getAssetQuantity() + 1,
+                                rar.getAssetTypeId(),
+                                roomId,
+                                operator));
+                    } else {
+                        listAsset.add(RoomAssets.add(rar.getAssetName(),
+                                ObjectUtils.isEmpty(rar.getAssetQuantity()) ? DEFAULT_ASSET_QUANTITY : rar.getAssetQuantity(),
+                                rar.getAssetTypeId(),
+                                roomId,
+                                operator
+                        ));
+                    }
+                }
             }
         }
         return roomAssetRepository.saveAll(listAsset);

@@ -18,8 +18,8 @@ public abstract class ManagerConstants {
     public static final Long TYPE_ANOTHER = 5L;
     public static final Long TYPE_OFFICE = 6L;
 
-    public static final String INCREASE_ROOM_PRICE = "increase";
-    public static final String DECREASE_ROOM_PRICE = "decrease";
+    public static final Boolean INCREASE_ROOM_PRICE = true;
+    public static final Boolean DECREASE_ROOM_PRICE = false;
 
 
     public static final Integer DEFAULT_ASSET_QUANTITY = 1;

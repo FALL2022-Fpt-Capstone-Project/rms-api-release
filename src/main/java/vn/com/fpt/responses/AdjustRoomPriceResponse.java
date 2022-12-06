@@ -21,7 +21,7 @@ public class AdjustRoomPriceResponse {
     private Long groupContractId;
     private Double number;
     private Double percent;
-    private String type;
+    private Boolean increase;
 
     private List<Long> listRoomAdjust;
     private String listRoomNameAdjust;
