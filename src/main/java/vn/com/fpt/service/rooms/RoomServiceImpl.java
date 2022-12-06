@@ -264,9 +264,12 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public List<Rooms> updateRoom(List<Rooms> rooms) {
+        var groupId = rooms.get(0).getGroupId();
+        var listCheckDuplicateRoomName = roomsRepository.findAllByGroupIdAndIdNotInAndIsDisableIsFalse(groupId, rooms.stream().map(Rooms::getId).toList());
+
         rooms.forEach(e -> {
             if (checkDuplicateRoomName(
-                    roomsRepository.findAllByGroupIdAndIsDisableIsFalse(room(e.getId()).getGroupId()),
+                    listCheckDuplicateRoomName,
                     e.getRoomName()))
                 throw new BusinessException(DUPLICATE_NAME, "Tên phòng bị trùng: " + e.getRoomName());
         });
