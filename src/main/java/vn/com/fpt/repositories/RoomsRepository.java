@@ -17,7 +17,7 @@ public interface RoomsRepository extends JpaRepository<Rooms, Long>, JpaSpecific
 
     List<Rooms> findByGroupIdAndIdNotAndIsDisableIsFalse(Long groupId, Long roomId);
 
-    List<Rooms> findAllByGroupContractIdAndGroupIdAndIsDisableIsFalse(Long groupContractId, Long groupId);
+    List<Rooms> findAllByGroupContractIdAndGroupId(Long groupContractId, Long groupId);
 
     List<Rooms> findAllByGroupContractIdNullAndGroupIdAndIsDisableIsFalse(Long groupId);
 

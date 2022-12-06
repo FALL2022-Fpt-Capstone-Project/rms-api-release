@@ -72,7 +72,7 @@ public class GroupServiceImpl implements GroupService {
         List<GroupContractedResponse> result = new ArrayList<>(Collections.emptyList());
 
         for (RoomGroups roomGroups : listContractedGroup) {
-            var contract = contractRepository.findByGroupIdAndContractType(roomGroups.getId(), LEASE_CONTRACT);
+            var contract = contractRepository.findByGroupIdAndContractTypeAndContractIsDisableIsFalse(roomGroups.getId(), LEASE_CONTRACT);
             for (Contracts contracts : contract) {
                 if (!contract.isEmpty() && !roomGroups.getIsDisable()) {
                     GroupContractedResponse group = new GroupContractedResponse();
@@ -110,7 +110,7 @@ public class GroupServiceImpl implements GroupService {
         List<GroupNonContractedResponse> result = new ArrayList<>(Collections.emptyList());
 
         for (RoomGroups roomGroups : listNonContractedGroup) {
-            if (contractRepository.findByGroupIdAndContractType(roomGroups.getId(), LEASE_CONTRACT).isEmpty() && !roomGroups.getIsDisable()) {
+            if (contractRepository.findByGroupIdAndContractTypeAndContractIsDisableIsFalse(roomGroups.getId(), LEASE_CONTRACT).isEmpty() && !roomGroups.getIsDisable()) {
                 GroupNonContractedResponse group = new GroupNonContractedResponse();
                 group.setGroupId(roomGroups.getId());
                 group.setGroupName(roomGroups.getGroupName());
@@ -135,7 +135,7 @@ public class GroupServiceImpl implements GroupService {
     @Override
     @Transactional
     public String delete(Long id, Long operator) {
-        if (ObjectUtils.isNotEmpty(contractRepository.findByGroupIdAndContractType(id, LEASE_CONTRACT)))
+        if (ObjectUtils.isNotEmpty(contractRepository.findByGroupIdAndContractTypeAndContractIsDisableIsFalse(id, LEASE_CONTRACT)))
             throw new BusinessException("Xóa thất bại. Do nhóm phòng đang tồn tại hợp đồng. Tính năng đang phát triển!!");
         var group = groupRepository.findById(id).get();
         // Xóa tòa

@@ -210,6 +210,17 @@ public class ServicesServiceImpl implements ServicesService {
     }
 
     @Override
+    public List<HandOverGeneralServices> deleteGeneralHandOverService(List<HandOverGeneralServices> list) {
+        handOverGeneralServicesRepo.deleteAll(list);
+        return list;
+    }
+
+    @Override
+    public List<HandOverGeneralServices> handOverGeneralServices(Long contractId) {
+        return handOverGeneralServicesRepo.findAllByContractId(contractId);
+    }
+
+    @Override
     public List<BasicServices> basicServices() {
         return basicServicesRepository.findAll();
     }

@@ -15,10 +15,7 @@ import vn.com.fpt.model.GeneralServiceDTO;
 import vn.com.fpt.model.GroupContractDTO;
 import vn.com.fpt.model.RoomContractDTO;
 import vn.com.fpt.repositories.*;
-import vn.com.fpt.requests.GeneralServiceRequest;
-import vn.com.fpt.requests.GroupContractRequest;
-import vn.com.fpt.requests.RenterRequest;
-import vn.com.fpt.requests.RoomContractRequest;
+import vn.com.fpt.requests.*;
 import vn.com.fpt.responses.GroupContractedResponse;
 import vn.com.fpt.responses.RentersResponse;
 import vn.com.fpt.service.TableLogComponent;
@@ -420,7 +417,7 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     public List<Contracts> listGroupContract(Long groupId) {
-        return contractRepository.findByGroupIdAndContractType(groupId, LEASE_CONTRACT);
+        return contractRepository.findByGroupIdAndContractTypeAndContractIsDisableIsFalse(groupId, LEASE_CONTRACT);
     }
 
     @Override
@@ -556,7 +553,7 @@ public class ContractServiceImpl implements ContractService {
                                                     String endDate,
                                                     Boolean isDisable) {
         if (ObjectUtils.isNotEmpty(groupId)) {
-            var groupContracts = contractRepository.findByGroupIdAndContractType(groupId, LEASE_CONTRACT);
+            var groupContracts = contractRepository.findByGroupIdAndContractTypeAndContractIsDisableIsFalse(groupId, LEASE_CONTRACT);
             if (Objects.isNull(groupContracts)) return Collections.emptyList();
             List<GroupContractDTO> listGroupContract = new ArrayList<>();
             groupContracts.forEach
@@ -645,5 +642,52 @@ public class ContractServiceImpl implements ContractService {
                 null,
                 null,
                 null).get(0);
+    }
+
+    @Override
+    @SneakyThrows
+    @Transactional
+    public EndRoomContractRequest endRoomContract(EndRoomContractRequest request, Long operator) {
+        var endContract = contract(request.getContractId());
+        var listHandOverService = servicesService.handOverGeneralServices(endContract.getId());
+        var room = roomService.room(endContract.getId());
+        room.setContractId(null);
+        roomService.updateRoom(room);
+        endContract.setContractIsDisable(true);
+        contractRepository.save(endContract);
+        servicesService.deleteGeneralHandOverService(listHandOverService);
+        if (request.getTotalMoney() < 0) {
+            var var1 = moneySourceRepository.save(MoneySource.of(
+                    "Tiền phát sinh nghiệm thu " + room.getRoomName(),
+                    request.getTotalMoney(),
+                    IN_MONEY,
+                    now()));
+            // lưu vết
+            tableLogComponent.addEvent(
+                    MoneySource.TABLE_NAME,
+                    var1.getId(),
+                    "money_source_description",
+                    String.valueOf(var1.getDescription()),
+                    Operator.operatorName());
+            tableLogComponent.addEvent(
+                    MoneySource.TABLE_NAME,
+                    var1.getId(),
+                    "money_source_total_money",
+                    String.valueOf(var1.getTotalMoney()),
+                    Operator.operatorName());
+            tableLogComponent.addEvent(
+                    MoneySource.TABLE_NAME,
+                    var1.getId(),
+                    "money_source_type",
+                    String.valueOf(var1.getMoneyType()),
+                    Operator.operatorName());
+            tableLogComponent.addEvent(
+                    MoneySource.TABLE_NAME,
+                    var1.getId(),
+                    "money_source_time",
+                    String.valueOf(var1.getMoneySourceTime()),
+                    Operator.operatorName());
+        }
+        return request;
     }
 }

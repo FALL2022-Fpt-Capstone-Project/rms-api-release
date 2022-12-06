@@ -11,6 +11,7 @@ import vn.com.fpt.common.response.BaseResponse;
 import vn.com.fpt.common.utils.Operator;
 import vn.com.fpt.model.GroupContractDTO;
 import vn.com.fpt.model.RoomContractDTO;
+import vn.com.fpt.requests.EndRoomContractRequest;
 import vn.com.fpt.requests.GroupContractRequest;
 import vn.com.fpt.requests.RoomContractRequest;
 import vn.com.fpt.service.contract.ContractService;
@@ -41,6 +42,12 @@ public class ContractController {
     public ResponseEntity<BaseResponse<RoomContractRequest>> updateContract(@PathVariable Long contractId,
                                                                             @RequestBody RoomContractRequest request) {
         return AppResponse.success(contractService.updateContract(contractId, request, Operator.operator()));
+    }
+
+    @Operation(summary = "Cập nhập hợp đồng cho phòng")
+    @PostMapping("/room/end")
+    public ResponseEntity<BaseResponse<EndRoomContractRequest>> endContract(@RequestBody EndRoomContractRequest request) {
+        return AppResponse.success(contractService.endRoomContract(request, Operator.operator()));
     }
 
     @Operation(summary = "Xem hợp đồng của phòng")
