@@ -10,9 +10,11 @@ import vn.com.fpt.common.response.AppResponse;
 import vn.com.fpt.common.response.BaseResponse;
 import vn.com.fpt.common.utils.Operator;
 import vn.com.fpt.entity.Rooms;
+import vn.com.fpt.requests.AdjustRoomPriceRequest;
 import vn.com.fpt.requests.RoomsPreviewRequest;
 import vn.com.fpt.requests.AddRoomsRequest;
 import vn.com.fpt.requests.UpdateRoomRequest;
+import vn.com.fpt.responses.AdjustRoomPriceResponse;
 import vn.com.fpt.responses.RoomsPreviewResponse;
 import vn.com.fpt.responses.RoomsResponse;
 import vn.com.fpt.service.rooms.RoomService;
@@ -69,6 +71,11 @@ public class RoomController {
         var updatedRoom = roomService.update(requests, Operator.operator());
         String roomNameUpdated = String.join(", ", updatedRoom.stream().map(Rooms::getRoomName).toList());
         return AppResponse.success(String.format("Cập nhập %s thành công", roomNameUpdated));
+    }
+
+    @PostMapping("/room-price-adjust")
+    public ResponseEntity<BaseResponse<AdjustRoomPriceResponse>> adjust(@RequestBody AdjustRoomPriceRequest request){
+        return AppResponse.success(roomService.adjustRoomPrice(request, Operator.operator()));
     }
 
     @PostMapping("/generate/preview")

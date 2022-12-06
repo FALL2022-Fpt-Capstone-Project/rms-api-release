@@ -18,6 +18,9 @@ public abstract class ManagerConstants {
     public static final Long TYPE_ANOTHER = 5L;
     public static final Long TYPE_OFFICE = 6L;
 
+    public static final String INCREASE_ROOM_PRICE = "increase";
+    public static final String DECREASE_ROOM_PRICE = "decrease";
+
 
     public static final Integer DEFAULT_ASSET_QUANTITY = 1;
     //basic service

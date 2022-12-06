@@ -143,14 +143,14 @@ public class AssetServiceImpl implements AssetService {
         var listAsset = new ArrayList<RoomAssets>(Collections.emptyList());
         for (Long roomId : roomIds) {
             var listExitedRoomAsset = roomAssetRepository.findAllByRoomId(roomId);
-            var room = roomAssetRepository.findById(roomId).get();
+            var room = roomAssetRepository.findAllByRoomId(roomId);
             for (RoomAssetsRequest rar : request) {
                 listAsset.addAll(listExitedRoomAsset.stream().filter(e ->
                         e.getAssetName().equalsIgnoreCase(rar.getAssetName())
                 ).map(e -> RoomAssets.modify(
-                        room,
+                        e,
                         e.getAssetName(),
-                        room.getAssetQuantity() + 1,
+                        e.getAssetQuantity() + 1,
                         rar.getAssetTypeId(),
                         roomId,
                         operator
@@ -159,7 +159,7 @@ public class AssetServiceImpl implements AssetService {
                 listAsset.addAll(listExitedRoomAsset.stream().filter(e ->
                         !e.getAssetName().equalsIgnoreCase(rar.getAssetName())
                 ).map(e -> RoomAssets.modify(
-                        room,
+                        e,
                         e.getAssetName(),
                         ObjectUtils.isEmpty(rar.getAssetQuantity()) ? DEFAULT_ASSET_QUANTITY : rar.getAssetQuantity(),
                         rar.getAssetTypeId(),

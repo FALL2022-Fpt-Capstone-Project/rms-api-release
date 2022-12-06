@@ -11,7 +11,7 @@ import vn.com.fpt.common.response.AppResponse;
 import vn.com.fpt.common.response.BaseResponse;
 import vn.com.fpt.requests.GenerateBillRequest;
 import vn.com.fpt.requests.RoomContractRequest;
-import vn.com.fpt.responses.NotBilledRoomResponse;
+import vn.com.fpt.responses.BillRoomStatusResponse;
 import vn.com.fpt.service.bill.BillService;
 
 import java.util.List;
@@ -36,12 +36,14 @@ public class BillController {
         return null;
     }
 
-    @Operation(summary = "Lấy các phòng chưa được tạo hóa đơn trong tháng này và theo kỳ")
-    public ResponseEntity<BaseResponse<List<NotBilledRoomResponse>>> listNotBilled(@RequestParam Long groupContractId,
-                                                                                   @RequestParam Integer billCircle){
+    @Operation(summary = "Trang thái hóa đơn các phòng trong tháng và theo kỳ")
+    @GetMapping("/room/not-billed")
+    public ResponseEntity<BaseResponse<List<BillRoomStatusResponse>>> listNotBilled(@RequestParam Long groupContractId,
+                                                                                    @RequestParam Integer billCircle){
         Pattern pattern = Pattern.compile("(0|15|30)", Pattern.CASE_INSENSITIVE);
         if (!pattern.matcher(billCircle.toString()).matches()) throw new BusinessException("Kỳ hạn thanh toán hóa đơn không hợp lệ");
-        return AppResponse.success(billService.listNotBilledRoom(groupContractId, billCircle));
+        return AppResponse.success(billService.listBillRoomStatus(groupContractId, billCircle));
     }
+
 
 }

@@ -1,9 +1,11 @@
 package vn.com.fpt.service.rooms;
 
 import vn.com.fpt.entity.Rooms;
+import vn.com.fpt.requests.AdjustRoomPriceRequest;
 import vn.com.fpt.requests.RoomsPreviewRequest;
 import vn.com.fpt.requests.AddRoomsRequest;
 import vn.com.fpt.requests.UpdateRoomRequest;
+import vn.com.fpt.responses.AdjustRoomPriceResponse;
 import vn.com.fpt.responses.GroupContractedResponse;
 import vn.com.fpt.responses.RoomsPreviewResponse;
 import vn.com.fpt.responses.RoomsResponse;
@@ -71,4 +73,6 @@ public interface RoomService {
     List<Rooms> update(List<UpdateRoomRequest> requests, Long operator);
 
     RoomsPreviewResponse.SeparationRoomPreview preview(RoomsPreviewRequest request);
+
+    AdjustRoomPriceResponse adjustRoomPrice(AdjustRoomPriceRequest request, Long operator);
 }

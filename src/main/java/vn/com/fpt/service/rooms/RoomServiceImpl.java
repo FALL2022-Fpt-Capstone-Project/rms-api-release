@@ -13,9 +13,11 @@ import vn.com.fpt.entity.Contracts;
 import vn.com.fpt.entity.Rooms;
 import vn.com.fpt.repositories.RackRenterRepository;
 import vn.com.fpt.repositories.RoomsRepository;
+import vn.com.fpt.requests.AdjustRoomPriceRequest;
 import vn.com.fpt.requests.RoomsPreviewRequest;
 import vn.com.fpt.requests.AddRoomsRequest;
 import vn.com.fpt.requests.UpdateRoomRequest;
+import vn.com.fpt.responses.AdjustRoomPriceResponse;
 import vn.com.fpt.responses.GroupContractedResponse;
 import vn.com.fpt.responses.RoomsPreviewResponse;
 import vn.com.fpt.responses.RoomsResponse;
@@ -31,7 +33,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static vn.com.fpt.common.constants.ErrorStatusConstants.*;
-import static vn.com.fpt.common.constants.ManagerConstants.NOT_RENTED_YET;
+import static vn.com.fpt.common.constants.ManagerConstants.*;
 import static vn.com.fpt.common.constants.SearchOperation.*;
 
 @Service
@@ -403,7 +405,7 @@ public class RoomServiceImpl implements RoomService {
                 boolean flag = false;
                 if (room[1] == null) {
                     int var2 = 1;
-                    for (int x = var2; x < request.getTotalRoomPerFloor() ; x++) {
+                    for (int x = var2; x < request.getTotalRoomPerFloor(); x++) {
                         if (room[x] == null) {
                             var2++;
                         }
@@ -491,7 +493,84 @@ public class RoomServiceImpl implements RoomService {
                 }
             }
         }
-        return new RoomsPreviewResponse.SeparationRoomPreview (oldRoom2, gen);
+        return new RoomsPreviewResponse.SeparationRoomPreview(oldRoom2, gen);
+    }
+
+    @Override
+    public AdjustRoomPriceResponse adjustRoomPrice(AdjustRoomPriceRequest request, Long operator) {
+        var listRoom = listRoom(
+                null,
+                request.getGroupContractId(),
+                null,
+                null,
+                null);
+
+        switch (request.getType()) {
+            case INCREASE_ROOM_PRICE -> {
+                List<Rooms> updatePrice = new ArrayList<>(Collections.emptyList());
+                if (ObjectUtils.isNotEmpty(request.getNumber())) {
+                    for (RoomsResponse rs : listRoom) {
+                        updatePrice.add(Rooms.modify(
+                                room(rs.getRoomId()),
+                                rs.getRoomName(),
+                                rs.getRoomFloor(),
+                                rs.getRoomLimitPeople(),
+                                rs.getRoomPrice() + request.getNumber(),
+                                rs.getRoomArea(),
+                                operator));
+                    }
+                } else if (ObjectUtils.isNotEmpty(request.getPercent())) {
+                    for (RoomsResponse rs : listRoom) {
+                        updatePrice.add(Rooms.modify(
+                                room(rs.getRoomId()),
+                                rs.getRoomName(),
+                                rs.getRoomFloor(),
+                                rs.getRoomLimitPeople(),
+                                rs.getRoomPrice() + (rs.getRoomPrice() * request.getPercent()),
+                                rs.getRoomArea(),
+                                operator));
+                    }
+                }
+                roomsRepository.saveAll(updatePrice);
+            }
+            case DECREASE_ROOM_PRICE -> {
+                List<Rooms> updatePrice = new ArrayList<>(Collections.emptyList());
+                if (ObjectUtils.isNotEmpty(request.getNumber())) {
+                    for (RoomsResponse rs : listRoom) {
+                        updatePrice.add(Rooms.modify(
+                                room(rs.getRoomId()),
+                                rs.getRoomName(),
+                                rs.getRoomFloor(),
+                                rs.getRoomLimitPeople(),
+                                rs.getRoomPrice() - request.getNumber(),
+                                rs.getRoomArea(),
+                                operator));
+                    }
+                } else if (ObjectUtils.isNotEmpty(request.getPercent())) {
+                    for (RoomsResponse rs : listRoom) {
+                        updatePrice.add(Rooms.modify(
+                                room(rs.getRoomId()),
+                                rs.getRoomName(),
+                                rs.getRoomFloor(),
+                                rs.getRoomLimitPeople(),
+                                rs.getRoomPrice() - (rs.getRoomPrice() * request.getPercent()),
+                                rs.getRoomArea(),
+                                operator));
+                    }
+                }
+                roomsRepository.saveAll(updatePrice);
+            }
+        }
+        var contractInfor = contractService.contract(request.getGroupContractId());
+        AdjustRoomPriceResponse response = new AdjustRoomPriceResponse();
+        response.setType(response.getType());
+        response.setPercent(request.getPercent());
+        response.setNumber(response.getNumber());
+        response.setGroupContractName(contractInfor.getContractName());
+        response.setGroupContractId(request.getGroupContractId());
+        response.setListRoomAdjust(listRoom.stream().map(RoomsResponse::getRoomId).toList());
+        response.setListRoomNameAdjust(String.join(", ", listRoom.stream().map(RoomsResponse::getRoomName).toList()));
+        return response;
     }
 
     public boolean checkNoobRoomName(String roomName) {
