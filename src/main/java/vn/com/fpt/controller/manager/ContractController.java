@@ -44,7 +44,7 @@ public class ContractController {
         return AppResponse.success(contractService.updateContract(contractId, request, Operator.operator()));
     }
 
-    @Operation(summary = "Cập nhập hợp đồng cho phòng")
+    @Operation(summary = "Kết thúc hợp đồng của phòng")
     @PostMapping("/room/end")
     public ResponseEntity<BaseResponse<EndRoomContractRequest>> endContract(@RequestBody EndRoomContractRequest request) {
         return AppResponse.success(contractService.endRoomContract(request, Operator.operator()));

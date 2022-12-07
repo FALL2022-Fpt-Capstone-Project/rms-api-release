@@ -18,4 +18,6 @@ public class HandOverGeneralServiceRequest {
 
     private Integer handOverGeneralServiceIndex;
 
+    private Long serviceId;
+
 }

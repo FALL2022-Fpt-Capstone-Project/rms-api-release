@@ -45,11 +45,6 @@ public class BillServiceImpl implements BillService {
     private final TableLogComponent tableLogComponent;
 
 
-    @Override
-    public List<PreviewGenerateBillResponse> generatePreview(GenerateBillRequest request) {
-
-        return null;
-    }
 
     @Override
     public List<BillRoomStatusResponse> listBillRoomStatus(Long groupContractId, Integer paymentCircle) {
@@ -264,5 +259,10 @@ public class BillServiceImpl implements BillService {
                         e.getServiceBill()
                 )
         ).toList();
+    }
+
+    @Override
+    public List<RoomBillHistory> roomBillHistory(Long roomId) {
+        return null;
     }
 }

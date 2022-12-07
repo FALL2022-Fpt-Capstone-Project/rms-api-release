@@ -1,8 +1,10 @@
 package vn.com.fpt.controller.manager;
 
+import io.sentry.protocol.App;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +15,7 @@ import vn.com.fpt.requests.AddBillRequest;
 import vn.com.fpt.responses.BillRoomStatusResponse;
 import vn.com.fpt.responses.ListRoomWithBillStatusResponse;
 import vn.com.fpt.responses.PreviewAddBillResponse;
+import vn.com.fpt.responses.RoomBillHistory;
 import vn.com.fpt.service.bill.BillService;
 
 import java.util.List;
@@ -58,6 +61,11 @@ public class BillController {
         return AppResponse.success(billService.addBill(requests));
     }
 
+    @Operation(summary = "Xem lịch sử hóa đơn của phòng")
+    @GetMapping("/room/history/{roomId}")
+    public ResponseEntity<BaseResponse<List<RoomBillHistory>>> roomBillHistory(@PathVariable Long roomId){
+        return AppResponse.success(billService.roomBillHistory(roomId));
+    }
 //    @PutMapping("/room/pay")
 //    public ResponseEntity<BaseResponse<?>> payBill(@RequestParam(required = false) List<Long> billId) {
 //        //todo

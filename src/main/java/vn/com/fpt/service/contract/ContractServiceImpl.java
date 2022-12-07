@@ -153,14 +153,12 @@ public class ContractServiceImpl implements ContractService {
             request.getListGeneralService().forEach(service -> {
                         var serviceId = servicesService.generalService(service.getGeneralServiceId()).getServiceId().longValue();
                         var serviceTypeId = servicesService.generalService(service.getGeneralServiceId()).getServiceTypeId().longValue();
-
                         if (serviceId == SERVICE_WATER && serviceTypeId == SERVICE_TYPE_METER) {
                             currentWater.set(service.getHandOverGeneralServiceIndex());
                         }
                         if (serviceId == SERVICE_ELECTRIC) {
                             currentElectric.set(service.getHandOverGeneralServiceIndex());
                         }
-                        servicesService.addHandOverGeneralService(service, contractId, startDate, operator);
                     }
             );
             //cập nhập chỉ số điện nước cho phòng
@@ -320,23 +318,12 @@ public class ContractServiceImpl implements ContractService {
             AtomicInteger currentWater = new AtomicInteger(0);
 
             request.getListGeneralService().forEach(service -> {
-
-                var serviceId = servicesService.generalService(service.getGeneralServiceId()).getServiceId().longValue();
-                var serviceTypeId = servicesService.generalService(service.getGeneralServiceId()).getServiceTypeId().longValue();
-
-                if (serviceId == SERVICE_WATER && serviceTypeId == SERVICE_TYPE_METER) {
+                if (Objects.equals(service.getServiceId(), SERVICE_WATER)) {
                     currentWater.set(service.getHandOverGeneralServiceIndex());
                 }
-                if (serviceId == SERVICE_ELECTRIC) {
+                if (Objects.equals(service.getServiceId(), SERVICE_ELECTRIC)) {
                     currentElectric.set(service.getHandOverGeneralServiceIndex());
                 }
-                servicesService.updateHandOverGeneralService(
-                        service.getHandOverGeneralServiceId(),
-                        service,
-                        oldContract.getId(),
-                        startDate,
-                        operator);
-
             });
             //cập nhập chỉ số điện nước cho phòng
             roomService.setServiceIndex(request.getRoomId(),
@@ -581,22 +568,11 @@ public class ContractServiceImpl implements ContractService {
     @Transactional
     public EndRoomContractRequest endRoomContract(EndRoomContractRequest request, Long operator) {
         var endContract = contract(request.getContractId());
-        var listHandOverService = servicesService.handOverGeneralServices(endContract.getId());
         var room = roomService.room(endContract.getId());
         room.setContractId(null);
         roomService.updateRoom(room);
         endContract.setContractIsDisable(true);
         contractRepository.save(endContract);
-        servicesService.deleteGeneralHandOverService(listHandOverService);
-        if (request.getTotalMoney() < 0) {
-            var var1 = moneySourceRepository.save(MoneySource.of(
-                    "Tiền phát sinh nghiệm thu " + room.getRoomName() + " kết thúc hợp đồng",
-                    request.getTotalMoney(),
-                    IN_MONEY,
-                    now()));
-            // lưu vết
-            tableLogComponent.saveMoneySourceHistory(var1);
-        }
         return request;
     }
 }
