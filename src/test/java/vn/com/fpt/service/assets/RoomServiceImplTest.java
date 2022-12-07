@@ -16,6 +16,7 @@ import vn.com.fpt.repositories.RoomsRepository;
 import vn.com.fpt.requests.AddRoomsRequest;
 import vn.com.fpt.service.contract.ContractService;
 import vn.com.fpt.service.group.GroupService;
+import vn.com.fpt.service.renter.RenterService;
 import vn.com.fpt.service.rooms.RoomService;
 import vn.com.fpt.service.rooms.RoomServiceImpl;
 import vn.com.fpt.service.services.ServicesService;
@@ -55,10 +56,12 @@ public class RoomServiceImplTest {
 
     private RoomService roomServiceTest;
 
+    private RenterService renterService;
+
 
     @BeforeEach
     void setUp() {
-        roomServiceTest = new RoomServiceImpl(roomsRepository, assetService, contractService, groupService, servicesService, renterRepository, contractRepo);
+        roomServiceTest = new RoomServiceImpl(roomsRepository, assetService, contractService, groupService, servicesService, renterRepository, contractRepo,renterService);
     }
 
 //    @Test
