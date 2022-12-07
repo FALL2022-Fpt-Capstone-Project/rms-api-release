@@ -295,11 +295,6 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public Rooms getRoom(Long id) {
-        return roomsRepository.findById(id).get();
-    }
-
-    @Override
     public Rooms emptyRoom(Long id) {
         var room = roomChecker(id);
         if (Objects.nonNull(room.getContractId()))

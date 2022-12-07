@@ -39,7 +39,7 @@ public class RoomBill extends BaseEntity {
     private Long roomId;
 
     @Column(name = "room_total_money")
-    private Double contractTotalMoney;
+    private Double roomTotalMoney;
 
     @Column(name = "payment_cycle")
     private Integer paymentCycle;
@@ -51,7 +51,7 @@ public class RoomBill extends BaseEntity {
                               Long groupContractId,
                               Long groupId,
                               Long roomId,
-                              Double contractTotalMoney,
+                              Double roomTotalMoney,
                               Integer paymentCycle,
                               String note) {
         return RoomBill.builder()
@@ -59,7 +59,7 @@ public class RoomBill extends BaseEntity {
                 .groupContractId(groupContractId)
                 .groupId(groupId)
                 .roomId(roomId)
-                .contractTotalMoney(contractTotalMoney)
+                .roomTotalMoney(roomTotalMoney)
                 .paymentCycle(paymentCycle)
                 .note(note).build();
     }
@@ -68,7 +68,7 @@ public class RoomBill extends BaseEntity {
                                Long groupContractId,
                                Long groupId,
                                Long roomId,
-                               Double contractTotalMoney,
+                               Double roomTotalMoney,
                                Integer paymentCycle,
                                String note) {
         var add = of(
@@ -76,7 +76,7 @@ public class RoomBill extends BaseEntity {
                 groupContractId,
                 groupId,
                 roomId,
-                contractTotalMoney,
+                roomTotalMoney,
                 paymentCycle,
                 note);
         add.setCreatedAt(now());

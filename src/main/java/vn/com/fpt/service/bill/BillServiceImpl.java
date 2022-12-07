@@ -1,12 +1,17 @@
 package vn.com.fpt.service.bill;
 
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
 import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.common.utils.DateUtils;
+import vn.com.fpt.common.utils.Operator;
+import vn.com.fpt.entity.RoomBill;
+import vn.com.fpt.entity.ServiceBill;
 import vn.com.fpt.model.RoomContractDTO;
 import vn.com.fpt.repositories.*;
+import vn.com.fpt.requests.AddBillRequest;
 import vn.com.fpt.requests.GenerateBillRequest;
 import vn.com.fpt.responses.BillRoomStatusResponse;
 import vn.com.fpt.responses.PreviewGenerateBillResponse;
@@ -18,6 +23,7 @@ import vn.com.fpt.service.renter.RenterService;
 import vn.com.fpt.service.rooms.RoomService;
 import vn.com.fpt.service.services.ServicesService;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -97,7 +103,7 @@ public class BillServiceImpl implements BillService {
                 response.setTotalRenter(renter.size());
                 response.setListGeneralService(generalService);
                 response.setContractPaymentCycle(rcd.getContractPaymentCycle());
-                if (DateUtils.monthsBetween(now(), parse(rcd.getContractStartDate())) / rcd.getContractPaymentCycle() == 0) {
+                if (DateUtils.monthsBetween(now(), parse(rcd.getContractStartDate())) % rcd.getContractPaymentCycle() == 0) {
                     response.setIsInPaymentCycle(true);
                     response.setTotalMoneyRoomPrice(room.getRoomPrice() * rcd.getContractPaymentCycle());
                 } else {
@@ -118,5 +124,50 @@ public class BillServiceImpl implements BillService {
             }
         }
         return responses;
+    }
+
+    @Override
+    @SneakyThrows
+    public List<AddBillRequest> addBill(List<AddBillRequest> addBillRequests) {
+        //tạo hóa đơn cho tiền phòng
+        for (AddBillRequest abr : addBillRequests) {
+            var roomInfor = roomService.room(abr.getRoomId());
+            var contractInfor = contractService.contract(roomInfor.getContractId());
+            if (abr.getTotalRoomMoney() > 0) {
+                var var1 = roomBillRepo.save(RoomBill.of(
+                                roomInfor.getContractId(),
+                                roomInfor.getGroupContractId(),
+                                roomInfor.getGroupId(),
+                                abr.getRoomId(),
+                                abr.getTotalRoomMoney(),
+                                contractInfor.getContractPaymentCycle(), "Tiền phòng " + roomInfor.getRoomName()
+                        )
+                );
+                //lưu vết
+                tableLogComponent.saveRoomBillHistory(var1);
+            }
+            // tạo hóa đơn dịch vụ
+            if(!abr.getServiceBill().isEmpty()){
+                List<ServiceBill> serviceBills = new ArrayList<>(Collections.emptyList());
+                for (AddBillRequest.ServiceBill sbr : abr.getServiceBill()) {
+                    serviceBills.add(ServiceBill.add(
+                          sbr.getServiceId(),
+                            sbr.getServiceType(),
+                            sbr.getServicePrice(),
+                            sbr.getServiceIndex(),
+                            abr.getRoomId(),
+                            roomInfor.getGroupContractId(),
+                            roomInfor.getContractId(),
+                            abr.getTotalServiceMoney(),
+                            Operator.operator()
+                            )
+                    );
+
+                }
+                serviceBillRepo.saveAll(serviceBills);
+            }
+            // tạo hóa đơn định kì
+        }
+        return null;
     }
 }

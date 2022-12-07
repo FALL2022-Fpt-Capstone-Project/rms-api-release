@@ -9,8 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.common.response.AppResponse;
 import vn.com.fpt.common.response.BaseResponse;
-import vn.com.fpt.requests.GenerateBillRequest;
-import vn.com.fpt.requests.RoomContractRequest;
+import vn.com.fpt.requests.AddBillRequest;
 import vn.com.fpt.responses.BillRoomStatusResponse;
 import vn.com.fpt.service.bill.BillService;
 
@@ -37,7 +36,7 @@ public class BillController {
 //    }
 
     @Operation(summary = "Trạng thái hóa đơn các phòng trong tháng và theo kỳ")
-    @GetMapping("/room/not-billed")
+    @GetMapping("/room/bill-status")
     public ResponseEntity<BaseResponse<List<BillRoomStatusResponse>>> listNotBilled(@RequestParam Long groupContractId,
                                                                                     @RequestParam Integer billCircle) {
         Pattern pattern = Pattern.compile("(0|15|30)", Pattern.CASE_INSENSITIVE);
@@ -46,5 +45,21 @@ public class BillController {
         return AppResponse.success(billService.listBillRoomStatus(groupContractId, billCircle));
     }
 
+    @PostMapping("/room/create")
+    public ResponseEntity<BaseResponse<?>> createBill(@RequestBody List<AddBillRequest> requests) {
+        //todo
+        return null;
+    }
 
+    @PutMapping("/room/pay")
+    public ResponseEntity<BaseResponse<?>> payBill(@RequestParam(required = false) List<Long> billId) {
+        //todo
+        return null;
+    }
+
+    @DeleteMapping("/room/delete")
+    public ResponseEntity<BaseResponse<?>> deleteBill(@RequestParam(required = false) List<Long> billId){
+        //todo
+        return null;
+    }
 }

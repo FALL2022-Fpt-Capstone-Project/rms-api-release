@@ -183,7 +183,7 @@ public class RoomServiceImplTest {
         Long id = 1l;
         Rooms rooms = Rooms.builder().roomName("rooms").build();
         when(roomsRepository.findById(id)).thenReturn(Optional.of(rooms));
-        Rooms result = roomServiceTest.getRoom(id);
+        Rooms result = roomServiceTest.room(id);
         //verify
         Assertions.assertEquals("rooms", result.getRoomName());
     }

@@ -90,7 +90,7 @@ public class ContractServiceImpl implements ContractService {
         Contracts contractsInformation = Contracts.addForSubLease(request, operator);
 
         var roomId = request.getRoomId();
-        var groupContractId = roomService.getRoom(roomId).getGroupContractId();
+        var groupContractId = roomService.room(roomId).getGroupContractId();
 
         if (ObjectUtils.isEmpty(groupContractId))
             throw new BusinessException("Phòng này chưa có hợp đồng nhóm phòng. Vui lòng kiểm tra lại!!");
@@ -178,32 +178,7 @@ public class ContractServiceImpl implements ContractService {
                         now()
                 )
         );
-        // lưu vết
-        tableLogComponent.addEvent(
-                MoneySource.TABLE_NAME,
-                var1.getId(),
-                "money_source_description",
-                String.valueOf(var1.getDescription()),
-                Operator.operatorName());
-        tableLogComponent.addEvent(
-                MoneySource.TABLE_NAME,
-                var1.getId(),
-                "money_source_total_money",
-                String.valueOf(var1.getTotalMoney()),
-                Operator.operatorName());
-        tableLogComponent.addEvent(
-                MoneySource.TABLE_NAME,
-                var1.getId(),
-                "money_source_type",
-                String.valueOf(var1.getMoneyType()),
-                Operator.operatorName());
-        tableLogComponent.addEvent(
-                MoneySource.TABLE_NAME,
-                var1.getId(),
-                "money_source_time",
-                String.valueOf(var1.getMoneySourceTime()),
-                Operator.operatorName());
-
+        tableLogComponent.saveMoneySourceHistory(var1);
 
         var var2 = roomBillRepository.save(RoomBill.add(
                 addedContract.getId(),
@@ -212,52 +187,9 @@ public class ContractServiceImpl implements ContractService {
                 room.getId(),
                 request.getContractPrice() * request.getContractPaymentCycle(),
                 request.getContractPaymentCycle(),
-                "Tiền phòng cho hợp lần lập hợp đồng đầu tiên phòng " + room.getRoomName() + "ở " + contract(room.getGroupContractId()).getContractName()
+                "Tiền phòng lập hợp đồng phòng " + room.getRoomName() + "ở " + contract(room.getGroupContractId()).getContractName()
         ));
-
-        //lưu vết
-        tableLogComponent.addEvent(
-                RoomBill.TABLE_NAME,
-                var1.getId(),
-                "contract_id",
-                String.valueOf(var2.getId()),
-                Operator.operatorName());
-        tableLogComponent.addEvent(
-                RoomBill.TABLE_NAME,
-                var1.getId(),
-                "group_contract_id",
-                String.valueOf(var2.getGroupContractId()),
-                Operator.operatorName());
-        tableLogComponent.addEvent(
-                RoomBill.TABLE_NAME,
-                var1.getId(),
-                "group_id",
-                String.valueOf(var2.getGroupId()),
-                Operator.operatorName());
-        tableLogComponent.addEvent(
-                RoomBill.TABLE_NAME,
-                var1.getId(),
-                "room_id",
-                String.valueOf(var2.getId()),
-                Operator.operatorName());
-        tableLogComponent.addEvent(
-                RoomBill.TABLE_NAME,
-                var1.getId(),
-                "room_total_money",
-                String.valueOf(var2.getContractTotalMoney()),
-                Operator.operatorName());
-        tableLogComponent.addEvent(
-                RoomBill.TABLE_NAME,
-                var1.getId(),
-                "payment_cycle",
-                String.valueOf(var2.getPaymentCycle()),
-                Operator.operatorName());
-        tableLogComponent.addEvent(
-                RoomBill.TABLE_NAME,
-                var1.getId(),
-                "note",
-                var2.getNote(),
-                Operator.operatorName());
+        tableLogComponent.saveRoomBillHistory(var2);
 
         return request;
     }
@@ -345,7 +277,7 @@ public class ContractServiceImpl implements ContractService {
 
 
         var roomId = oldContract.getRoomId(); //oldRoom
-        var groupContractId = roomService.getRoom(roomId).getGroupContractId();
+        var groupContractId = roomService.room(roomId).getGroupContractId();
         if (ObjectUtils.isEmpty(groupContractId))
             throw new BusinessException("Phòng này chưa có hợp đồng nhóm phòng. Vui lòng kiểm tra lại!!");
 
@@ -355,7 +287,7 @@ public class ContractServiceImpl implements ContractService {
         contractsInformation.setRoomId(roomId);
 
         //update giá phòng
-        var oldRoom = roomService.getRoom(roomId);
+        var oldRoom = roomService.room(roomId);
         var newRoom = oldRoom;
 
         newRoom.setRoomPrice(request.getContractPrice());
@@ -435,13 +367,13 @@ public class ContractServiceImpl implements ContractService {
                 listRenter,
                 assetService.listRoomAsset(contract.getRoomId(), null),
                 servicesService.listHandOverGeneralService(id));
-        roomContract.setRoom(roomService.getRoom(roomContract.getRoomId()));
-        roomContract.setRoomName(roomService.getRoom(roomContract.getRoomId()).getRoomName());
+        roomContract.setRoom(roomService.room(roomContract.getRoomId()));
+        roomContract.setRoomName(roomService.room(roomContract.getRoomId()).getRoomName());
         roomContract.setGroupName(((GroupContractedResponse) groupService.group(roomContract.getGroupId())).getGroupName());
         roomContract.setListRoom(
                 roomService.listRoom(
                         contract.getGroupId(),
-                        roomService.getRoom(roomContract.getRoomId()).getGroupContractId(),
+                        roomService.room(roomContract.getRoomId()).getGroupContractId(),
                         null,
                         null,
                         null)
@@ -535,8 +467,8 @@ public class ContractServiceImpl implements ContractService {
                     listRenter,
                     assetService.listRoomAsset(e.getRoomId(), null),
                     servicesService.listHandOverGeneralService(e.getId()));
-            roomContract.setRoom(roomService.getRoom(e.getRoomId()));
-            roomContract.setRoomName(roomService.getRoom(e.getRoomId()).getRoomName());
+            roomContract.setRoom(roomService.room(e.getRoomId()));
+            roomContract.setRoomName(roomService.room(e.getRoomId()).getRoomName());
             roomContract.setGroupName(group.getGroupName());
             roomContracts.add(roomContract);
         });
@@ -663,30 +595,7 @@ public class ContractServiceImpl implements ContractService {
                     IN_MONEY,
                     now()));
             // lưu vết
-            tableLogComponent.addEvent(
-                    MoneySource.TABLE_NAME,
-                    var1.getId(),
-                    "money_source_description",
-                    String.valueOf(var1.getDescription()),
-                    Operator.operatorName());
-            tableLogComponent.addEvent(
-                    MoneySource.TABLE_NAME,
-                    var1.getId(),
-                    "money_source_total_money",
-                    String.valueOf(var1.getTotalMoney()),
-                    Operator.operatorName());
-            tableLogComponent.addEvent(
-                    MoneySource.TABLE_NAME,
-                    var1.getId(),
-                    "money_source_type",
-                    String.valueOf(var1.getMoneyType()),
-                    Operator.operatorName());
-            tableLogComponent.addEvent(
-                    MoneySource.TABLE_NAME,
-                    var1.getId(),
-                    "money_source_time",
-                    String.valueOf(var1.getMoneySourceTime()),
-                    Operator.operatorName());
+            tableLogComponent.saveMoneySourceHistory(var1);
         }
         return request;
     }

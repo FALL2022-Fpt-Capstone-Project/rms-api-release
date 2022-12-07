@@ -52,6 +52,7 @@ public class AppConfigs {
     public static final String GROUP_PATH = "/group";
 
     public static final String BILL_PATH = "/bill";
+    public static final String HISTORY_PATH = "/history";
 
     public static final String STATISTICAL_PATH = "/statistical";
 
@@ -61,5 +62,6 @@ public class AppConfigs {
     public static final String TABLE_MANAGER = "manager.";
 
     public static final String TABLE_CONFIG = "config.";
+
 
 }

@@ -64,7 +64,7 @@ public interface RoomService {
 
     Rooms roomChecker(Long id);
 
-    Rooms getRoom(Long id);
+
 
     Rooms emptyRoom(Long id);
 
