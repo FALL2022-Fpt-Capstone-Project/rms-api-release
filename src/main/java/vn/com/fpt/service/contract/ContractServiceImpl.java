@@ -493,7 +493,7 @@ public class ContractServiceImpl implements ContractService {
                             listGroupContract.add(GroupContractDTO.of(
                                             e,
                                             (GroupContractedResponse) groupService.group(e.getGroupId()),
-                                            servicesService.listGeneralService(e.getId()),
+                                            servicesService.listGeneralServiceByGroupId(e.getGroupId()),
                                             roomService.listRoom(e.getGroupId(), e.getId(), null, null, null),
                                             renterService.rackRenter(e.getRackRenters())
                                     )
@@ -510,7 +510,7 @@ public class ContractServiceImpl implements ContractService {
                             listGroupContract.add(GroupContractDTO.of(
                                             e,
                                             (GroupContractedResponse) groupService.group(e.getGroupId()),
-                                            servicesService.listGeneralService(e.getId()),
+                                            servicesService.listGeneralServiceByGroupId(e.getGroupId()),
                                             roomService.listRoom(e.getGroupId(), e.getId(), null, null, null),
                                             renterService.rackRenter(e.getRackRenters())
                                     )
