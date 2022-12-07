@@ -19,5 +19,5 @@ public interface RecurringBillRepository extends JpaRepository<RecurringBill, Lo
             "contract_id = :contractId",
 
             nativeQuery = true)
-    List<RecurringBill> findByContractIdAndCreatedAt(Long contractId, int month, int year);
+    RecurringBill findByContractIdAndCreatedAt(Long contractId, int month, int year);
 }

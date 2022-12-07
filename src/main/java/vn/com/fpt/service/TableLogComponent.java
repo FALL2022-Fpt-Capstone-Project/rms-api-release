@@ -9,10 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import vn.com.fpt.common.utils.Operator;
-import vn.com.fpt.entity.MoneySource;
-import vn.com.fpt.entity.RoomBill;
-import vn.com.fpt.entity.ServiceBill;
-import vn.com.fpt.entity.TableChangeLog;
+import vn.com.fpt.entity.*;
 import vn.com.fpt.repositories.TableChangeLogRepository;
 import vn.com.fpt.security.domain.AccountAuthenticationDetail;
 
@@ -86,7 +83,7 @@ public class TableLogComponent {
 
     @SneakyThrows
     @Transactional
-    public void saveRoomBillHistory(RoomBill roomBill){
+    public void saveRoomBillHistory(RoomBill roomBill) {
         addEvent(
                 List.of(
                         new AddLog(RoomBill.TABLE_NAME,
@@ -182,7 +179,7 @@ public class TableLogComponent {
 
     @SneakyThrows
     @Transactional
-    public void saveMoneySourceHistory(MoneySource request){
+    public void saveMoneySourceHistory(MoneySource request) {
         addEvent(
                 List.of(new AddLog(
                                 MoneySource.TABLE_NAME,
@@ -214,15 +211,15 @@ public class TableLogComponent {
 
     @SneakyThrows
     @Transactional
-    public void saveServiceBillSourceHistory(List<ServiceBill> list){
+    public void saveServiceBillSourceHistory(List<ServiceBill> list) {
         List<AddLog> addLogs = new ArrayList<>(Collections.emptyList());
         list.forEach(e -> {
             addLogs.add(
                     new AddLog(
                             ServiceBill.TABLE_NAME,
                             e.getId(),
-                            "",
-                            String.valueOf(""),
+                            "service_id",
+                            String.valueOf(e.getServiceId()),
                             Operator.operatorName()
                     )
             );
@@ -230,8 +227,8 @@ public class TableLogComponent {
                     new AddLog(
                             ServiceBill.TABLE_NAME,
                             e.getId(),
-                            "",
-                            String.valueOf(""),
+                            "service_type_id",
+                            String.valueOf(e.getServiceTypeId()),
                             Operator.operatorName()
                     )
             );
@@ -239,8 +236,8 @@ public class TableLogComponent {
                     new AddLog(
                             ServiceBill.TABLE_NAME,
                             e.getId(),
-                            "",
-                            String.valueOf(""),
+                            "service_price",
+                            String.valueOf(e.getServicePrice()),
                             Operator.operatorName()
                     )
             );
@@ -248,8 +245,8 @@ public class TableLogComponent {
                     new AddLog(
                             ServiceBill.TABLE_NAME,
                             e.getId(),
-                            "",
-                            String.valueOf(""),
+                            "description",
+                            e.getDescription(),
                             Operator.operatorName()
                     )
             );
@@ -257,8 +254,8 @@ public class TableLogComponent {
                     new AddLog(
                             ServiceBill.TABLE_NAME,
                             e.getId(),
-                            "",
-                            String.valueOf(""),
+                            "service_index",
+                            String.valueOf(e.getServiceIndex()),
                             Operator.operatorName()
                     )
             );
@@ -266,8 +263,8 @@ public class TableLogComponent {
                     new AddLog(
                             ServiceBill.TABLE_NAME,
                             e.getId(),
-                            "",
-                            String.valueOf(""),
+                            "room_id",
+                            String.valueOf(e.getRoomId()),
                             Operator.operatorName()
                     )
             );
@@ -275,8 +272,8 @@ public class TableLogComponent {
                     new AddLog(
                             ServiceBill.TABLE_NAME,
                             e.getId(),
-                            "",
-                            String.valueOf(""),
+                            "group_contract_id",
+                            String.valueOf(e.getGroupContractId()),
                             Operator.operatorName()
                     )
             );
@@ -284,8 +281,8 @@ public class TableLogComponent {
                     new AddLog(
                             ServiceBill.TABLE_NAME,
                             e.getId(),
-                            "",
-                            String.valueOf(""),
+                            "contract_id",
+                            String.valueOf(e.getContractId()),
                             Operator.operatorName()
                     )
             );
@@ -293,13 +290,158 @@ public class TableLogComponent {
                     new AddLog(
                             ServiceBill.TABLE_NAME,
                             e.getId(),
-                            "",
-                            String.valueOf(""),
+                            "service_bill_total_money",
+                            String.valueOf(e.getServiceBillTotalMoney()),
+                            Operator.operatorName()
+                    )
+            );
+            addLogs.add(
+                    new AddLog(
+                            ServiceBill.TABLE_NAME,
+                            e.getId(),
+                            "bill_created_time",
+                            String.valueOf(e.getBillCreatedTime()),
                             Operator.operatorName()
                     )
             );
         });
+        addEvent(addLogs);
     }
 
+    @Transactional
+    @SneakyThrows
+    public void saveRecurringBillHistory(List<RecurringBill> recurringBill){
+        List<AddLog> addLogs = new ArrayList<>(Collections.emptyList());
+        recurringBill.forEach(e -> {
+            addLogs.add(
+                    new AddLog(
+                            ServiceBill.TABLE_NAME,
+                            e.getId(),
+                            "room_id",
+                            String.valueOf(e.getRoomId()),
+                            Operator.operatorName()
+                    )
+            );
+            addLogs.add(
+                    new AddLog(
+                            ServiceBill.TABLE_NAME,
+                            e.getId(),
+                            "group_id",
+                            String.valueOf(e.getGroupId()),
+                            Operator.operatorName()
+                    )
+            );
+            addLogs.add(
+                    new AddLog(
+                            ServiceBill.TABLE_NAME,
+                            e.getId(),
+                            "group_contract_id",
+                            String.valueOf(e.getGroupContractId()),
+                            Operator.operatorName()
+                    )
+            );
+            addLogs.add(
+                    new AddLog(
+                            ServiceBill.TABLE_NAME,
+                            e.getId(),
+                            "contract_id",
+                            String.valueOf(e.getContractId()),
+                            Operator.operatorName()
+                    )
+            );
+            addLogs.add(
+                    new AddLog(
+                            ServiceBill.TABLE_NAME,
+                            e.getId(),
+                            "total_money",
+                            String.valueOf(e.getTotalMoney()),
+                            Operator.operatorName()
+                    )
+            );
+            addLogs.add(
+                    new AddLog(
+                            ServiceBill.TABLE_NAME,
+                            e.getId(),
+                            "description",
+                            String.valueOf(e.getDescription()),
+                            Operator.operatorName()
+                    )
+            );
+            addLogs.add(
+                    new AddLog(
+                            ServiceBill.TABLE_NAME,
+                            e.getId(),
+                            "is_paid",
+                            String.valueOf(e.getIsPaid()),
+                            Operator.operatorName()
+                    )
+            );
+            addLogs.add(
+                    new AddLog(
+                            ServiceBill.TABLE_NAME,
+                            e.getId(),
+                            "is_debt",
+                            String.valueOf(e.getContractId()),
+                            Operator.operatorName()
+                    )
+            );
+            addLogs.add(
+                    new AddLog(
+                            ServiceBill.TABLE_NAME,
+                            e.getId(),
+                            "bill_type",
+                            String.valueOf(e.getBillType()),
+                            Operator.operatorName()
+                    )
+            );
+            addLogs.add(
+                    new AddLog(
+                            ServiceBill.TABLE_NAME,
+                            e.getId(),
+                            "payment_term",
+                            String.valueOf(e.getPaymentTerm()),
+                            Operator.operatorName()
+                    )
+            );
+            addLogs.add(
+                    new AddLog(
+                            ServiceBill.TABLE_NAME,
+                            e.getId(),
+                            "bill_created_time",
+                            String.valueOf(e.getBillCreatedTime()),
+                            Operator.operatorName()
+                    )
+            );
+            addLogs.add(
+                    new AddLog(
+                            ServiceBill.TABLE_NAME,
+                            e.getId(),
+                            "service_bill_id",
+                            String.valueOf(e.getServiceBillId()),
+                            Operator.operatorName()
+                    )
+            );
+            addLogs.add(
+                    new AddLog(
+                            ServiceBill.TABLE_NAME,
+                            e.getId(),
+                            "room_bill_id",
+                            String.valueOf(e.getRoomBillId()),
+                            Operator.operatorName()
+                    )
+            );
+            addLogs.add(
+                    new AddLog(
+                            ServiceBill.TABLE_NAME,
+                            e.getId(),
+                            "is_in_bill_circle",
+                            String.valueOf(e.getIsInBillCircle()),
+                            Operator.operatorName()
+                    )
+            );
+
+        });
+        addEvent(addLogs);
+    }
 
 }

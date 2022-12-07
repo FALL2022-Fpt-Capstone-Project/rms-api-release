@@ -19,9 +19,9 @@ public class AddBillRequest {
     private Double totalRoomMoney;
     private Double totalServiceMoney;
     private String description;
-    private List<ServiceBill> serviceBill;
     private String paymentTerm;
-    private String createTime;
+    private String createdTime;
+    private List<ServiceBill> serviceBill;
 
     @Getter
     @Setter

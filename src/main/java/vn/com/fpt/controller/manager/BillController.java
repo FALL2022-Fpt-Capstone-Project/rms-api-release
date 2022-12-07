@@ -45,21 +45,25 @@ public class BillController {
         return AppResponse.success(billService.listBillRoomStatus(groupContractId, paymentCycle));
     }
 
+//    @PostMapping("/room/create/preview")
+//    @Operation(summary = "Xem trước list hóa đơn tạo cho nhiều phòng")
+//    public ResponseEntity<BaseResponse<List<>>>
+
+    @Operation(summary = "Tạo một hoặc nhiều hóa đơn cho phòng")
     @PostMapping("/room/create")
-    public ResponseEntity<BaseResponse<?>> createBill(@RequestBody List<AddBillRequest> requests) {
-        //todo
-        return null;
+    public ResponseEntity<BaseResponse<List<AddBillRequest>>> createBill(@RequestBody List<AddBillRequest> requests) {
+        return AppResponse.success(billService.addBill(requests));
     }
 
-    @PutMapping("/room/pay")
-    public ResponseEntity<BaseResponse<?>> payBill(@RequestParam(required = false) List<Long> billId) {
-        //todo
-        return null;
-    }
+//    @PutMapping("/room/pay")
+//    public ResponseEntity<BaseResponse<?>> payBill(@RequestParam(required = false) List<Long> billId) {
+//        //todo
+//        return null;
+//    }
 
-    @DeleteMapping("/room/delete")
-    public ResponseEntity<BaseResponse<?>> deleteBill(@RequestParam(required = false) List<Long> billId){
-        //todo
-        return null;
-    }
+//    @DeleteMapping("/room/delete")
+//    public ResponseEntity<BaseResponse<?>> deleteBill(@RequestParam(required = false) List<Long> billId) {
+//        //todo
+//        return null;
+//    }
 }

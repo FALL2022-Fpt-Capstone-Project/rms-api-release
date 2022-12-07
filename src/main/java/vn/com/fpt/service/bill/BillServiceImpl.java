@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.common.utils.DateUtils;
 import vn.com.fpt.common.utils.Operator;
+import vn.com.fpt.entity.RecurringBill;
 import vn.com.fpt.entity.RoomBill;
 import vn.com.fpt.entity.ServiceBill;
 import vn.com.fpt.model.RoomContractDTO;
@@ -81,43 +82,50 @@ public class BillServiceImpl implements BillService {
             var1 = listRoomContract.stream().filter(e -> e.getContractPaymentCycle().equals(paymentCircle)).toList();
         }
         if (var1.isEmpty()) throw new BusinessException("Tòa này chưa có phòng có hợp đồng");
-
+        var currentMonth = toLocalDate(now()).getMonth().getValue();
+        var currentYear = toLocalDate(now()).getYear();
         List<BillRoomStatusResponse> responses = new ArrayList<>(Collections.emptyList());
         for (RoomContractDTO rcd : var1) {
-            if (paymentCircle == 0) {
-                var room = roomService.room(rcd.getRoomId());
-                var renter = renterService.listRenter(room.getId());
-                var generalService = servicesService.listGeneralServiceByGroupId(rcd.getGroupId());
-                BillRoomStatusResponse response = new BillRoomStatusResponse();
-                response.setGroupId(room.getGroupId());
-                response.setContractId(rcd.getContractId());
-                response.setRoomName(room.getRoomName());
-                response.setGroupContractId(room.getGroupContractId());
-                response.setRoomFloor(room.getRoomFloor());
-                response.setRoomLimitPeople(room.getRoomLimitPeople());
-                response.setRoomCurrentWaterIndex(room.getRoomCurrentWaterIndex() == null ? 0 : room.getRoomCurrentWaterIndex());
-                response.setRoomCurrentElectricIndex(room.getRoomCurrentElectricIndex() == null ? 0 : room.getRoomCurrentElectricIndex());
-                response.setRoomPrice(room.getRoomPrice());
-                response.setTotalRenter(renter.size());
-                response.setListGeneralService(generalService);
-                response.setContractPaymentCycle(rcd.getContractPaymentCycle());
-                if (DateUtils.monthsBetween(now(), parse(rcd.getContractStartDate())) % rcd.getContractBillCycle() == 0) {
-                    response.setIsInBillCycle(true);
-                    response.setTotalMoneyRoomPrice(room.getRoomPrice() * rcd.getContractBillCycle());
-                } else {
-                    response.setIsInBillCycle(false);
-                    response.setTotalMoneyRoomPrice((double) 0);
-                }
-                response.setIsBilled(
-                                !ObjectUtils.isEmpty(
-                                        recurringBillRepo.findByContractIdAndCreatedAt(
-                                                rcd.getContractId(),
-                                                toLocalDate(now()).getMonth().getValue(), toLocalDate(now()).getYear()
-                                        )
-                                )
-                );
-                responses.add(response);
+            BillRoomStatusResponse response = new BillRoomStatusResponse();
+
+            var room = roomService.room(rcd.getRoomId());
+            var renter = renterService.listRenter(room.getId());
+            var generalService = servicesService.listGeneralServiceByGroupId(rcd.getGroupId());
+            response.setGroupId(room.getGroupId());
+            response.setContractId(rcd.getContractId());
+            response.setRoomName(room.getRoomName());
+            response.setGroupContractId(room.getGroupContractId());
+            response.setRoomFloor(room.getRoomFloor());
+            response.setRoomLimitPeople(room.getRoomLimitPeople());
+            response.setRoomCurrentWaterIndex(room.getRoomCurrentWaterIndex() == null ? 0 : room.getRoomCurrentWaterIndex());
+            response.setRoomCurrentElectricIndex(room.getRoomCurrentElectricIndex() == null ? 0 : room.getRoomCurrentElectricIndex());
+            response.setRoomPrice(room.getRoomPrice());
+            response.setTotalRenter(renter.size());
+            response.setListGeneralService(generalService);
+            response.setContractPaymentCycle(rcd.getContractPaymentCycle());
+
+            if (DateUtils.monthsBetween(now(), parse(rcd.getContractStartDate())) % rcd.getContractBillCycle() == 0) {
+                response.setIsInBillCycle(true);
+                response.setTotalMoneyRoomPrice(room.getRoomPrice() * rcd.getContractBillCycle());
+            } else {
+                response.setIsInBillCycle(false);
+                response.setTotalMoneyRoomPrice((double) 0);
             }
+
+            if (ObjectUtils.isNotEmpty(recurringBillRepo.findByContractIdAndCreatedAt(rcd.getContractId(), currentMonth, currentYear))) {
+                var recurringBill = recurringBillRepo.findByContractIdAndCreatedAt(rcd.getContractId(), currentMonth, currentYear);
+                var electric = serviceBillRepo.findAllByRoomIdAndByServiceIdAndCreatedBy(recurringBill.getRoomId(), SERVICE_ELECTRIC, SERVICE_TYPE_METER, currentMonth, currentYear);
+                var water = serviceBillRepo.findAllByRoomIdAndByServiceIdAndCreatedBy(recurringBill.getRoomBillId(), SERVICE_WATER, SERVICE_TYPE_METER, currentMonth, currentYear);
+
+                response.setRoomOldWaterIndex(water.getServiceIndex());
+                response.setRoomOldElectricIndex(electric.getServiceIndex());
+                response.setIsBilled(true);
+            } else {
+                response.setRoomOldWaterIndex(room.getRoomCurrentWaterIndex() == null ? 0 : room.getRoomCurrentWaterIndex());
+                response.setRoomOldElectricIndex(room.getRoomCurrentElectricIndex() == null ? 0 : room.getRoomCurrentElectricIndex());
+                response.setIsBilled(false);
+            }
+            responses.add(response);
         }
         return responses;
     }
@@ -125,6 +133,8 @@ public class BillServiceImpl implements BillService {
     @Override
     @SneakyThrows
     public List<AddBillRequest> addBill(List<AddBillRequest> addBillRequests) {
+        var currentMonth = toLocalDate(now()).getMonth().getValue();
+        var currentYear = toLocalDate(now()).getYear();
         for (AddBillRequest abr : addBillRequests) {
             //tạo hóa đơn cho tiền phòng
             var roomInfor = roomService.room(abr.getRoomId());
@@ -143,49 +153,66 @@ public class BillServiceImpl implements BillService {
                 tableLogComponent.saveRoomBillHistory(var1);
             }
             // tạo hóa đơn dịch vụ
+            Double totalMoneyService = 0.0;
             if (!abr.getServiceBill().isEmpty()) {
                 List<ServiceBill> serviceBills = new ArrayList<>(Collections.emptyList());
                 for (AddBillRequest.ServiceBill sbr : abr.getServiceBill()) {
                     Double serviceTotalMoney;
                     if (ObjectUtils.isEmpty(sbr.getServiceTotalMoney()) && Objects.equals(sbr.getServiceId(), SERVICE_ELECTRIC)) {
                         serviceTotalMoney = sbr.getServiceIndex() - (ObjectUtils.isEmpty(roomInfor.getRoomCurrentElectricIndex()) ? 0 : roomInfor.getRoomCurrentElectricIndex()) * sbr.getServicePrice();
-                    }
-                    else{
+                    } else {
                         serviceTotalMoney = sbr.getServiceTotalMoney();
                     }
+
                     if (ObjectUtils.isEmpty(sbr.getServiceTotalMoney()) && Objects.equals(sbr.getServiceId(), SERVICE_WATER)) {
                         if (sbr.getServiceType().equals(SERVICE_TYPE_METER)) {
                             serviceTotalMoney = sbr.getServiceIndex() - (ObjectUtils.isEmpty(roomInfor.getRoomCurrentElectricIndex()) ? 0 : roomInfor.getRoomCurrentElectricIndex()) * sbr.getServicePrice();
-                        }
-                        else{
+                        } else {
                             serviceTotalMoney = sbr.getServiceIndex() * sbr.getServicePrice();
                         }
-                    }
-                    else {
+                    } else {
                         serviceTotalMoney = sbr.getServiceTotalMoney();
                     }
                     serviceBills.add(ServiceBill.add(
                                     sbr.getServiceId(),
                                     sbr.getServiceType(),
                                     sbr.getServicePrice(),
-                                    "Tiền " + servicesService.basicService(sbr.getServiceId()).getServiceShowName() + "  " + toLocalDate(parse(abr.getCreateTime())).getMonth().getValue() + "-" + toLocalDate(parse(abr.getCreateTime())).getYear(),
+                                    "Tiền " + servicesService.basicService(sbr.getServiceId()).getServiceShowName() + "  " + toLocalDate(parse(abr.getCreatedTime())).getMonth().getValue() + "-" + toLocalDate(parse(abr.getCreatedTime())).getYear(),
                                     sbr.getServiceIndex(),
                                     abr.getRoomId(),
                                     roomInfor.getGroupContractId(),
                                     roomInfor.getContractId(),
                                     serviceTotalMoney,
-                                    parse(abr.getCreateTime()),
+                                    parse(abr.getCreatedTime()),
                                     Operator.operator()
                             )
                     );
+                    totalMoneyService += serviceTotalMoney;
                 }
                 var var1 = serviceBillRepo.saveAll(serviceBills);
-
                 // lưu vết
+                tableLogComponent.saveServiceBillSourceHistory(var1);
             }
             // tạo hóa đơn định kì
-
+            var var2 = recurringBillRepo.save(
+                    RecurringBill.add(
+                            abr.getRoomId(),
+                            roomInfor.getGroupId(),
+                            roomInfor.getGroupContractId(),
+                            roomInfor.getContractId(),
+                            totalMoneyService + abr.getTotalRoomMoney(),
+                            "Hóa đơn phòng " + roomInfor.getRoomName() + "tháng " + currentMonth + "/" + currentYear,
+                            false,
+                            true,
+                            "IN",
+                            parse(abr.getPaymentTerm()),
+                            parse(abr.getCreatedTime()),
+                            DateUtils.monthsBetween(now(), contractInfor.getContractStartDate()) % contractInfor.getContractBillCycle() == 0
+                    )
+            );
+            //lưu vết
+            tableLogComponent.saveRecurringBillHistory(List.of(var2));
         }
-        return null;
+        return addBillRequests;
     }
 }

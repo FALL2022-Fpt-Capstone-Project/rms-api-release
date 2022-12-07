@@ -53,7 +53,7 @@ public class ServiceBill extends BaseEntity {
     @Column(name = "contract_id")
     private Long contractId;
 
-    @Column(name = "serice_bill_total_money")
+    @Column(name = "service_bill_total_money")
     private Double serviceBillTotalMoney;
 
     @Column(name = "bill_created_time")

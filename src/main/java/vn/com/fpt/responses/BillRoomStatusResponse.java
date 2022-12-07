@@ -22,6 +22,8 @@ public class BillRoomStatusResponse {
     private Integer roomLimitPeople;
     private Integer roomCurrentWaterIndex;
     private Integer roomCurrentElectricIndex;
+    private Integer roomOldWaterIndex;
+    private Integer roomOldElectricIndex;
 
     private Long groupId;
     private Long contractId;
