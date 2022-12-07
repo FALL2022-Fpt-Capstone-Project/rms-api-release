@@ -63,14 +63,14 @@ public class RoomContractDTO implements Serializable {
 
     private List<RoomAssetDTO> listRoomAsset;
 
-    private List<GeneralServiceDTO> listHandOverGeneralService;
+    private List<HandOverGeneralServiceDTO> listHandOverGeneralService;
 
     private List<RoomsResponse> listRoom;
 
     public static RoomContractDTO of(Contracts contract,
                                      List<RentersResponse> listRenter,
                                      List<RoomAssetDTO> listRoomAsset,
-                                     List<GeneralServiceDTO> generalServiceDTOS) {
+                                     List<HandOverGeneralServiceDTO> listHandOverGeneralService) {
         var response = RoomContractDTO.builder()
                 .contractId(contract.getId())
                 .contractName(contract.getContractName())
@@ -90,7 +90,7 @@ public class RoomContractDTO implements Serializable {
                 .build();
         response.setListRenter(listRenter);
         response.setListRoomAsset(listRoomAsset);
-        response.setListHandOverGeneralService(generalServiceDTOS);
+        response.setListHandOverGeneralService(listHandOverGeneralService);
         return response;
     }
 }

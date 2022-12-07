@@ -353,7 +353,7 @@ public class ContractServiceImpl implements ContractService {
         var roomContract = RoomContractDTO.of(contract,
                 listRenter,
                 assetService.listRoomAsset(contract.getRoomId(), null),
-                servicesService.listGeneralServiceByGroupId(contract.getGroupId()));
+                servicesService.listHandOverGeneralService(contract.getId()));
         roomContract.setRoom(roomService.room(roomContract.getRoomId()));
         roomContract.setRoomName(roomService.room(roomContract.getRoomId()).getRoomName());
         roomContract.setGroupName(((GroupContractedResponse) groupService.group(roomContract.getGroupId())).getGroupName());
@@ -453,7 +453,7 @@ public class ContractServiceImpl implements ContractService {
             var roomContract = RoomContractDTO.of(e,
                     listRenter,
                     assetService.listRoomAsset(e.getRoomId(), null),
-                    servicesService.listGeneralServiceByGroupId(e.getGroupId()));
+                    servicesService.listHandOverGeneralService(e.getId()));
             roomContract.setRoom(roomService.room(e.getRoomId()));
             roomContract.setRoomName(roomService.room(e.getRoomId()).getRoomName());
             roomContract.setGroupName(group.getGroupName());
