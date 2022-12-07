@@ -11,6 +11,8 @@ import vn.com.fpt.common.response.AppResponse;
 import vn.com.fpt.common.response.BaseResponse;
 import vn.com.fpt.requests.AddBillRequest;
 import vn.com.fpt.responses.BillRoomStatusResponse;
+import vn.com.fpt.responses.ListRoomWithBillStatusResponse;
+import vn.com.fpt.responses.PreviewAddBillResponse;
 import vn.com.fpt.service.bill.BillService;
 
 import java.util.List;
@@ -28,13 +30,6 @@ public class BillController {
 
     private final BillService billService;
 
-//    @Operation(summary = "Tạo tự động hợp đồng theo kỳ")
-//    @PostMapping("/room/generate")
-//    public ResponseEntity<BaseResponse<RoomContractRequest>> addContract(@RequestBody GenerateBillRequest request) {
-////        return AppResponse.success(contractService.addContract(request, Operator.operator()));
-//        return null;
-//    }
-
     @Operation(summary = "Trạng thái hóa đơn các phòng trong tháng và theo kỳ")
     @GetMapping("/room/bill-status")
     public ResponseEntity<BaseResponse<List<BillRoomStatusResponse>>> listNotBilled(@RequestParam Long groupContractId,
@@ -45,9 +40,17 @@ public class BillController {
         return AppResponse.success(billService.listBillRoomStatus(groupContractId, paymentCycle));
     }
 
-//    @PostMapping("/room/create/preview")
-//    @Operation(summary = "Xem trước list hóa đơn tạo cho nhiều phòng")
-//    public ResponseEntity<BaseResponse<List<>>>
+    @Operation(summary = "Danh trang thái hóa đơn của các phòng theo tòa")
+    @GetMapping("/room/list/{groupId}")
+    public ResponseEntity<BaseResponse<List<ListRoomWithBillStatusResponse>>> listRoomWithBill(@PathVariable Long groupId){
+        return AppResponse.success(billService.listRoomWithBillStatus(groupId));
+    }
+
+    @PostMapping("/room/create/preview")
+    @Operation(summary = "Xem trước list hóa đơn tạo cho nhiều phòng")
+    public ResponseEntity<BaseResponse<List<PreviewAddBillResponse>>> preview(@RequestBody List<AddBillRequest> requests){
+        return AppResponse.success(billService.addBillPreview(requests));
+    }
 
     @Operation(summary = "Tạo một hoặc nhiều hóa đơn cho phòng")
     @PostMapping("/room/create")

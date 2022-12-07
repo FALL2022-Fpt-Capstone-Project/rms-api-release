@@ -24,6 +24,7 @@ import vn.com.fpt.responses.RoomsResponse;
 import vn.com.fpt.service.assets.AssetService;
 import vn.com.fpt.service.contract.ContractService;
 import vn.com.fpt.service.group.GroupService;
+import vn.com.fpt.service.renter.RenterService;
 import vn.com.fpt.service.services.ServicesService;
 import vn.com.fpt.specification.BaseSpecification;
 import vn.com.fpt.specification.SearchCriteria;
@@ -48,6 +49,7 @@ public class RoomServiceImpl implements RoomService {
 
     private final RackRenterRepository rackRenters;
 
+    private final RenterService renterService;
     private final ServicesService servicesService;
 
     private final ContractRepository contractRepo;
@@ -57,7 +59,9 @@ public class RoomServiceImpl implements RoomService {
                            @Lazy ContractService contractService,
                            @Lazy GroupService service,
                            @Lazy ServicesService servicesService,
-                           RackRenterRepository rackRenters, ContractRepository contractRepo) {
+                           RackRenterRepository rackRenters,
+                           ContractRepository contractRepo,
+                           RenterService renterService) {
         this.roomsRepository = roomsRepository;
         this.assetService = assetService;
         this.contractService = contractService;
@@ -65,6 +69,7 @@ public class RoomServiceImpl implements RoomService {
         this.rackRenters = rackRenters;
         this.servicesService = servicesService;
         this.contractRepo = contractRepo;
+        this.renterService = renterService;
     }
 
     @Override
@@ -233,6 +238,8 @@ public class RoomServiceImpl implements RoomService {
     @Transactional
     public Rooms removeRoom(Long id, Long operator) {
         assetService.deleteRoomAsset(id);
+        var listRenterInRoom = renterService.listRenter(id);
+        listRenterInRoom.forEach(e -> renterService.removeFromRoom(e.getRenterId(), operator));
         if (Objects.nonNull(roomChecker(id).getContractId()))
             throw new BusinessException(ROOM_NOT_AVAILABLE, "Phòng " + roomChecker(id).getRoomName() + " đã có người thuê. Không thể xóa!!");
         return roomsRepository.save(Rooms.delete(room(id), operator));
@@ -246,7 +253,11 @@ public class RoomServiceImpl implements RoomService {
             throw new BusinessException(ROOM_NOT_AVAILABLE, "Phòng " + var1 + " đã có người thuê. Không thể xóa!!");
         }
         List<Rooms> toDelete = new ArrayList<>(Collections.emptyList());
-        id.forEach(e -> toDelete.add(Rooms.delete(room(e), operator)));
+        id.forEach(e -> {
+            toDelete.add(Rooms.delete(room(e), operator));
+            renterService.listRenter(e).forEach(x -> renterService.removeFromRoom(x.getRenterId(), operator));
+        });
+
         return roomsRepository.saveAll(toDelete);
     }
 

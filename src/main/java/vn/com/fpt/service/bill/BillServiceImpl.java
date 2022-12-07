@@ -9,14 +9,13 @@ import vn.com.fpt.common.utils.DateUtils;
 import vn.com.fpt.common.utils.Operator;
 import vn.com.fpt.entity.RecurringBill;
 import vn.com.fpt.entity.RoomBill;
+import vn.com.fpt.entity.RoomGroups;
 import vn.com.fpt.entity.ServiceBill;
 import vn.com.fpt.model.RoomContractDTO;
 import vn.com.fpt.repositories.*;
 import vn.com.fpt.requests.AddBillRequest;
 import vn.com.fpt.requests.GenerateBillRequest;
-import vn.com.fpt.responses.BillRoomStatusResponse;
-import vn.com.fpt.responses.PreviewGenerateBillResponse;
-import vn.com.fpt.responses.RoomsResponse;
+import vn.com.fpt.responses.*;
 import vn.com.fpt.service.TableLogComponent;
 import vn.com.fpt.service.contract.ContractService;
 import vn.com.fpt.service.group.GroupService;
@@ -25,6 +24,7 @@ import vn.com.fpt.service.rooms.RoomService;
 import vn.com.fpt.service.services.ServicesService;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static vn.com.fpt.common.constants.ManagerConstants.*;
 import static vn.com.fpt.common.utils.DateUtils.*;
@@ -214,5 +214,55 @@ public class BillServiceImpl implements BillService {
             tableLogComponent.saveRecurringBillHistory(List.of(var2));
         }
         return addBillRequests;
+    }
+
+    @Override
+    public List<ListRoomWithBillStatusResponse> listRoomWithBillStatus(Long groupId) {
+        List<ListRoomWithBillStatusResponse> responses = new ArrayList<>(Collections.emptyList());
+        List<RoomsResponse> listRentedRoom = roomService.listRoom(
+                groupId,
+                null,
+                null,
+                0,
+                null
+        );
+        RoomGroups roomGroups = groupService.getGroup(groupId);
+        listRentedRoom.forEach(e->{
+            RoomContractDTO contract = contractService.roomContract(e.getContractId());
+            RentersResponse representRenter = renterService.representRenter(e.getRoomId());
+            responses.add(
+                    new ListRoomWithBillStatusResponse(
+                            roomGroups.getGroupName(),
+                            e.getRoomId(),
+                            e.getRoomName(),
+                            e.getContractId(),
+                            representRenter.getRenterFullName(),
+                            e.getRoomPrice(),
+                            e.getRoomCurrentElectricIndex(),
+                            e.getRoomCurrentWaterIndex(),
+                            renterService.listRenter(e.getRoomId()).size(),
+                            contract.getContractPaymentCycle(),
+                            ObjectUtils.isEmpty(recurringBillRepo.findAllByRoomIdAndIsPaid(e.getRoomId(), false))
+                    )
+            );
+        });
+        return responses;
+    }
+
+    @Override
+    public List<PreviewAddBillResponse> addBillPreview(List<AddBillRequest> requests) {
+        AtomicInteger key = new AtomicInteger(0);
+        return requests.stream().map(e ->
+                new PreviewAddBillResponse(
+                        key.getAndAdd(1),
+                        e.getRoomId(),
+                        e.getTotalRoomMoney(),
+                        e.getTotalServiceMoney(),
+                        e.getDescription(),
+                        e.getPaymentTerm(),
+                        e.getCreatedTime(),
+                        e.getServiceBill()
+                )
+        ).toList();
     }
 }
