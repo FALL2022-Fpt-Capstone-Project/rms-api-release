@@ -13,6 +13,8 @@ import java.util.List;
 public interface ContractRepository extends JpaRepository<Contracts, Long>, JpaSpecificationExecutor<Contracts> {
     List<Contracts> findAllByGroupIdAndContractType(Long groupId, Integer contractType);
 
+    List<Contracts> findAllByGroupIdAndContractTypeAndContractPaymentCycle(Long groupId, Integer contractType, Integer payment);
+
     List<Contracts> findByGroupIdAndContractTypeAndContractIsDisableIsFalse(Long groupId, Integer contractType);
 
     List<Contracts> findAllByContractTypeOrderByContractStartDateDesc(Integer contractType);

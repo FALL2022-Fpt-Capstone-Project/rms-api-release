@@ -7,10 +7,7 @@ import org.springframework.stereotype.Service;
 import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.common.utils.DateUtils;
 import vn.com.fpt.common.utils.Operator;
-import vn.com.fpt.entity.RecurringBill;
-import vn.com.fpt.entity.RoomBill;
-import vn.com.fpt.entity.RoomGroups;
-import vn.com.fpt.entity.ServiceBill;
+import vn.com.fpt.entity.*;
 import vn.com.fpt.model.RoomContractDTO;
 import vn.com.fpt.repositories.*;
 import vn.com.fpt.requests.AddBillRequest;
@@ -45,7 +42,6 @@ public class BillServiceImpl implements BillService {
     private final TableLogComponent tableLogComponent;
 
 
-
     @Override
     public List<BillRoomStatusResponse> listBillRoomStatus(Long groupContractId, Integer paymentCircle) {
 
@@ -76,7 +72,7 @@ public class BillServiceImpl implements BillService {
         } else {
             var1 = listRoomContract.stream().filter(e -> e.getContractPaymentCycle().equals(paymentCircle)).toList();
         }
-        if (var1.isEmpty()) throw new BusinessException("Tòa này chưa có phòng có hợp đồng");
+        if (var1.isEmpty()) return Collections.emptyList();
         var currentMonth = toLocalDate(now()).getMonth().getValue();
         var currentYear = toLocalDate(now()).getYear();
         List<BillRoomStatusResponse> responses = new ArrayList<>(Collections.emptyList());
@@ -222,7 +218,7 @@ public class BillServiceImpl implements BillService {
                 null
         );
         RoomGroups roomGroups = groupService.getGroup(groupId);
-        listRentedRoom.forEach(e->{
+        listRentedRoom.forEach(e -> {
             RoomContractDTO contract = contractService.roomContract(e.getContractId());
             RentersResponse representRenter = renterService.representRenter(e.getRoomId());
             responses.add(
