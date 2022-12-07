@@ -33,7 +33,7 @@ public class BillRoomStatusResponse {
     private Double totalMoneyServicePrice;
 
     private Integer contractPaymentCycle;
-    private Boolean isInPaymentCycle;
+    private Boolean isInBillCycle;
     private Boolean isBilled;
 
     List<GeneralServiceDTO> listGeneralService;

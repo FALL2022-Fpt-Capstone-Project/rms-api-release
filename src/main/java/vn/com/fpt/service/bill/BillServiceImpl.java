@@ -53,7 +53,7 @@ public class BillServiceImpl implements BillService {
     }
 
     @Override
-    public List<BillRoomStatusResponse> listBillRoomStatus(Long groupContractId, Integer billCircle) {
+    public List<BillRoomStatusResponse> listBillRoomStatus(Long groupContractId, Integer paymentCircle) {
 
         // Lấy các phòng đã có hợp đồng
         var listRoom = roomService.listRoom(
@@ -77,16 +77,16 @@ public class BillServiceImpl implements BillService {
                 null,
                 listRoomId);
         List<RoomContractDTO> var1;
-        if (billCircle.equals(0)) {
+        if (paymentCircle.equals(0)) {
             var1 = listRoomContract;
         } else {
-            var1 = listRoomContract.stream().filter(e -> e.getContractBillCycle().equals(billCircle)).toList();
+            var1 = listRoomContract.stream().filter(e -> e.getContractPaymentCycle().equals(paymentCircle)).toList();
         }
         if (var1.isEmpty()) throw new BusinessException("Tòa này chưa có phòng có hợp đồng");
 
-        List<BillRoomStatusResponse> responses = new LinkedList<>(Collections.emptyList());
+        List<BillRoomStatusResponse> responses = new ArrayList<>(Collections.emptyList());
         for (RoomContractDTO rcd : var1) {
-            if (billCircle == 0) {
+            if (paymentCircle == 0) {
                 var room = roomService.room(rcd.getRoomId());
                 var renter = renterService.listRenter(room.getId());
                 var generalService = servicesService.listGeneralServiceByGroupId(rcd.getGroupId());
@@ -103,17 +103,15 @@ public class BillServiceImpl implements BillService {
                 response.setTotalRenter(renter.size());
                 response.setListGeneralService(generalService);
                 response.setContractPaymentCycle(rcd.getContractPaymentCycle());
-                if (DateUtils.monthsBetween(now(), parse(rcd.getContractStartDate())) % rcd.getContractPaymentCycle() == 0) {
-                    response.setIsInPaymentCycle(true);
-                    response.setTotalMoneyRoomPrice(room.getRoomPrice() * rcd.getContractPaymentCycle());
+                if (DateUtils.monthsBetween(now(), parse(rcd.getContractStartDate())) % rcd.getContractBillCycle() == 0) {
+                    response.setIsInBillCycle(true);
+                    response.setTotalMoneyRoomPrice(room.getRoomPrice() * rcd.getContractBillCycle());
                 } else {
-                    response.setIsInPaymentCycle(false);
+                    response.setIsInBillCycle(false);
                     response.setTotalMoneyRoomPrice((double) 0);
                 }
                 response.setIsBilled(
-                        !rcd.getContractBillCycle().equals(billCircle)
-                                ||
-                                !ObjectUtils.isEmpty(
+                                ObjectUtils.isEmpty(
                                         recurringBillRepo.findByContractIdAndCreatedAt(
                                                 rcd.getContractId(),
                                                 toLocalDate(now()).getMonth().getValue(), toLocalDate(now()).getYear()
