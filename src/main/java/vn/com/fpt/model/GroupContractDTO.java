@@ -3,6 +3,7 @@ package vn.com.fpt.model;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
+import vn.com.fpt.entity.Address;
 import vn.com.fpt.entity.Contracts;
 import vn.com.fpt.entity.RackRenters;
 import vn.com.fpt.entity.Rooms;
@@ -44,6 +45,8 @@ public class GroupContractDTO implements Serializable {
     private Integer totalRoom ;
     private Integer totalFloor;
 
+    private Address address;
+
     private Integer contractType;
 
     private List<GeneralServiceDTO> listGeneralService;
@@ -78,6 +81,7 @@ public class GroupContractDTO implements Serializable {
                 .gender(rackRenters.getGender())
                 .phoneNumber(rackRenters.getPhoneNumber())
                 .identityNumber(rackRenters.getIdentityNumber())
+                .address(groupContracted.getAddress())
                 .build();
         response.setListGeneralService(generalServices);
         return response;
