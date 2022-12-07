@@ -23,6 +23,8 @@ public interface ServicesService {
 
     List<BasicServices> basicServices();
 
+    BasicServices basicService(Long basicServiceId);
+
     List<ServiceTypes> serviceTypes();
     GeneralService addGeneralService(GeneralServiceRequest request, Long operator);
 

@@ -11,6 +11,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import java.beans.BeanInfo;
+import java.util.Date;
+
 import static vn.com.fpt.common.utils.DateUtils.now;
 
 @Entity
@@ -35,6 +38,9 @@ public class ServiceBill extends BaseEntity {
     @Column(name = "service_price")
     private Double servicePrice;
 
+    @Column(name = "description")
+    private String description;
+
     @Column(name = "service_index")
     private Integer serviceIndex;
 
@@ -50,44 +56,55 @@ public class ServiceBill extends BaseEntity {
     @Column(name = "serice_bill_total_money")
     private Double serviceBillTotalMoney;
 
+    @Column(name = "bill_created_time")
+    private Date billCreatedTime;
+
     public static ServiceBill of(Long serviceId,
                                  Long serviceTypeId,
                                  Double servicePrice,
+                                 String description,
                                  Integer serviceIndex,
                                  Long roomId,
                                  Long groupContractId,
                                  Long contractId,
-                                 Double serviceBillTotalMoney) {
+                                 Double serviceBillTotalMoney,
+                                 Date billCreatedTime) {
         return ServiceBill.builder()
                 .serviceId(serviceId)
                 .serviceTypeId(serviceTypeId)
                 .servicePrice(servicePrice)
+                .description(description)
                 .serviceIndex(serviceIndex)
                 .roomId(roomId)
                 .groupContractId(groupContractId)
                 .contractId(contractId)
                 .serviceBillTotalMoney(serviceBillTotalMoney)
+                .billCreatedTime(billCreatedTime)
                 .build();
     }
 
     public static ServiceBill add(Long serviceId,
                                   Long serviceTypeId,
                                   Double servicePrice,
+                                  String description,
                                   Integer serviceIndex,
                                   Long roomId,
                                   Long groupContractId,
                                   Long contractId,
                                   Double serviceBillTotalMoney,
+                                  Date billCreatedTime,
                                   Long operator) {
         var add = of(
                 serviceId,
                 serviceTypeId,
                 servicePrice,
+                description,
                 serviceIndex,
                 roomId,
                 groupContractId,
                 contractId,
-                serviceBillTotalMoney);
+                serviceBillTotalMoney,
+                billCreatedTime);
         add.setCreatedAt(now());
         add.setCreatedBy(operator);
         return add;
@@ -97,21 +114,26 @@ public class ServiceBill extends BaseEntity {
                                      Long serviceId,
                                      Long serviceTypeId,
                                      Double servicePrice,
+                                     String description,
                                      Integer serviceIndex,
                                      Long roomId,
                                      Long groupContractId,
                                      Long contractId,
                                      Double serviceBillTotalMoney,
+                                     Date billCreatedTime,
                                      Long operator) {
         var modify = of(
                 serviceId,
                 serviceTypeId,
                 servicePrice,
+                description,
                 serviceIndex,
                 roomId,
                 groupContractId,
                 contractId,
-                serviceBillTotalMoney);
+                serviceBillTotalMoney,
+                billCreatedTime
+        );
 
         //fetch
         modify.setCreatedBy(old.getCreatedBy());

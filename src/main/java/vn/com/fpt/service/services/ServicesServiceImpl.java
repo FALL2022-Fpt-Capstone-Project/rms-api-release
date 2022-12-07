@@ -226,6 +226,11 @@ public class ServicesServiceImpl implements ServicesService {
     }
 
     @Override
+    public BasicServices basicService(Long basicServiceId) {
+        return basicServicesRepository.findById(basicServiceId).get();
+    }
+
+    @Override
     public List<ServiceTypes> serviceTypes() {
         return serviceTypesRepository.findAll();
     }

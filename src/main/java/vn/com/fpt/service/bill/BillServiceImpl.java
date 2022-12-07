@@ -23,11 +23,9 @@ import vn.com.fpt.service.renter.RenterService;
 import vn.com.fpt.service.rooms.RoomService;
 import vn.com.fpt.service.services.ServicesService;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
+import static vn.com.fpt.common.constants.ManagerConstants.*;
 import static vn.com.fpt.common.utils.DateUtils.*;
 
 @Service
@@ -111,7 +109,7 @@ public class BillServiceImpl implements BillService {
                     response.setTotalMoneyRoomPrice((double) 0);
                 }
                 response.setIsBilled(
-                                ObjectUtils.isEmpty(
+                                !ObjectUtils.isEmpty(
                                         recurringBillRepo.findByContractIdAndCreatedAt(
                                                 rcd.getContractId(),
                                                 toLocalDate(now()).getMonth().getValue(), toLocalDate(now()).getYear()
@@ -127,8 +125,8 @@ public class BillServiceImpl implements BillService {
     @Override
     @SneakyThrows
     public List<AddBillRequest> addBill(List<AddBillRequest> addBillRequests) {
-        //tạo hóa đơn cho tiền phòng
         for (AddBillRequest abr : addBillRequests) {
+            //tạo hóa đơn cho tiền phòng
             var roomInfor = roomService.room(abr.getRoomId());
             var contractInfor = contractService.contract(roomInfor.getContractId());
             if (abr.getTotalRoomMoney() > 0) {
@@ -145,26 +143,48 @@ public class BillServiceImpl implements BillService {
                 tableLogComponent.saveRoomBillHistory(var1);
             }
             // tạo hóa đơn dịch vụ
-            if(!abr.getServiceBill().isEmpty()){
+            if (!abr.getServiceBill().isEmpty()) {
                 List<ServiceBill> serviceBills = new ArrayList<>(Collections.emptyList());
                 for (AddBillRequest.ServiceBill sbr : abr.getServiceBill()) {
+                    Double serviceTotalMoney;
+                    if (ObjectUtils.isEmpty(sbr.getServiceTotalMoney()) && Objects.equals(sbr.getServiceId(), SERVICE_ELECTRIC)) {
+                        serviceTotalMoney = sbr.getServiceIndex() - (ObjectUtils.isEmpty(roomInfor.getRoomCurrentElectricIndex()) ? 0 : roomInfor.getRoomCurrentElectricIndex()) * sbr.getServicePrice();
+                    }
+                    else{
+                        serviceTotalMoney = sbr.getServiceTotalMoney();
+                    }
+                    if (ObjectUtils.isEmpty(sbr.getServiceTotalMoney()) && Objects.equals(sbr.getServiceId(), SERVICE_WATER)) {
+                        if (sbr.getServiceType().equals(SERVICE_TYPE_METER)) {
+                            serviceTotalMoney = sbr.getServiceIndex() - (ObjectUtils.isEmpty(roomInfor.getRoomCurrentElectricIndex()) ? 0 : roomInfor.getRoomCurrentElectricIndex()) * sbr.getServicePrice();
+                        }
+                        else{
+                            serviceTotalMoney = sbr.getServiceIndex() * sbr.getServicePrice();
+                        }
+                    }
+                    else {
+                        serviceTotalMoney = sbr.getServiceTotalMoney();
+                    }
                     serviceBills.add(ServiceBill.add(
-                          sbr.getServiceId(),
-                            sbr.getServiceType(),
-                            sbr.getServicePrice(),
-                            sbr.getServiceIndex(),
-                            abr.getRoomId(),
-                            roomInfor.getGroupContractId(),
-                            roomInfor.getContractId(),
-                            abr.getTotalServiceMoney(),
-                            Operator.operator()
+                                    sbr.getServiceId(),
+                                    sbr.getServiceType(),
+                                    sbr.getServicePrice(),
+                                    "Tiền " + servicesService.basicService(sbr.getServiceId()).getServiceShowName() + "  " + toLocalDate(parse(abr.getCreateTime())).getMonth().getValue() + "-" + toLocalDate(parse(abr.getCreateTime())).getYear(),
+                                    sbr.getServiceIndex(),
+                                    abr.getRoomId(),
+                                    roomInfor.getGroupContractId(),
+                                    roomInfor.getContractId(),
+                                    serviceTotalMoney,
+                                    parse(abr.getCreateTime()),
+                                    Operator.operator()
                             )
                     );
-
                 }
-                serviceBillRepo.saveAll(serviceBills);
+                var var1 = serviceBillRepo.saveAll(serviceBills);
+
+                // lưu vết
             }
             // tạo hóa đơn định kì
+
         }
         return null;
     }

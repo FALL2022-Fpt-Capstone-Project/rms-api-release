@@ -33,6 +33,6 @@ public class AddBillRequest {
         private Long serviceType;
         private Double servicePrice;
         private Integer serviceIndex;
-        private Long serviceTotalMoney;
+        private Double serviceTotalMoney;
     }
 }

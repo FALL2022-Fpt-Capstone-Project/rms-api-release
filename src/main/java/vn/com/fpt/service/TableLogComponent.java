@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import vn.com.fpt.common.utils.Operator;
 import vn.com.fpt.entity.MoneySource;
 import vn.com.fpt.entity.RoomBill;
+import vn.com.fpt.entity.ServiceBill;
 import vn.com.fpt.entity.TableChangeLog;
 import vn.com.fpt.repositories.TableChangeLogRepository;
 import vn.com.fpt.security.domain.AccountAuthenticationDetail;
@@ -210,5 +211,95 @@ public class TableLogComponent {
                 )
         );
     }
+
+    @SneakyThrows
+    @Transactional
+    public void saveServiceBillSourceHistory(List<ServiceBill> list){
+        List<AddLog> addLogs = new ArrayList<>(Collections.emptyList());
+        list.forEach(e -> {
+            addLogs.add(
+                    new AddLog(
+                            ServiceBill.TABLE_NAME,
+                            e.getId(),
+                            "",
+                            String.valueOf(""),
+                            Operator.operatorName()
+                    )
+            );
+            addLogs.add(
+                    new AddLog(
+                            ServiceBill.TABLE_NAME,
+                            e.getId(),
+                            "",
+                            String.valueOf(""),
+                            Operator.operatorName()
+                    )
+            );
+            addLogs.add(
+                    new AddLog(
+                            ServiceBill.TABLE_NAME,
+                            e.getId(),
+                            "",
+                            String.valueOf(""),
+                            Operator.operatorName()
+                    )
+            );
+            addLogs.add(
+                    new AddLog(
+                            ServiceBill.TABLE_NAME,
+                            e.getId(),
+                            "",
+                            String.valueOf(""),
+                            Operator.operatorName()
+                    )
+            );
+            addLogs.add(
+                    new AddLog(
+                            ServiceBill.TABLE_NAME,
+                            e.getId(),
+                            "",
+                            String.valueOf(""),
+                            Operator.operatorName()
+                    )
+            );
+            addLogs.add(
+                    new AddLog(
+                            ServiceBill.TABLE_NAME,
+                            e.getId(),
+                            "",
+                            String.valueOf(""),
+                            Operator.operatorName()
+                    )
+            );
+            addLogs.add(
+                    new AddLog(
+                            ServiceBill.TABLE_NAME,
+                            e.getId(),
+                            "",
+                            String.valueOf(""),
+                            Operator.operatorName()
+                    )
+            );
+            addLogs.add(
+                    new AddLog(
+                            ServiceBill.TABLE_NAME,
+                            e.getId(),
+                            "",
+                            String.valueOf(""),
+                            Operator.operatorName()
+                    )
+            );
+            addLogs.add(
+                    new AddLog(
+                            ServiceBill.TABLE_NAME,
+                            e.getId(),
+                            "",
+                            String.valueOf(""),
+                            Operator.operatorName()
+                    )
+            );
+        });
+    }
+
 
 }
