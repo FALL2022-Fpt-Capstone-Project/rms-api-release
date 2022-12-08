@@ -1,5 +1,6 @@
 package vn.com.fpt.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Getter;
@@ -32,6 +33,7 @@ import java.util.Date;
                         @ColumnResult(name = "service_type_name", type = String.class)
                 }))
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class HandOverGeneralServiceDTO implements Serializable {
 
     public static final String SQL_RESULT_SETS_MAPPING = "HandOverGeneralServiceDTO";

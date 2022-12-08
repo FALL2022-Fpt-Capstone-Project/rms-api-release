@@ -35,4 +35,6 @@ public class ListRoomWithBillStatusResponse {
 
     private Boolean isAllPaid;
 
+    private String remindAlert;
+
 }

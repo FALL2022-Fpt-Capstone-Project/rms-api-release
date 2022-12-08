@@ -10,6 +10,7 @@ import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.common.utils.DateUtils;
 import vn.com.fpt.common.utils.Operator;
 import vn.com.fpt.entity.*;
+import vn.com.fpt.model.HandOverGeneralServiceDTO;
 import vn.com.fpt.model.RoomContractDTO;
 import vn.com.fpt.repositories.*;
 import vn.com.fpt.requests.AddBillRequest;
@@ -24,6 +25,7 @@ import vn.com.fpt.service.renter.RenterService;
 import vn.com.fpt.service.rooms.RoomService;
 import vn.com.fpt.service.services.ServicesService;
 
+import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -220,6 +222,12 @@ public class BillServiceImpl implements BillService {
     @Override
     public List<ListRoomWithBillStatusResponse> listRoomWithBillStatus(Long groupId) {
         List<ListRoomWithBillStatusResponse> responses = new ArrayList<>(Collections.emptyList());
+        String remindAlert = null;
+        if (10 <= now().getDate() && now().getDate() <= 15) {
+            remindAlert = "Đã đến kỳ lập hóa đơn (Kỳ 15)";
+        } else if (25 <= now().getDate() && now().getDate() <= 30) {
+            remindAlert = "Đã đến kỳ lập hóa đơn (Kỳ 30)";
+        }
         List<RoomsResponse> listRentedRoom = roomService.listRoom(
                 groupId,
                 null,
@@ -228,6 +236,7 @@ public class BillServiceImpl implements BillService {
                 null
         ).stream().filter(e -> e.getContractId() != null).toList();
         RoomGroups roomGroups = groupService.getGroup(groupId);
+        String finalRemindAlert = remindAlert;
         listRentedRoom.forEach(e -> {
             RoomContractDTO contract = contractService.roomContract(e.getContractId());
             RentersResponse representRenter = renterService.representRenter(e.getRoomId());
@@ -244,6 +253,7 @@ public class BillServiceImpl implements BillService {
                             renterService.listRenter(e.getRoomId()).size(),
                             contract.getContractPaymentCycle(),
                             ObjectUtils.isEmpty(recurringBillRepo.findAllByRoomIdAndIsPaid(e.getRoomId(), false))
+                            , finalRemindAlert
                     )
             );
         });
@@ -341,5 +351,45 @@ public class BillServiceImpl implements BillService {
             if (!listServiceBill.isEmpty()) serviceBillRepo.deleteAll(listServiceBill);
             recurringBillRepo.delete(e);
         });
+    }
+
+    @Override
+    public PayBillInformationResponse payBillInformation(Long roomId) {
+        var room = roomService.room(roomId);
+        var contract = contractService.contract(room.getContractId());
+        var renter = renterService.listRenter(roomId);
+        var generalService = servicesService.listGeneralServiceByGroupId(room.getGroupId());
+        List<HandOverGeneralServiceDTO> list = new ArrayList<>();
+        generalService.forEach(e -> {
+            HandOverGeneralServiceDTO service = new HandOverGeneralServiceDTO();
+            service.setServiceId(e.getServiceId());
+            service.setServiceName(e.getServiceName());
+            service.setServiceTypeId(e.getServiceTypeId());
+            service.setServiceTypeName(e.getServiceTypeName());
+            service.setServiceShowName(e.getServiceShowName());
+            if (e.getServiceId().equals(SERVICE_ELECTRIC)) {
+                service.setHandOverGeneralServiceIndex(room.getRoomCurrentElectricIndex());
+            }
+            if (e.getServiceId().equals(SERVICE_WATER)) {
+                service.setHandOverGeneralServiceIndex(room.getRoomCurrentWaterIndex());
+            }
+            if (e.getServiceTypeId().equals(BigInteger.valueOf(SERVICE_TYPE_PERSON))) {
+                service.setHandOverGeneralServiceIndex(renter.size());
+            }
+            list.add(service);
+        });
+        PayBillInformationResponse response = new PayBillInformationResponse();
+        response.setRoomId(roomId);
+        response.setRoomName(room.getRoomName());
+        response.setRoomFloor(room.getRoomFloor());
+        response.setRoomLimitPeople(room.getRoomLimitPeople());
+        response.setGroupId(room.getGroupId());
+        response.setContractId(room.getContractId());
+        response.setGroupContractId(room.getGroupContractId());
+        response.setRoomPrice(room.getRoomPrice());
+        response.setTotalRenter(renter.size());
+        response.setContractPaymentCycle(contract.getContractPaymentCycle());
+        response.setListGeneralService(list);
+        return response;
     }
 }

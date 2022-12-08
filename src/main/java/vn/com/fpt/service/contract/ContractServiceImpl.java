@@ -369,8 +369,6 @@ public class ContractServiceImpl implements ContractService {
         List<GeneralServiceDTO> list = servicesService.listGeneralServiceByGroupId(contract.getGroupId());
         var water = list.stream().filter(x -> x.getServiceId() == (BigInteger.valueOf(SERVICE_WATER))).findAny().get();
         var electric = list.stream().filter(z -> z.getServiceId() == (BigInteger.valueOf(SERVICE_ELECTRIC))).findAny().get();
-
-
         HandOverGeneralServiceDTO water1 = new HandOverGeneralServiceDTO();
         water1.setServiceId(water.getServiceId());
         water1.setServiceName(water.getServiceName());

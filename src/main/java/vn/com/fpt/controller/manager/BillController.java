@@ -1,10 +1,8 @@
 package vn.com.fpt.controller.manager;
 
-import io.sentry.protocol.App;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +13,7 @@ import vn.com.fpt.entity.RecurringBill;
 import vn.com.fpt.requests.AddBillRequest;
 import vn.com.fpt.responses.BillRoomStatusResponse;
 import vn.com.fpt.responses.ListRoomWithBillStatusResponse;
+import vn.com.fpt.responses.PayBillInformationResponse;
 import vn.com.fpt.responses.PreviewAddBillResponse;
 import vn.com.fpt.service.bill.BillService;
 
@@ -41,6 +40,12 @@ public class BillController {
         if (!pattern.matcher(paymentCycle.toString()).matches())
             throw new BusinessException("Kỳ hạn thanh toán hóa đơn không hợp lệ");
         return AppResponse.success(billService.listBillRoomStatus(groupId, paymentCycle));
+    }
+
+    @Operation(summary = "Chi tiết tính toán hóa đơn của phòng")
+    @GetMapping("/room/information/{roomId}")
+    public ResponseEntity<BaseResponse<PayBillInformationResponse>> payBillInformation(@RequestParam Long roomId){
+        return AppResponse.success(billService.payBillInformation(roomId));
     }
 
     @Operation(summary = "Danh trang thái hóa đơn của các phòng theo tòa")

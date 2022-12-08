@@ -16,13 +16,12 @@ import java.util.List;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class NotBilledRoomResponse {
+public class PayBillInformationResponse {
+    private Long roomId;
     private String roomName;
     private Integer roomFloor;
 
     private Integer roomLimitPeople;
-    private Integer roomCurrentWaterIndex;
-    private Integer roomCurrentElectricIndex;
 
     private Long groupId;
     private Long contractId;
@@ -30,11 +29,8 @@ public class NotBilledRoomResponse {
     private Double roomPrice;
     private Integer totalRenter;
 
-    private Double totalMoneyRoomPrice;
-    private Double totalMoneyServicePrice;
-
     private Integer contractPaymentCycle;
     private Boolean isInPaymentCycle;
 
-    List<GeneralServiceDTO> listGeneralService;
+    List<HandOverGeneralServiceDTO> listGeneralService;
 }
