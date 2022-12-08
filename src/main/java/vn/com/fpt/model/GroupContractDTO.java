@@ -37,6 +37,10 @@ public class GroupContractDTO implements Serializable {
     private Long    rackRenter;
     private String  rackRenterFullName;
     private String rackRenterEmail;
+    private String rackRenterCity;
+    private String rackRenterDistrict;
+    private String rackRenterWards;
+    private String rackRenterMoreDetails;
     private Boolean gender;
     private String  phoneNumber;
     private String  identityNumber;
@@ -65,7 +69,7 @@ public class GroupContractDTO implements Serializable {
                 .contractDeposit(contract.getContractDeposit())
                 .contractBillCycle(contract.getContractBillCycle())
                 .contractPaymentCycle(contract.getContractPaymentCycle())
-                .contractStartDate(format(contract.getContractStartDate(),DATE_FORMAT_3))
+                .contractStartDate(format(contract.getContractStartDate(), DATE_FORMAT_3))
                 .contractEndDate(format(contract.getContractEndDate(), DATE_FORMAT_3))
                 .contractTerm(monthsBetween(contract.getContractEndDate(), contract.getContractStartDate()))
                 .note(contract.getNote())
@@ -83,6 +87,10 @@ public class GroupContractDTO implements Serializable {
                 .phoneNumber(rackRenters.getPhoneNumber())
                 .identityNumber(rackRenters.getIdentityNumber())
                 .rackRenterEmail(rackRenters.getEmail())
+                .rackRenterDistrict(rackRenters.getAddress().getAddressDistrict())
+                .rackRenterMoreDetails(rackRenters.getAddress().getAddressMoreDetails())
+                .rackRenterCity(rackRenters.getAddress().getCreatedAtt())
+                .rackRenterWards(rackRenters.getAddress().getAddressWards())
                 .address(groupContracted.getAddress())
                 .build();
         response.setListGeneralService(generalServices);
