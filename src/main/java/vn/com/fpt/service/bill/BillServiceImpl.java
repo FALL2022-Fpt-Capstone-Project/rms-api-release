@@ -48,16 +48,16 @@ public class BillServiceImpl implements BillService {
 
 
     @Override
-    public List<BillRoomStatusResponse> listBillRoomStatus(Long groupContractId, Long groupId, Integer paymentCircle) {
+    public List<BillRoomStatusResponse> listBillRoomStatus(Long groupId, Integer paymentCircle) {
 
         // Lấy các phòng đã có hợp đồng
         var listRoom = roomService.listRoom(
+                groupId,
                 null,
-                groupContractId,
                 null,
-                0,
+                null,
                 null);
-        var listRoomId = listRoom.stream().map(RoomsResponse::getRoomId).toList();
+        var listRoomId = listRoom.stream().filter(e -> e.getContractId() != null).toList().stream().map(RoomsResponse::getContractId).toList();
 
         // Lấy hợp đồng của các phòng
         var listRoomContract = contractService.listRoomContract(

@@ -36,13 +36,12 @@ public class BillController {
 
     @Operation(summary = "Trạng thái hóa đơn các phòng trong tháng và theo kỳ")
     @GetMapping("/room/bill-status")
-    public ResponseEntity<BaseResponse<List<BillRoomStatusResponse>>> listNotBilled(@RequestParam Long groupContractId,
-                                                                                    @RequestParam Integer paymentCycle,
+    public ResponseEntity<BaseResponse<List<BillRoomStatusResponse>>> listNotBilled(@RequestParam Integer paymentCycle,
                                                                                     @RequestParam Long groupId) {
         Pattern pattern = Pattern.compile("(0|15|30)", Pattern.CASE_INSENSITIVE);
         if (!pattern.matcher(paymentCycle.toString()).matches())
             throw new BusinessException("Kỳ hạn thanh toán hóa đơn không hợp lệ");
-        return AppResponse.success(billService.listBillRoomStatus(groupContractId, groupId, paymentCycle));
+        return AppResponse.success(billService.listBillRoomStatus(groupId, paymentCycle));
     }
 
     @Operation(summary = "Danh trang thái hóa đơn của các phòng theo tòa")

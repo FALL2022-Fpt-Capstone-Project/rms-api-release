@@ -8,7 +8,7 @@ import vn.com.fpt.responses.*;
 import java.util.List;
 
 public interface BillService {
-    List<BillRoomStatusResponse> listBillRoomStatus(Long groupContractId, Long groupId, Integer billCircle);
+    List<BillRoomStatusResponse> listBillRoomStatus( Long groupId, Integer billCircle);
 
     List<AddBillRequest> addBill(List<AddBillRequest> addBillRequests);
 
