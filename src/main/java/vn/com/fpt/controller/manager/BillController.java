@@ -44,7 +44,7 @@ public class BillController {
 
     @Operation(summary = "Chi tiết tính toán hóa đơn của phòng")
     @GetMapping("/room/information/{roomId}")
-    public ResponseEntity<BaseResponse<PayBillInformationResponse>> payBillInformation(@RequestParam Long roomId){
+    public ResponseEntity<BaseResponse<PayBillInformationResponse>> payBillInformation(@PathVariable Long roomId){
         return AppResponse.success(billService.payBillInformation(roomId));
     }
 
