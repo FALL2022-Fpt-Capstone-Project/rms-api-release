@@ -83,7 +83,7 @@ public class GroupServiceImpl implements GroupService {
             } else {
                 contract.addAll(contractRepository.findByGroupIdAndContractTypeAndContractIsDisableIsFalse(roomGroups.getId(), LEASE_CONTRACT));
             }
-            if (!roomGroups.getIsDisable()) {
+            if (!roomGroups.getIsDisable() && !contractRepository.findAllByGroupIdAndContractType(roomGroups.getId(), LEASE_CONTRACT).isEmpty()) {
                 GroupContractedResponse group = new GroupContractedResponse();
                 var roomLeaseContracted = roomService.listRoomLeaseContracted(roomGroups.getId());
                 group.setGroupId(roomGroups.getId());
