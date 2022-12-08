@@ -24,6 +24,11 @@ public abstract class ManagerConstants {
     public static final String IN_MONEY = "IN";
     public static final String OUT_MONEY = "OUT";
 
+    public static final String SERVICE_BILL = "SERVICE";
+    public static final String ROOM_BILL = "ROOM";
+    public static final String RECURRING_BILL = "RECURRING";
+    public static final String ANOTHER_BILL = "ANOTHER";
+
 
     public static final Integer DEFAULT_ASSET_QUANTITY = 1;
     //basic service

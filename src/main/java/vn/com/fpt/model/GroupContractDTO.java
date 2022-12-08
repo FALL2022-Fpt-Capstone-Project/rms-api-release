@@ -36,6 +36,7 @@ public class GroupContractDTO implements Serializable {
 
     private Long    rackRenter;
     private String  rackRenterFullName;
+    private String rackRenterEmail;
     private Boolean gender;
     private String  phoneNumber;
     private String  identityNumber;
@@ -81,6 +82,7 @@ public class GroupContractDTO implements Serializable {
                 .gender(rackRenters.getGender())
                 .phoneNumber(rackRenters.getPhoneNumber())
                 .identityNumber(rackRenters.getIdentityNumber())
+                .rackRenterEmail(rackRenters.getEmail())
                 .address(groupContracted.getAddress())
                 .build();
         response.setListGeneralService(generalServices);

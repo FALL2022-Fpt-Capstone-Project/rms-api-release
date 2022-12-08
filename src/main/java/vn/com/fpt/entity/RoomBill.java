@@ -11,6 +11,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import java.util.Date;
+
 import static vn.com.fpt.common.utils.DateUtils.now;
 
 @Entity
@@ -45,7 +47,7 @@ public class RoomBill extends BaseEntity {
     private Integer paymentCycle;
 
     @Column(name = "bill_created_time")
-    private String billCreatedTime;
+    private Date billCreatedTime;
 
     @Column(name = "note")
     private String note;
@@ -56,6 +58,7 @@ public class RoomBill extends BaseEntity {
                               Long roomId,
                               Double roomTotalMoney,
                               Integer paymentCycle,
+                              Date billCreatedTime,
                               String note) {
         return RoomBill.builder()
                 .contractId(contractId)
@@ -64,6 +67,7 @@ public class RoomBill extends BaseEntity {
                 .roomId(roomId)
                 .roomTotalMoney(roomTotalMoney)
                 .paymentCycle(paymentCycle)
+                .billCreatedTime(billCreatedTime)
                 .note(note).build();
     }
 
@@ -73,6 +77,7 @@ public class RoomBill extends BaseEntity {
                                Long roomId,
                                Double roomTotalMoney,
                                Integer paymentCycle,
+                               Date billCreatedTime,
                                String note) {
         var add = of(
                 contractId,
@@ -81,6 +86,7 @@ public class RoomBill extends BaseEntity {
                 roomId,
                 roomTotalMoney,
                 paymentCycle,
+                billCreatedTime,
                 note);
         add.setCreatedAt(now());
         return add;

@@ -3,7 +3,9 @@ package vn.com.fpt.service.bill;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.ObjectUtils;
+import org.hibernate.sql.Update;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.common.utils.DateUtils;
 import vn.com.fpt.common.utils.Operator;
@@ -13,7 +15,9 @@ import vn.com.fpt.repositories.*;
 import vn.com.fpt.requests.AddBillRequest;
 import vn.com.fpt.requests.GenerateBillRequest;
 import vn.com.fpt.responses.*;
+import vn.com.fpt.service.DeleteLog;
 import vn.com.fpt.service.TableLogComponent;
+import vn.com.fpt.service.UpdateLog;
 import vn.com.fpt.service.contract.ContractService;
 import vn.com.fpt.service.group.GroupService;
 import vn.com.fpt.service.renter.RenterService;
@@ -37,13 +41,14 @@ public class BillServiceImpl implements BillService {
 
     private final RenterService renterService;
     private final RecurringBillRepository recurringBillRepo;
+    private final MoneySourceRepository moneySourceRepo;
     private final ServiceBillRepository serviceBillRepo;
     private final RoomBillRepository roomBillRepo;
     private final TableLogComponent tableLogComponent;
 
 
     @Override
-    public List<BillRoomStatusResponse> listBillRoomStatus(Long groupContractId, Integer paymentCircle) {
+    public List<BillRoomStatusResponse> listBillRoomStatus(Long groupContractId, Long groupId, Integer paymentCircle) {
 
         // Lấy các phòng đã có hợp đồng
         var listRoom = roomService.listRoom(
@@ -82,6 +87,7 @@ public class BillServiceImpl implements BillService {
             var room = roomService.room(rcd.getRoomId());
             var renter = renterService.listRenter(room.getId());
             var generalService = servicesService.listGeneralServiceByGroupId(rcd.getGroupId());
+            response.setRoomId(rcd.getRoomId());
             response.setGroupId(room.getGroupId());
             response.setContractId(rcd.getContractId());
             response.setRoomName(room.getRoomName());
@@ -110,10 +116,12 @@ public class BillServiceImpl implements BillService {
 
                 response.setRoomOldWaterIndex(water.getServiceIndex());
                 response.setRoomOldElectricIndex(electric.getServiceIndex());
+                response.setTotalMoney(recurringBill.getTotalMoney());
                 response.setIsBilled(true);
             } else {
                 response.setRoomOldWaterIndex(room.getRoomCurrentWaterIndex() == null ? 0 : room.getRoomCurrentWaterIndex());
                 response.setRoomOldElectricIndex(room.getRoomCurrentElectricIndex() == null ? 0 : room.getRoomCurrentElectricIndex());
+                response.setTotalMoney(0.0);
                 response.setIsBilled(false);
             }
             responses.add(response);
@@ -131,13 +139,15 @@ public class BillServiceImpl implements BillService {
             var roomInfor = roomService.room(abr.getRoomId());
             var contractInfor = contractService.contract(roomInfor.getContractId());
             if (abr.getTotalRoomMoney() > 0) {
-                var var1 = roomBillRepo.save(RoomBill.of(
+                var var1 = roomBillRepo.save(RoomBill.add(
                                 roomInfor.getContractId(),
                                 roomInfor.getGroupContractId(),
                                 roomInfor.getGroupId(),
                                 abr.getRoomId(),
                                 abr.getTotalRoomMoney(),
-                                contractInfor.getContractPaymentCycle(), "Tiền phòng " + roomInfor.getRoomName()
+                                contractInfor.getContractPaymentCycle(),
+                                parse(abr.getCreatedTime()),
+                                "Tiền phòng " + roomInfor.getRoomName()
                         )
                 );
                 //lưu vết
@@ -258,7 +268,78 @@ public class BillServiceImpl implements BillService {
     }
 
     @Override
-    public List<RoomBillHistory> roomBillHistory(Long roomId) {
-        return null;
+    public List<RecurringBill> roomBillHistory(Long roomId) {
+        return recurringBillRepo.findAllById(Collections.singleton(roomId));
+    }
+
+    @Override
+    @SneakyThrows
+    @Transactional
+    public void payRoomBill(List<Long> billId) {
+        var listRecurringBill = recurringBillRepo.findAllByIdIn(billId);
+
+        List<UpdateLog> updateLogs = new ArrayList<>(Collections.emptyList());
+        List<MoneySource> moneySources = new ArrayList<>(Collections.emptyList());
+        listRecurringBill.forEach(e -> {
+            int month = toLocalDate(e.getBillCreatedTime()).getMonthValue();
+            int year = toLocalDate(e.getBillCreatedTime()).getYear();
+            e.setIsPaid(true);
+            e.setIsDebt(false);
+            updateLogs.add(new UpdateLog(
+                    RecurringBill.TABLE_NAME,
+                    e.getId(),
+                    "is_paid",
+                    Operator.operatorName(),
+                    String.valueOf(e.getIsPaid()),
+                    String.valueOf(true)
+            ));
+            updateLogs.add(new UpdateLog(
+                    RecurringBill.TABLE_NAME,
+                    e.getId(),
+                    "is_debt",
+                    Operator.operatorName(),
+                    String.valueOf(e.getIsDebt()),
+                    String.valueOf(false)
+            ));
+            moneySources.add(MoneySource.of(
+                    "Tiền hóa đơn tháng " + month + "/" + year,
+                    e.getTotalMoney(),
+                    IN_MONEY,
+                    e.getBillCreatedTime(),
+                    e.getId(),
+                    RECURRING_BILL));
+        });
+        recurringBillRepo.saveAll(listRecurringBill);
+        tableLogComponent.updateEvent(updateLogs);
+
+        // thêm nguồn tiền
+        tableLogComponent.saveMoneySourceHistory(moneySourceRepo.saveAll(moneySources));
+
+    }
+
+    @Override
+    @Transactional
+    @SneakyThrows
+    public void deleteRoomBill(List<Long> billId) {
+        var listRecurringBill = recurringBillRepo.findAllByIdIn(billId);
+        List<DeleteLog> deleteLogs = new ArrayList<>(Collections.emptyList());
+        listRecurringBill.forEach(e -> {
+
+            var listServiceBill = new ArrayList<ServiceBill>(Collections.emptyList());
+            if (!ObjectUtils.isEmpty(e.getServiceBillId())) {
+                listServiceBill.addAll(serviceBillRepo.findAllById(Collections.singleton(e.getServiceBillId())));
+            }
+            var listRoomBill = new ArrayList<RoomBill>(Collections.emptyList());
+
+            if (!ObjectUtils.isEmpty(e.getRoomBillId())) {
+                listRoomBill.addAll(roomBillRepo.findAllById(Collections.singleton(e.getServiceBillId())));
+            }
+            if (!listRoomBill.isEmpty()) {
+                roomBillRepo.deleteAll(listRoomBill);
+                deleteLogs.add(new DeleteLog(RoomBill.TABLE_NAME, e.getRoomBillId(), Operator.operatorName()));
+            }
+            if (!listServiceBill.isEmpty()) serviceBillRepo.deleteAll(listServiceBill);
+            recurringBillRepo.delete(e);
+        });
     }
 }

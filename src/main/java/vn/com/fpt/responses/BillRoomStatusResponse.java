@@ -16,6 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class BillRoomStatusResponse {
+    private Long roomId;
     private String roomName;
     private Integer roomFloor;
 
@@ -33,6 +34,7 @@ public class BillRoomStatusResponse {
 
     private Double totalMoneyRoomPrice;
     private Double totalMoneyServicePrice;
+    private Double totalMoney;
 
     private Integer contractPaymentCycle;
     private Boolean isInBillCycle;

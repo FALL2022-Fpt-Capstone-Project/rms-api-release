@@ -48,15 +48,16 @@ public class TableLogComponent {
     public void updateEvent(List<UpdateLog> updateLogs) throws JsonProcessingException {
         List<TableChangeLog> var1 = new ArrayList<>(Collections.emptyList());
         for (UpdateLog ul : updateLogs) {
-            var1.add(TableChangeLog.add(
-                    ul.getProperty(),
-                    ul.getOldValue(),
-                    ul.getNewValue(),
-                    ul.getTableName(),
-                    ul.getUsername(),
-                    ul.getId(),
-                    INSERT
-            ));
+            if (!ul.getNewValue().equalsIgnoreCase(ul.getOldValue()))
+                var1.add(TableChangeLog.add(
+                        ul.getProperty(),
+                        ul.getOldValue(),
+                        ul.getNewValue(),
+                        ul.getTableName(),
+                        ul.getUsername(),
+                        ul.getId(),
+                        UPDATE
+                ));
         }
         log.info(objectMapper.writeValueAsString(billChangeLogRepo.saveAll(var1)));
     }
@@ -179,34 +180,48 @@ public class TableLogComponent {
 
     @SneakyThrows
     @Transactional
-    public void saveMoneySourceHistory(MoneySource request) {
-        addEvent(
-                List.of(new AddLog(
-                                MoneySource.TABLE_NAME,
-                                request.getId(),
-                                "money_source_description",
-                                String.valueOf(request.getDescription()),
-                                Operator.operatorName()),
-                        new AddLog(
-                                MoneySource.TABLE_NAME,
-                                request.getId(),
-                                "money_source_total_money",
-                                String.valueOf(request.getTotalMoney()),
-                                Operator.operatorName()),
-                        new AddLog(
-                                MoneySource.TABLE_NAME,
-                                request.getId(),
-                                "money_source_type",
-                                String.valueOf(request.getMoneyType()),
-                                Operator.operatorName()),
-                        new AddLog(
-                                MoneySource.TABLE_NAME,
-                                request.getId(),
-                                "money_source_time",
-                                String.valueOf(request.getMoneySourceTime()),
-                                Operator.operatorName())
-                )
-        );
+    public void saveMoneySourceHistory(List<MoneySource> request) {
+        List<AddLog> addLogs = new ArrayList<>(Collections.emptyList());
+        request.forEach(e -> {
+            addLogs.add(new AddLog(
+                    MoneySource.TABLE_NAME,
+                    e.getId(),
+                    "money_source_description",
+                    String.valueOf(e.getDescription()),
+                    Operator.operatorName()));
+            addLogs.add(new AddLog(
+                    MoneySource.TABLE_NAME,
+                    e.getId(),
+                    "money_source_total_money",
+                    String.valueOf(e.getTotalMoney()),
+                    Operator.operatorName()));
+            addLogs.add(new AddLog(
+                    MoneySource.TABLE_NAME,
+                    e.getId(),
+                    "money_source_type",
+                    String.valueOf(e.getMoneyType()),
+                    Operator.operatorName()));
+            addLogs.add(new AddLog(
+                    MoneySource.TABLE_NAME,
+                    e.getId(),
+                    "money_source_time",
+                    String.valueOf(e.getMoneySourceTime()),
+                    Operator.operatorName()));
+            addLogs.add(new AddLog(
+                    MoneySource.TABLE_NAME,
+                    e.getId(),
+                    "key",
+                    String.valueOf(e.getKey()),
+                    Operator.operatorName()));
+            addLogs.add(new AddLog(
+                    MoneySource.TABLE_NAME,
+                    e.getId(),
+                    "bill_type",
+                    String.valueOf(e.getBillType()),
+                    Operator.operatorName()));
+
+        });
+
     }
 
     @SneakyThrows
@@ -310,7 +325,7 @@ public class TableLogComponent {
 
     @Transactional
     @SneakyThrows
-    public void saveRecurringBillHistory(List<RecurringBill> recurringBill){
+    public void saveRecurringBillHistory(List<RecurringBill> recurringBill) {
         List<AddLog> addLogs = new ArrayList<>(Collections.emptyList());
         recurringBill.forEach(e -> {
             addLogs.add(

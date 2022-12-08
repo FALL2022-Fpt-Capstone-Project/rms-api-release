@@ -1,5 +1,6 @@
 package vn.com.fpt.service.bill;
 
+import vn.com.fpt.entity.RecurringBill;
 import vn.com.fpt.requests.AddBillRequest;
 import vn.com.fpt.requests.GenerateBillRequest;
 import vn.com.fpt.responses.*;
@@ -7,7 +8,7 @@ import vn.com.fpt.responses.*;
 import java.util.List;
 
 public interface BillService {
-    List<BillRoomStatusResponse> listBillRoomStatus(Long groupContractId, Integer billCircle);
+    List<BillRoomStatusResponse> listBillRoomStatus(Long groupContractId, Long groupId, Integer billCircle);
 
     List<AddBillRequest> addBill(List<AddBillRequest> addBillRequests);
 
@@ -15,5 +16,9 @@ public interface BillService {
 
     List<PreviewAddBillResponse> addBillPreview(List<AddBillRequest> requests);
 
-    List<RoomBillHistory> roomBillHistory(Long roomId);
+    List<RecurringBill> roomBillHistory(Long roomId);
+
+    void payRoomBill(List<Long> billId);
+
+    void deleteRoomBill(List<Long> billId);
 }

@@ -24,4 +24,6 @@ public interface RecurringBillRepository extends JpaRepository<RecurringBill, Lo
     List<RecurringBill> findAllByRoomIdAndIsPaid(Long roomId, Boolean isPaid);
 
     List<RecurringBill> findAllByRoomId(Long roomId);
+
+    List<RecurringBill> findAllByIdIn(List<Long> id);
 }

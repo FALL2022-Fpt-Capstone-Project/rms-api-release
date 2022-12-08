@@ -9,4 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class DeleteLog extends BaseLog {
+    public DeleteLog(String tableName, Long id, String userName) {
+        super(tableName, id, "", tableName);
+    }
 }

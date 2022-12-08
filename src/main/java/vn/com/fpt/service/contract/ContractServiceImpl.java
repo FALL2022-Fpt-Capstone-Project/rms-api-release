@@ -173,21 +173,35 @@ public class ContractServiceImpl implements ContractService {
                         "Tiền cọc hợp đồng phòng " + room.getRoomName(),
                         request.getContractDeposit(),
                         IN_MONEY,
-                        now()
+                        now(),
+                        null,
+                        ANOTHER_BILL
                 )
         );
-        tableLogComponent.saveMoneySourceHistory(var1);
+        tableLogComponent.saveMoneySourceHistory(List.of(var1));
 
         var var2 = roomBillRepository.save(RoomBill.add(
-                addedContract.getId(),
-                room.getGroupContractId(),
-                room.getGroupId(),
-                room.getId(),
-                request.getContractPrice() * request.getContractPaymentCycle(),
-                request.getContractPaymentCycle(),
-                "Tiền phòng lập hợp đồng phòng " + room.getRoomName() + "ở " + contract(room.getGroupContractId()).getContractName()
-        ));
+                        addedContract.getId(),
+                        room.getGroupContractId(),
+                        room.getGroupId(),
+                        room.getId(),
+                        request.getContractPrice() * request.getContractPaymentCycle(),
+                        request.getContractPaymentCycle(),
+                        now(),
+                "Tiền phòng lập hợp đồng phòng " + room.getRoomName() + "ở " + groupService.getGroup(request.getGroupId()).getGroupName()
+                )
+        );
         tableLogComponent.saveRoomBillHistory(var2);
+
+        var var3 = moneySourceRepository.save(MoneySource.of(
+                var2.getNote(),
+                var2.getRoomTotalMoney(),
+                IN_MONEY,
+                var2.getBillCreatedTime(),
+                var2.getId(),
+                ROOM_BILL
+        ));
+        tableLogComponent.saveMoneySourceHistory(List.of(var3));
 
         return request;
     }

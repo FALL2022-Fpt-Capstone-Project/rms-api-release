@@ -37,15 +37,25 @@ public class MoneySource extends BaseEntity {
     @Column(name = "money_source_time")
     private Date moneySourceTime;
 
+    @Column(name = "key")
+    private Long key;
+
+    @Column(name = "bill_type")
+    private String billType;
+
     public static MoneySource of(String description,
                                  Double totalMoney,
                                  String moneyType,
-                                 Date moneySourceTime) {
+                                 Date moneySourceTime,
+                                 Long key,
+                                 String billType) {
         return MoneySource.builder()
                 .description(description)
                 .totalMoney(totalMoney)
                 .moneyType(moneyType)
                 .moneySourceTime(moneySourceTime)
+                .billType(billType)
+                .key(key)
                 .build();
     }
 }

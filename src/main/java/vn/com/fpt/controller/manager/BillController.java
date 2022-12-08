@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.common.response.AppResponse;
 import vn.com.fpt.common.response.BaseResponse;
+import vn.com.fpt.entity.RecurringBill;
 import vn.com.fpt.requests.AddBillRequest;
 import vn.com.fpt.responses.BillRoomStatusResponse;
 import vn.com.fpt.responses.ListRoomWithBillStatusResponse;
@@ -36,11 +37,12 @@ public class BillController {
     @Operation(summary = "Trạng thái hóa đơn các phòng trong tháng và theo kỳ")
     @GetMapping("/room/bill-status")
     public ResponseEntity<BaseResponse<List<BillRoomStatusResponse>>> listNotBilled(@RequestParam Long groupContractId,
-                                                                                    @RequestParam Integer paymentCycle) {
+                                                                                    @RequestParam Integer paymentCycle,
+                                                                                    @RequestParam Long groupId) {
         Pattern pattern = Pattern.compile("(0|15|30)", Pattern.CASE_INSENSITIVE);
         if (!pattern.matcher(paymentCycle.toString()).matches())
             throw new BusinessException("Kỳ hạn thanh toán hóa đơn không hợp lệ");
-        return AppResponse.success(billService.listBillRoomStatus(groupContractId, paymentCycle));
+        return AppResponse.success(billService.listBillRoomStatus(groupContractId, groupId, paymentCycle));
     }
 
     @Operation(summary = "Danh trang thái hóa đơn của các phòng theo tòa")
@@ -63,18 +65,20 @@ public class BillController {
 
     @Operation(summary = "Xem lịch sử hóa đơn của phòng")
     @GetMapping("/room/history/{roomId}")
-    public ResponseEntity<BaseResponse<List<RoomBillHistory>>> roomBillHistory(@PathVariable Long roomId){
+    public ResponseEntity<BaseResponse<List<RecurringBill>>> roomBillHistory(@PathVariable Long roomId){
         return AppResponse.success(billService.roomBillHistory(roomId));
     }
-//    @PutMapping("/room/pay")
-//    public ResponseEntity<BaseResponse<?>> payBill(@RequestParam(required = false) List<Long> billId) {
-//        //todo
-//        return null;
-//    }
+    @Operation(summary = "Chi trả một hoặc nhiều hóa đơn định kỳ ")
+    @PutMapping("/room/pay")
+    public ResponseEntity<BaseResponse<String>> payBill(@RequestParam List<Long> billId) {
+        billService.payRoomBill(billId);
+        return AppResponse.success("Chi trả thành công");
+    }
 
-//    @DeleteMapping("/room/delete")
-//    public ResponseEntity<BaseResponse<?>> deleteBill(@RequestParam(required = false) List<Long> billId) {
-//        //todo
-//        return null;
-//    }
+    @Operation(summary = "Xóa một hoặc nhiều hóa đơn định định kỳ")
+    @DeleteMapping("/room/delete")
+    public ResponseEntity<BaseResponse<String>> deleteBill(@RequestParam List<Long> billId) {
+        billService.deleteRoomBill(billId);
+        return AppResponse.success("Xóa hóa đơn thành công");
+    }
 }
