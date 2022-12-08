@@ -79,7 +79,7 @@ public class GroupServiceImpl implements GroupService {
         BaseSpecification<RoomGroups> contractSpec = new BaseSpecification<>();
 
         if (ObjectUtils.isNotEmpty(addressId)) {
-            contractSpec.add(SearchCriteria.of("addressId", addressId, IN));
+            contractSpec.add(SearchCriteria.of("address", addressId, IN));
         }
 
         var listContractedGroup = groupRepository.findAll(contractSpec, Sort.by("id").descending());
@@ -116,7 +116,7 @@ public class GroupServiceImpl implements GroupService {
 
         BaseSpecification<RoomGroups> contractSpec = new BaseSpecification<>();
         if(ObjectUtils.isNotEmpty(addressId)){
-            contractSpec.add(SearchCriteria.of("addressId", addressId, IN));
+            contractSpec.add(SearchCriteria.of("address", addressId, IN));
         }
         var listNonContractedGroup = groupRepository.findAll(contractSpec, Sort.by("id").descending());
         List<GroupNonContractedResponse> result = new ArrayList<>(Collections.emptyList());

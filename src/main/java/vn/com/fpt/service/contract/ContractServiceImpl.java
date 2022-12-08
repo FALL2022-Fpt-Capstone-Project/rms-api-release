@@ -367,8 +367,9 @@ public class ContractServiceImpl implements ContractService {
         var room = roomService.room(contract.getRoomId());
         List<HandOverGeneralServiceDTO> listService = new ArrayList<>();
         List<GeneralServiceDTO> list = servicesService.listGeneralServiceByGroupId(contract.getGroupId());
-        var water = list.stream().filter(x -> x.getServiceId().equals(SERVICE_WATER)).findFirst().get();
-        var electric = list.stream().filter(z -> z.getServiceId().equals(SERVICE_ELECTRIC)).findFirst().get();
+        var water = list.stream().filter(x -> x.getServiceId() == (BigInteger.valueOf(SERVICE_WATER))).findAny().get();
+        var electric = list.stream().filter(z -> z.getServiceId() == (BigInteger.valueOf(SERVICE_ELECTRIC))).findAny().get();
+
 
         HandOverGeneralServiceDTO water1 = new HandOverGeneralServiceDTO();
         water1.setServiceId(water.getServiceId());
@@ -489,8 +490,8 @@ public class ContractServiceImpl implements ContractService {
             var room = roomService.room(e.getRoomId());
             List<HandOverGeneralServiceDTO> listService = new ArrayList<>();
             List<GeneralServiceDTO> list = servicesService.listGeneralServiceByGroupId(e.getGroupId());
-            var water = list.stream().filter(x -> x.getServiceId().equals(SERVICE_WATER)).findFirst().get();
-            var electrict = list.stream().filter(z -> z.getServiceId().equals(SERVICE_ELECTRIC)).findFirst().get();
+            var water = list.stream().filter(x -> x.getServiceId() == (BigInteger.valueOf(SERVICE_WATER))).findAny().get();
+            var electrict = list.stream().filter(z -> z.getServiceId() == (BigInteger.valueOf(SERVICE_ELECTRIC))).findAny().get();
 
             HandOverGeneralServiceDTO water1 = new HandOverGeneralServiceDTO();
             water1.setServiceId(water.getServiceId());
