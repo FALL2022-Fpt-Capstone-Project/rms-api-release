@@ -13,6 +13,7 @@ import vn.com.fpt.common.utils.Operator;
 import vn.com.fpt.entity.*;
 import vn.com.fpt.model.GeneralServiceDTO;
 import vn.com.fpt.model.GroupContractDTO;
+import vn.com.fpt.model.HandOverGeneralServiceDTO;
 import vn.com.fpt.model.RoomContractDTO;
 import vn.com.fpt.repositories.*;
 import vn.com.fpt.requests.*;
@@ -27,6 +28,7 @@ import vn.com.fpt.service.services.ServicesService;
 import vn.com.fpt.specification.BaseSpecification;
 import vn.com.fpt.specification.SearchCriteria;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -188,7 +190,7 @@ public class ContractServiceImpl implements ContractService {
                         request.getContractPrice() * request.getContractPaymentCycle(),
                         request.getContractPaymentCycle(),
                         now(),
-                "Tiền phòng lập hợp đồng phòng " + room.getRoomName() + "ở " + groupService.getGroup(request.getGroupId()).getGroupName()
+                        "Tiền phòng lập hợp đồng phòng " + room.getRoomName() + "ở " + groupService.getGroup(request.getGroupId()).getGroupName()
                 )
         );
         tableLogComponent.saveRoomBillHistory(var2);
@@ -362,10 +364,36 @@ public class ContractServiceImpl implements ContractService {
         List<RentersResponse> listRenter = new ArrayList<>(renterService.listMember(contract.getRoomId()));
         listRenter.add(renterService.renter(contract.getRenters()));
 
+        var room = roomService.room(contract.getRoomId());
+        List<HandOverGeneralServiceDTO> listService = new ArrayList<>();
+        List<GeneralServiceDTO> list = servicesService.listGeneralServiceByGroupId(contract.getGroupId());
+        var water = list.stream().filter(x -> x.getServiceId().equals(SERVICE_WATER)).findFirst().get();
+        var electric = list.stream().filter(z -> z.getServiceId().equals(SERVICE_ELECTRIC)).findFirst().get();
+
+        HandOverGeneralServiceDTO water1 = new HandOverGeneralServiceDTO();
+        water1.setServiceId(water.getServiceId());
+        water1.setServiceName(water.getServiceName());
+        water1.setServicePrice(water.getServicePrice());
+        water1.setServiceShowName(water.getServiceShowName());
+        water1.setServiceTypeId(water.getServiceTypeId());
+        water1.setServiceTypeName(water.getServiceName());
+        water1.setHandOverGeneralServiceIndex(room.getRoomCurrentWaterIndex());
+
+
+        HandOverGeneralServiceDTO electric1 = new HandOverGeneralServiceDTO();
+        electric1.setServiceId(electric.getServiceId());
+        electric1.setServiceName(electric.getServiceName());
+        electric1.setServicePrice(electric.getServicePrice());
+        electric1.setServiceShowName(electric.getServiceShowName());
+        electric1.setServiceTypeId(electric.getServiceTypeId());
+        electric1.setServiceTypeName(electric.getServiceName());
+        electric1.setHandOverGeneralServiceIndex(room.getRoomCurrentElectricIndex());
+        listService.add(water1);
+        listService.add(electric1);
         var roomContract = RoomContractDTO.of(contract,
                 listRenter,
                 assetService.listRoomAsset(contract.getRoomId(), null),
-                servicesService.listHandOverGeneralService(contract.getId()));
+                listService);
         roomContract.setRoom(roomService.room(roomContract.getRoomId()));
         roomContract.setRoomName(roomService.room(roomContract.getRoomId()).getRoomName());
         roomContract.setGroupName(((GroupContractedResponse) groupService.group(roomContract.getGroupId())).getGroupName());
@@ -458,6 +486,33 @@ public class ContractServiceImpl implements ContractService {
 
         if (listContract.isEmpty()) return Collections.emptyList();
         listContract.forEach(e -> {
+            var room = roomService.room(e.getRoomId());
+            List<HandOverGeneralServiceDTO> listService = new ArrayList<>();
+            List<GeneralServiceDTO> list = servicesService.listGeneralServiceByGroupId(e.getGroupId());
+            var water = list.stream().filter(x -> x.getServiceId().equals(SERVICE_WATER)).findFirst().get();
+            var electrict = list.stream().filter(z -> z.getServiceId().equals(SERVICE_ELECTRIC)).findFirst().get();
+
+            HandOverGeneralServiceDTO water1 = new HandOverGeneralServiceDTO();
+            water1.setServiceId(water.getServiceId());
+            water1.setServiceName(water.getServiceName());
+            water1.setServicePrice(water.getServicePrice());
+            water1.setServiceShowName(water.getServiceShowName());
+            water1.setServiceTypeId(water.getServiceTypeId());
+            water1.setServiceTypeName(water.getServiceName());
+            water1.setHandOverGeneralServiceIndex(room.getRoomCurrentWaterIndex());
+
+
+            HandOverGeneralServiceDTO electric1 = new HandOverGeneralServiceDTO();
+            electric1.setServiceId(electrict.getServiceId());
+            electric1.setServiceName(electrict.getServiceName());
+            electric1.setServicePrice(electrict.getServicePrice());
+            electric1.setServiceShowName(electrict.getServiceShowName());
+            electric1.setServiceTypeId(electrict.getServiceTypeId());
+            electric1.setServiceTypeName(electrict.getServiceName());
+            electric1.setHandOverGeneralServiceIndex(room.getRoomCurrentElectricIndex());
+            listService.add(water1);
+            listService.add(electric1);
+
             List<RentersResponse> listRenter = new ArrayList<>(renterService.listMember(e.getRoomId()));
             listRenter.add(renterService.renter(e.getRenters()));
 
@@ -465,11 +520,12 @@ public class ContractServiceImpl implements ContractService {
             var roomContract = RoomContractDTO.of(e,
                     listRenter,
                     assetService.listRoomAsset(e.getRoomId(), null),
-                    servicesService.listHandOverGeneralService(e.getId()));
-            roomContract.setRoom(roomService.room(e.getRoomId()));
-            roomContract.setRoomName(roomService.room(e.getRoomId()).getRoomName());
+                    listService);
+            roomContract.setRoom(room);
+            roomContract.setRoomName(room.getRoomName());
             roomContract.setGroupName(group.getGroupName());
             roomContracts.add(roomContract);
+
         });
         return roomContracts;
     }
