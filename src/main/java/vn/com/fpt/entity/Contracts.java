@@ -151,7 +151,7 @@ public class Contracts extends BaseEntity {
         //fetch
         leaseContract.setId(old.getId());
         leaseContract.setContractType(LEASE_CONTRACT);
-        leaseContract.setRenters(old.getRackRenters());
+        leaseContract.setRackRenters(old.getRackRenters());
         leaseContract.setContractIsDisable(false);
         leaseContract.setCreatedBy(old.getCreatedBy());
         leaseContract.setCreatedAt(old.getCreatedAt());
