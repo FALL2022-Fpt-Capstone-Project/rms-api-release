@@ -248,7 +248,6 @@ public class ContractServiceImpl implements ContractService {
                     request.getGroupId()
             ));
         }
-        servicesService.addGeneralService(listGeneralServiceForLeaseContract, operator);
 
         return request;
     }

@@ -17,6 +17,8 @@ public interface ContractRepository extends JpaRepository<Contracts, Long>, JpaS
 
     List<Contracts> findByGroupIdAndContractTypeAndContractIsDisableIsFalse(Long groupId, Integer contractType);
 
+    List<Contracts> findByGroupIdAndContractTypeAndContractIsDisableIsFalseAndAddressIdIn(Long groupId, Integer contracType, List<Long> addressId);
+
     List<Contracts> findAllByContractTypeOrderByContractStartDateDesc(Integer contractType);
 
     List<Contracts> findAllByRentersIn(List<Long> renterId);

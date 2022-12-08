@@ -1,7 +1,6 @@
 package vn.com.fpt.service.group;
 
 import vn.com.fpt.entity.RoomGroups;
-import vn.com.fpt.entity.Rooms;
 import vn.com.fpt.requests.AddGroupRequest;
 import vn.com.fpt.requests.UpdateGroupRequest;
 import vn.com.fpt.responses.GroupAllResponse;
@@ -9,18 +8,17 @@ import vn.com.fpt.responses.GroupContractedResponse;
 import vn.com.fpt.responses.GroupNonContractedResponse;
 
 import java.util.List;
-import java.util.Objects;
 
 public interface GroupService {
     Object group(Long groupId);
 
     RoomGroups getGroup(Long groupId);
 
-    List<GroupContractedResponse> listContracted();
+    List<GroupContractedResponse> listContracted(String city);
 
-    List<GroupNonContractedResponse> listNonContracted();
+    List<GroupNonContractedResponse> listNonContracted(String city);
 
-    GroupAllResponse listGroup();
+    GroupAllResponse listGroup(String city);
 
     String delete(Long id, Long operator);
 

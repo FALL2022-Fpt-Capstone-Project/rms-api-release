@@ -42,20 +42,20 @@ public class GroupController {
 
     @GetMapping("/all/contracted")
     @Operation(summary = "Lấy thông tin của tất cả chung cư mini đã có hợp đồng")
-    public ResponseEntity<BaseResponse<List<GroupContractedResponse>>> listGroupContracted() {
-        return AppResponse.success(groupService.listContracted());
+    public ResponseEntity<BaseResponse<List<GroupContractedResponse>>> listGroupContracted(@RequestBody(required = false) String city) {
+        return AppResponse.success(groupService.listContracted(city));
     }
 
     @GetMapping("/all/non-contracted")
     @Operation(summary = "Lấy thông tin của tất cả chung cư mini đã có hợp đồng")
-    public ResponseEntity<BaseResponse<List<GroupNonContractedResponse>>> listGroupNonContracted() {
-        return AppResponse.success(groupService.listNonContracted());
+    public ResponseEntity<BaseResponse<List<GroupNonContractedResponse>>> listGroupNonContracted(@RequestBody(required = false) String city) {
+        return AppResponse.success(groupService.listNonContracted(city));
     }
 
     @GetMapping("/all")
     @Operation(summary = "Lấy thông tin của tất cả chung cu mini bao gồm có và chưa có hợp đồng")
-    public ResponseEntity<BaseResponse<GroupAllResponse>> listGroup() {
-        return AppResponse.success(groupService.listGroup());
+    public ResponseEntity<BaseResponse<GroupAllResponse>> listGroup(@RequestParam(required = false) String city) {
+        return AppResponse.success(groupService.listGroup(city));
     }
 
     @PostMapping("/add")

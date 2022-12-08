@@ -2,6 +2,7 @@ package vn.com.fpt.service.group;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -49,12 +50,12 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public Object group(Long groupId) {
-        for (GroupContractedResponse groupContractedResponse : listContracted()) {
+        for (GroupContractedResponse groupContractedResponse : listContracted(null)) {
             if (Objects.equals(groupContractedResponse.getGroupId(), groupId))
                 return groupContractedResponse;
 
         }
-        for (GroupNonContractedResponse groupNonContractedResponse : listNonContracted()) {
+        for (GroupNonContractedResponse groupNonContractedResponse : listNonContracted(null)) {
             if (Objects.equals(groupNonContractedResponse.getGroupId(), groupId))
                 return groupNonContractedResponse;
         }
@@ -67,12 +68,21 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public List<GroupContractedResponse> listContracted() {
+    public List<GroupContractedResponse> listContracted(String city) {
+        List<Long> addressId = null;
+        if (StringUtils.isNotEmpty(city)) {
+            addressId = addressRepository.findAllByAddressCityLikeIgnoreCase(city).stream().map(Address::getId).toList();
+        }
         var listContractedGroup = groupRepository.findAll(Sort.by("id").descending());
         List<GroupContractedResponse> result = new ArrayList<>(Collections.emptyList());
 
         for (RoomGroups roomGroups : listContractedGroup) {
-            var contract = contractRepository.findByGroupIdAndContractTypeAndContractIsDisableIsFalse(roomGroups.getId(), LEASE_CONTRACT);
+            var contract = new ArrayList<Contracts>(Collections.emptyList());
+            if (ObjectUtils.isNotEmpty(addressId)) {
+                contract.addAll(contractRepository.findByGroupIdAndContractTypeAndContractIsDisableIsFalseAndAddressIdIn(roomGroups.getId(), LEASE_CONTRACT, addressId));
+            } else {
+                contract.addAll(contractRepository.findByGroupIdAndContractTypeAndContractIsDisableIsFalse(roomGroups.getId(), LEASE_CONTRACT));
+            }
             for (Contracts contracts : contract) {
                 if (!contract.isEmpty() && !roomGroups.getIsDisable()) {
                     GroupContractedResponse group = new GroupContractedResponse();
@@ -105,31 +115,53 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public List<GroupNonContractedResponse> listNonContracted() {
+    public List<GroupNonContractedResponse> listNonContracted(String city) {
+        List<Long> addressId = null;
+        if (StringUtils.isNotEmpty(city)) {
+            addressId = addressRepository.findAllByAddressCityLikeIgnoreCase(city).stream().map(Address::getId).toList();
+        }
+
         var listNonContractedGroup = groupRepository.findAll(Sort.by("id").descending());
         List<GroupNonContractedResponse> result = new ArrayList<>(Collections.emptyList());
 
         for (RoomGroups roomGroups : listNonContractedGroup) {
-            if (contractRepository.findByGroupIdAndContractTypeAndContractIsDisableIsFalse(roomGroups.getId(), LEASE_CONTRACT).isEmpty() && !roomGroups.getIsDisable()) {
-                GroupNonContractedResponse group = new GroupNonContractedResponse();
-                group.setGroupId(roomGroups.getId());
-                group.setGroupName(roomGroups.getGroupName());
-                group.setDescription(roomGroups.getGroupDescription());
-                group.setTotalRoom(roomsRepository.findAllByGroupIdAndIsDisableIsFalse(roomGroups.getId()).size());
-                group.setTotalFloor(roomsRepository.findAllFloorByGroupId(roomGroups.getId()).size());
-                group.setAddress(addressRepository.findById(roomGroups.getAddress()).get());
-                group.setListRooms(roomService.listRoom(roomGroups.getId(), null, null, null, null));
-                group.setListGeneralService(servicesService.listGeneralServiceByGroupId(roomGroups.getId()));
-                group.setGroupContracted(false);
-                result.add(group);
+            if(ObjectUtils.isNotEmpty(addressId)){
+                if (contractRepository.findByGroupIdAndContractTypeAndContractIsDisableIsFalseAndAddressIdIn(roomGroups.getId(), LEASE_CONTRACT, addressId).isEmpty() && !roomGroups.getIsDisable()) {
+                    GroupNonContractedResponse group = new GroupNonContractedResponse();
+                    group.setGroupId(roomGroups.getId());
+                    group.setGroupName(roomGroups.getGroupName());
+                    group.setDescription(roomGroups.getGroupDescription());
+                    group.setTotalRoom(roomsRepository.findAllByGroupIdAndIsDisableIsFalse(roomGroups.getId()).size());
+                    group.setTotalFloor(roomsRepository.findAllFloorByGroupId(roomGroups.getId()).size());
+                    group.setAddress(addressRepository.findById(roomGroups.getAddress()).get());
+                    group.setListRooms(roomService.listRoom(roomGroups.getId(), null, null, null, null));
+                    group.setListGeneralService(servicesService.listGeneralServiceByGroupId(roomGroups.getId()));
+                    group.setGroupContracted(false);
+                    result.add(group);
+                }
+            }
+            else {
+                if (contractRepository.findByGroupIdAndContractTypeAndContractIsDisableIsFalse(roomGroups.getId(), LEASE_CONTRACT).isEmpty() && !roomGroups.getIsDisable()) {
+                    GroupNonContractedResponse group = new GroupNonContractedResponse();
+                    group.setGroupId(roomGroups.getId());
+                    group.setGroupName(roomGroups.getGroupName());
+                    group.setDescription(roomGroups.getGroupDescription());
+                    group.setTotalRoom(roomsRepository.findAllByGroupIdAndIsDisableIsFalse(roomGroups.getId()).size());
+                    group.setTotalFloor(roomsRepository.findAllFloorByGroupId(roomGroups.getId()).size());
+                    group.setAddress(addressRepository.findById(roomGroups.getAddress()).get());
+                    group.setListRooms(roomService.listRoom(roomGroups.getId(), null, null, null, null));
+                    group.setListGeneralService(servicesService.listGeneralServiceByGroupId(roomGroups.getId()));
+                    group.setGroupContracted(false);
+                    result.add(group);
+                }
             }
         }
         return result;
     }
 
     @Override
-    public GroupAllResponse listGroup() {
-        return GroupAllResponse.of(listContracted(), listNonContracted());
+    public GroupAllResponse listGroup(String city) {
+        return GroupAllResponse.of(listContracted(city), listNonContracted(city));
     }
 
     @Override
