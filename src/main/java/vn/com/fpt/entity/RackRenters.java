@@ -94,6 +94,7 @@ public class RackRenters extends BaseEntity{
                 old.getIdentityNumber(),
                 note,
                 address);
+        rackRenter.setId(old.getId());
         rackRenter.setCreatedAt(old.getCreatedAt());
         rackRenter.setCreatedBy(old.getCreatedBy());
 
