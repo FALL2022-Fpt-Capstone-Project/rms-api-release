@@ -19,6 +19,8 @@ import vn.com.fpt.responses.RoomsResponse;
 import vn.com.fpt.service.assets.AssetService;
 import vn.com.fpt.service.rooms.RoomService;
 import vn.com.fpt.service.services.ServicesService;
+import vn.com.fpt.specification.BaseSpecification;
+import vn.com.fpt.specification.SearchCriteria;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,6 +30,7 @@ import java.util.Objects;
 import static vn.com.fpt.common.constants.ErrorStatusConstants.DUPLICATE_NAME;
 import static vn.com.fpt.common.constants.ManagerConstants.DEFAULT_ASSET_QUANTITY;
 import static vn.com.fpt.common.constants.ManagerConstants.LEASE_CONTRACT;
+import static vn.com.fpt.common.constants.SearchOperation.IN;
 
 @Service
 @RequiredArgsConstructor
@@ -71,18 +74,17 @@ public class GroupServiceImpl implements GroupService {
     public List<GroupContractedResponse> listContracted(String city) {
         List<Long> addressId = null;
         if (StringUtils.isNotEmpty(city)) {
-            addressId = addressRepository.findAllByAddressCityLikeIgnoreCase(city).stream().map(Address::getId).toList();
+            addressId = addressRepository.findAllByAddressCityEqualsIgnoreCase(city).stream().map(Address::getId).toList();
         }
-        var listContractedGroup = groupRepository.findAll(Sort.by("id").descending());
-        List<GroupContractedResponse> result = new ArrayList<>(Collections.emptyList());
+        BaseSpecification<RoomGroups> contractSpec = new BaseSpecification<>();
 
+        if (ObjectUtils.isNotEmpty(addressId)) {
+            contractSpec.add(SearchCriteria.of("addressId", addressId, IN));
+        }
+
+        var listContractedGroup = groupRepository.findAll(contractSpec, Sort.by("id").descending());
+        List<GroupContractedResponse> result = new ArrayList<>(Collections.emptyList());
         for (RoomGroups roomGroups : listContractedGroup) {
-            var contract = new ArrayList<Contracts>(Collections.emptyList());
-            if (ObjectUtils.isNotEmpty(addressId)) {
-                contract.addAll(contractRepository.findByGroupIdAndContractTypeAndContractIsDisableIsFalseAndAddressIdIn(roomGroups.getId(), LEASE_CONTRACT, addressId));
-            } else {
-                contract.addAll(contractRepository.findByGroupIdAndContractTypeAndContractIsDisableIsFalse(roomGroups.getId(), LEASE_CONTRACT));
-            }
             if (!roomGroups.getIsDisable() && !contractRepository.findAllByGroupIdAndContractType(roomGroups.getId(), LEASE_CONTRACT).isEmpty()) {
                 GroupContractedResponse group = new GroupContractedResponse();
                 var roomLeaseContracted = roomService.listRoomLeaseContracted(roomGroups.getId());
@@ -109,29 +111,17 @@ public class GroupServiceImpl implements GroupService {
     public List<GroupNonContractedResponse> listNonContracted(String city) {
         List<Long> addressId = null;
         if (StringUtils.isNotEmpty(city)) {
-            addressId = addressRepository.findAllByAddressCityLikeIgnoreCase(city).stream().map(Address::getId).toList();
+            addressId = addressRepository.findAllByAddressCityEqualsIgnoreCase(city).stream().map(Address::getId).toList();
         }
 
-        var listNonContractedGroup = groupRepository.findAll(Sort.by("id").descending());
+        BaseSpecification<RoomGroups> contractSpec = new BaseSpecification<>();
+        if(ObjectUtils.isNotEmpty(addressId)){
+            contractSpec.add(SearchCriteria.of("addressId", addressId, IN));
+        }
+        var listNonContractedGroup = groupRepository.findAll(contractSpec, Sort.by("id").descending());
         List<GroupNonContractedResponse> result = new ArrayList<>(Collections.emptyList());
 
         for (RoomGroups roomGroups : listNonContractedGroup) {
-            if(ObjectUtils.isNotEmpty(addressId)){
-                if (contractRepository.findByGroupIdAndContractTypeAndContractIsDisableIsFalseAndAddressIdIn(roomGroups.getId(), LEASE_CONTRACT, addressId).isEmpty() && !roomGroups.getIsDisable()) {
-                    GroupNonContractedResponse group = new GroupNonContractedResponse();
-                    group.setGroupId(roomGroups.getId());
-                    group.setGroupName(roomGroups.getGroupName());
-                    group.setDescription(roomGroups.getGroupDescription());
-                    group.setTotalRoom(roomsRepository.findAllByGroupIdAndIsDisableIsFalse(roomGroups.getId()).size());
-                    group.setTotalFloor(roomsRepository.findAllFloorByGroupId(roomGroups.getId()).size());
-                    group.setAddress(addressRepository.findById(roomGroups.getAddress()).get());
-                    group.setListRooms(roomService.listRoom(roomGroups.getId(), null, null, null, null));
-                    group.setListGeneralService(servicesService.listGeneralServiceByGroupId(roomGroups.getId()));
-                    group.setGroupContracted(false);
-                    result.add(group);
-                }
-            }
-            else {
                 if (contractRepository.findByGroupIdAndContractTypeAndContractIsDisableIsFalse(roomGroups.getId(), LEASE_CONTRACT).isEmpty() && !roomGroups.getIsDisable()) {
                     GroupNonContractedResponse group = new GroupNonContractedResponse();
                     group.setGroupId(roomGroups.getId());
@@ -144,7 +134,6 @@ public class GroupServiceImpl implements GroupService {
                     group.setListGeneralService(servicesService.listGeneralServiceByGroupId(roomGroups.getId()));
                     group.setGroupContracted(false);
                     result.add(group);
-                }
             }
         }
         return result;
