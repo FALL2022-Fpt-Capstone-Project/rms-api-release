@@ -16,7 +16,6 @@ import vn.com.fpt.requests.AddBillRequest;
 import vn.com.fpt.responses.BillRoomStatusResponse;
 import vn.com.fpt.responses.ListRoomWithBillStatusResponse;
 import vn.com.fpt.responses.PreviewAddBillResponse;
-import vn.com.fpt.responses.RoomBillHistory;
 import vn.com.fpt.service.bill.BillService;
 
 import java.util.List;
