@@ -83,32 +83,23 @@ public class GroupServiceImpl implements GroupService {
             } else {
                 contract.addAll(contractRepository.findByGroupIdAndContractTypeAndContractIsDisableIsFalse(roomGroups.getId(), LEASE_CONTRACT));
             }
-            for (Contracts contracts : contract) {
-                if (!contract.isEmpty() && !roomGroups.getIsDisable()) {
-                    GroupContractedResponse group = new GroupContractedResponse();
-                    var roomLeaseContracted = roomService.listRoomLeaseContracted(roomGroups.getId());
-                    var rackRenter = rackRenterRepo.findById(contracts.getRackRenters()).get();
-                    group.setGroupId(roomGroups.getId());
-                    group.setRackRenterName(rackRenter.getRackRenterFullName());
-                    group.setRackRenterPhone(rackRenter.getPhoneNumber());
-                    group.setRackRenterGender(rackRenter.getGender());
-                    group.setRackRenterIdentity(rackRenter.getIdentityNumber());
-                    group.setRackRenterEmail(rackRenter.getEmail());
-                    group.setRackRenterNote(rackRenter.getNote());
-                    group.setGroupName(roomGroups.getGroupName());
-                    group.setDescription(roomGroups.getGroupDescription());
-                    group.setTotalRoom(roomsRepository.findAllRoomsByGroupId(roomGroups.getId()).size());
-                    group.setTotalFloor(roomsRepository.findAllFloorByGroupId(roomGroups.getId()).size());
-                    group.setAddress(addressRepository.findById(roomGroups.getAddress()).get());
-                    group.setListRooms(roomService.listRoom(roomGroups.getId(), null, null, null, null));
-                    group.setListGeneralService(servicesService.listGeneralServiceByGroupId(roomGroups.getId()));
-                    group.setListRoomLeaseContracted(roomLeaseContracted);
-                    group.setListRoomNonLeaseContracted(roomService.listRoomLeaseNonContracted(roomGroups.getId()));
-                    group.setTotalFloorLeaseContracted(roomsRepository.findAllFloorByGroupContractIdAndGroupId(group.getGroupId(), contracts.getId()).size());
-                    group.setTotalRoomLeaseContracted(roomLeaseContracted.size());
-                    group.setGroupContracted(true);
-                    result.add(group);
-                }
+            if (!roomGroups.getIsDisable()) {
+                GroupContractedResponse group = new GroupContractedResponse();
+                var roomLeaseContracted = roomService.listRoomLeaseContracted(roomGroups.getId());
+                group.setGroupId(roomGroups.getId());
+                group.setGroupName(roomGroups.getGroupName());
+                group.setDescription(roomGroups.getGroupDescription());
+                group.setTotalRoom(roomsRepository.findAllRoomsByGroupId(roomGroups.getId()).size());
+                group.setTotalFloor(roomsRepository.findAllFloorByGroupId(roomGroups.getId()).size());
+                group.setAddress(addressRepository.findById(roomGroups.getAddress()).get());
+                group.setListRooms(roomService.listRoom(roomGroups.getId(), null, null, null, null));
+                group.setListGeneralService(servicesService.listGeneralServiceByGroupId(roomGroups.getId()));
+                group.setListRoomLeaseContracted(roomLeaseContracted);
+                group.setListRoomNonLeaseContracted(roomService.listRoomLeaseNonContracted(roomGroups.getId()));
+                group.setTotalFloorLeaseContracted(roomsRepository.findAllFloorByGroupContractIdNotNullAndGroupId(group.getGroupId()).size());
+                group.setTotalRoomLeaseContracted(roomLeaseContracted.size());
+                group.setGroupContracted(true);
+                result.add(group);
             }
         }
         return result;

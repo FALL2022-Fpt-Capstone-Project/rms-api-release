@@ -27,6 +27,9 @@ public interface RoomsRepository extends JpaRepository<Rooms, Long>, JpaSpecific
     List<Integer> findAllFloorByGroupContractIdAndGroupId(@Param("groupContractId") Long groupContractId,
                                                           @Param("groupId") Long groupId);
 
+    @Query("select DISTINCT (r.roomFloor) from Rooms r WHERE r.groupContractId IS NOT null AND r.groupId = :groupId")
+    List<Integer> findAllFloorByGroupContractIdNotNullAndGroupId(@Param("groupId") Long groupId);
+
     @Query("select DISTINCT (r.roomFloor) from Rooms r WHERE r.groupContractId is NULL AND r.groupId = :groupId AND r.isDisable = false")
     List<Integer> findAllFloorByGroupNonContractAndGroupId(@Param("groupId") Long groupId);
 

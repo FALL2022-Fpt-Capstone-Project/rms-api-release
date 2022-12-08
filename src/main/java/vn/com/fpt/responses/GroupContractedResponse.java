@@ -17,19 +17,7 @@ import java.util.List;
 public class GroupContractedResponse {
     private Long groupId;
 
-    private String rackRenterName;
-
-    private Boolean rackRenterGender;
-
-    private String rackRenterPhone;
-
-    private String rackRenterIdentity;
-
     private String groupName;
-
-    private String rackRenterEmail;
-
-    private String rackRenterNote;
 
     private Integer totalRoom;
 
