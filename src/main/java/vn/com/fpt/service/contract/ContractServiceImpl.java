@@ -248,7 +248,6 @@ public class ContractServiceImpl implements ContractService {
                     request.getGroupId()
             ));
         }
-
         return request;
     }
 
@@ -256,7 +255,7 @@ public class ContractServiceImpl implements ContractService {
     @Transactional
     public GroupContractRequest updateContract(Long groupContractId, GroupContractRequest request, Long operator) {
         var oldContract = contract(groupContractId);
-        var oldRackRenter = renterService.rackRenter(oldContract.getRenters());
+        var oldRackRenter = renterService.rackRenter(oldContract.getRackRenters());
         rackRenterRepository.save(RackRenters.modify(
                 oldRackRenter,
                 request.getRackRenterName(),
