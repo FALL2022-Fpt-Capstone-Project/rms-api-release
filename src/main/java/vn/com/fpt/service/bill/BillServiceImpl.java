@@ -224,9 +224,9 @@ public class BillServiceImpl implements BillService {
                 groupId,
                 null,
                 null,
-                0,
+                null,
                 null
-        );
+        ).stream().filter(e -> e.getContractId() != null).toList();
         RoomGroups roomGroups = groupService.getGroup(groupId);
         listRentedRoom.forEach(e -> {
             RoomContractDTO contract = contractService.roomContract(e.getContractId());
