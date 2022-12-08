@@ -367,6 +367,7 @@ public class BillServiceImpl implements BillService {
             service.setServiceTypeId(e.getServiceTypeId());
             service.setServiceTypeName(e.getServiceTypeName());
             service.setServiceShowName(e.getServiceShowName());
+            service.setServicePrice(e.getServicePrice());
             service.setHandOverGeneralServiceIndex(1);
             if (e.getServiceId().equals(BigInteger.valueOf(SERVICE_ELECTRIC))) {
                 service.setHandOverGeneralServiceIndex(room.getRoomCurrentElectricIndex());
