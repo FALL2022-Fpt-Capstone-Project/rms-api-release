@@ -10,13 +10,11 @@ import vn.com.fpt.common.response.AppResponse;
 import vn.com.fpt.common.response.BaseResponse;
 import vn.com.fpt.common.utils.Operator;
 import vn.com.fpt.entity.Rooms;
-import vn.com.fpt.requests.AdjustRoomPriceRequest;
-import vn.com.fpt.requests.RoomsPreviewRequest;
-import vn.com.fpt.requests.AddRoomsRequest;
-import vn.com.fpt.requests.UpdateRoomRequest;
+import vn.com.fpt.requests.*;
 import vn.com.fpt.responses.AdjustRoomPriceResponse;
 import vn.com.fpt.responses.RoomsPreviewResponse;
 import vn.com.fpt.responses.RoomsResponse;
+import vn.com.fpt.service.assets.AssetService;
 import vn.com.fpt.service.rooms.RoomService;
 
 import java.util.ArrayList;
@@ -35,6 +33,8 @@ public class RoomController {
     public static final String PATH = V1_PATH + MANAGER_PATH + ROOM_PATH;
 
     private final RoomService roomService;
+
+    private final AssetService assetService;
 
     @GetMapping("/")
     @Operation(summary = "Danh sách các phòng")
@@ -102,6 +102,7 @@ public class RoomController {
                                         Operator.operator()
                                 )
                         );
+                    assetService.roomAdd(e.getRoomAsset(), Operator.operator());
                 }
         );
 //        String roomName = String.join(", ", .stream().map(Rooms::getRoomName).toList());

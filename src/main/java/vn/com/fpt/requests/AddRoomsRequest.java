@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -30,5 +32,7 @@ public class AddRoomsRequest {
     private Double roomArea;
 
     private Boolean isOld;
+
+    private List<RoomAssetsRequest> roomAsset;
 
 }

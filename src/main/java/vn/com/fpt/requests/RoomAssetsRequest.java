@@ -24,7 +24,6 @@ public class RoomAssetsRequest {
     @Min(value = 0, message = "Số lượng trang thiết bị không được để trống")
     private Integer assetQuantity;
 
-    @NotBlank(message = "Phòng không được để trống")
     private Long roomId;
 
 }

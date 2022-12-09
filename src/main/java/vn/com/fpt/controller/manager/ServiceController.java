@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.com.fpt.common.response.AppResponse;
 import vn.com.fpt.common.response.BaseResponse;
@@ -77,6 +78,7 @@ public class ServiceController {
 
     @Operation(summary = "Xóa dịch vụ chung ra khỏi tòa")
     @DeleteMapping("/general/remove/{generalServiceId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BaseResponse<String>> removeGeneralService(@PathVariable Long generalServiceId) {
         return AppResponse.success(servicesService.removeGeneralService(generalServiceId));
     }
