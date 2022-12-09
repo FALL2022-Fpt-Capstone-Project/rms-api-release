@@ -20,6 +20,8 @@ import vn.com.fpt.entity.Address;
 import vn.com.fpt.entity.authentication.Account;
 import vn.com.fpt.entity.authentication.Role;
 import vn.com.fpt.repositories.AccountRepository;
+import vn.com.fpt.repositories.PermissionDetailRepository;
+import vn.com.fpt.repositories.PermissionRepository;
 import vn.com.fpt.repositories.RoleRepository;
 import vn.com.fpt.requests.LoginRequest;
 import vn.com.fpt.requests.RegisterRequest;
@@ -51,9 +53,12 @@ class AuthenticationServiceImplTest {
 
     private AuthenticationService authenticationService;
 
+    @Mock
+    private PermissionRepository permissionRepository;
+
     @BeforeEach
     void setUp() {
-        authenticationService = new AuthenticationServiceImpl(authenticationManager, accountRepository, roleRepository, jwtUtils);
+        authenticationService = new AuthenticationServiceImpl(authenticationManager, accountRepository, permissionRepository, roleRepository, jwtUtils);
     }
 
     @Test
