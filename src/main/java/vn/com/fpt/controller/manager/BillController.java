@@ -73,9 +73,9 @@ public class BillController {
     }
 
     @Operation(summary = "Chi trả một hoặc nhiều hóa đơn định kỳ ")
-    @PutMapping("/room/pay")
-    public ResponseEntity<BaseResponse<String>> payBill(@RequestParam List<Long> billId) {
-        billService.payRoomBill(billId);
+    @PutMapping("/room/pay/{billId}")
+    public ResponseEntity<BaseResponse<String>> payBill(@PathVariable Long billId) {
+        billService.payRoomBill(List.of(billId));
         return AppResponse.success("Chi trả thành công");
     }
 
