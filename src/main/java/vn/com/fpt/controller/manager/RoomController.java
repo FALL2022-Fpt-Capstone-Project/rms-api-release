@@ -89,24 +89,25 @@ public class RoomController {
     public ResponseEntity<BaseResponse<List<Rooms>>> add(@RequestBody List<AddRoomsRequest> requests) {
         List<Rooms> roomToAdd = new ArrayList<>(Collections.emptyList());
         requests.forEach(e -> {
-                    if (e.getIsOld() != null && !e.getIsOld())
-                        roomToAdd.add(
-                                Rooms.add(
-                                        e.getRoomName(),
-                                        e.getRoomFloor(),
-                                        e.getRoomLimitPeople(),
-                                        e.getGroupId(),
-                                        NOT_RENTED_YET,
-                                        e.getRoomPrice(),
-                                        e.getRoomArea(),
-                                        Operator.operator()
-                                )
-                        );
-                    assetService.roomAdd(e.getRoomAsset(), Operator.operator());
+                    if (e.getIsOld() != null && !e.getIsOld()) {
+                        var addedRoom = roomService.add(Rooms.add(
+                                e.getRoomName(),
+                                e.getRoomFloor(),
+                                e.getRoomLimitPeople(),
+                                e.getGroupId(),
+                                NOT_RENTED_YET,
+                                e.getRoomPrice(),
+                                e.getRoomArea(),
+                                Operator.operator()
+                        ));
+                        roomToAdd.add(addedRoom);
+                        e.getRoomAsset().forEach(x -> x.setRoomId(addedRoom.getId()));
+                        assetService.roomAdd(e.getRoomAsset(), Operator.operator());
+                    }
+
                 }
         );
-//        String roomName = String.join(", ", .stream().map(Rooms::getRoomName).toList());
-        return AppResponse.success(roomService.add(roomToAdd));
+        return AppResponse.success(roomToAdd);
     }
 
 }
