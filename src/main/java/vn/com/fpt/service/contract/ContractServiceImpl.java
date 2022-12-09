@@ -475,6 +475,7 @@ public class ContractServiceImpl implements ContractService {
         }
 
         if (org.apache.commons.lang3.ObjectUtils.isNotEmpty(isDisable)) {
+            contractSpec.add(new SearchCriteria("contractIsDisable", isDisable, EQUAL));
             if ((ObjectUtils.isEmpty(status) ? EXPIRED_CONTRACT : status) != EXPIRED_CONTRACT)
                 contractSpec.add(new SearchCriteria("contractIsDisable", isDisable, EQUAL));
         }

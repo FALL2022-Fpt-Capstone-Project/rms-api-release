@@ -247,23 +247,25 @@ public class BillServiceImpl implements BillService {
         String finalRemindAlert = remindAlert;
         listRentedRoom.forEach(e -> {
             RoomContractDTO contract = contractService.roomContract(e.getContractId());
-            RentersResponse representRenter = renterService.representRenter(e.getRoomId());
-            responses.add(
-                    new ListRoomWithBillStatusResponse(
-                            roomGroups.getGroupName(),
-                            e.getRoomId(),
-                            e.getRoomName(),
-                            e.getContractId(),
-                            representRenter.getRenterFullName(),
-                            e.getRoomPrice(),
-                            e.getRoomCurrentElectricIndex(),
-                            e.getRoomCurrentWaterIndex(),
-                            renterService.listRenter(e.getRoomId()).size(),
-                            contract.getContractPaymentCycle(),
-                            ObjectUtils.isEmpty(recurringBillRepo.findAllByRoomIdAndIsPaid(e.getRoomId(), false))
-                            , finalRemindAlert
-                    )
-            );
+            if(ObjectUtils.isNotEmpty(contract.getContractIsDisable())){
+                RentersResponse representRenter = renterService.representRenter(e.getRoomId());
+                responses.add(
+                        new ListRoomWithBillStatusResponse(
+                                roomGroups.getGroupName(),
+                                e.getRoomId(),
+                                e.getRoomName(),
+                                e.getContractId(),
+                                representRenter.getRenterFullName(),
+                                e.getRoomPrice(),
+                                e.getRoomCurrentElectricIndex(),
+                                e.getRoomCurrentWaterIndex(),
+                                renterService.listRenter(e.getRoomId()).size(),
+                                contract.getContractPaymentCycle(),
+                                ObjectUtils.isEmpty(recurringBillRepo.findAllByRoomIdAndIsPaid(e.getRoomId(), false))
+                                , finalRemindAlert
+                        )
+                );
+            }
         });
         return responses;
     }
