@@ -9,8 +9,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.com.fpt.common.response.AppResponse;
 import vn.com.fpt.common.response.BaseResponse;
+import vn.com.fpt.entity.Permission;
+import vn.com.fpt.entity.PermissionDetail;
+import vn.com.fpt.repositories.PermissionDetailRepository;
 import vn.com.fpt.requests.RegisterRequest;
 import vn.com.fpt.responses.AccountResponse;
+import vn.com.fpt.requests.AddPermission;
 import vn.com.fpt.service.staff.StaffService;
 import vn.com.fpt.common.utils.Operator;
 
@@ -31,6 +35,8 @@ public class StaffController {
 
     private final StaffService staffService;
 
+    private final PermissionDetailRepository permissionDetailRepo;
+
 
     @GetMapping
     @Operation(summary = "Danh sách tài khoản nhân viên")
@@ -41,8 +47,9 @@ public class StaffController {
                                                                     @RequestParam(required = false) String endDate,
                                                                     @RequestParam(required = false, defaultValue = "false") boolean deactivate,
                                                                     @RequestParam(required = false) String name,
-                                                                    @RequestParam(required = false) String userName) {
-        return AppResponse.success(staffService.listStaff(role, order, startDate, endDate, deactivate, name, userName));
+                                                                    @RequestParam(required = false) String userName,
+                                                                    @RequestParam(required = false) List<Long> permission) {
+        return AppResponse.success(staffService.listStaff(role, order, startDate, endDate, deactivate, name, userName, permission));
     }
 
     @GetMapping("/{staffId}")
@@ -74,5 +81,23 @@ public class StaffController {
         return AppResponse.success(staffService.updateStaff(staffId, request, Operator.operator(), Operator.time()));
     }
 
+    @PostMapping("/permission/set")
+    @Operation(summary = "Thêm một hoặc nhiều quyền cho nhân viên")
+    public ResponseEntity<BaseResponse<List<Permission>>> addPermission(@RequestBody AddPermission request){
+        return AppResponse.success(staffService.addPermission(request, Operator.operator()));
+    }
 
+    @DeleteMapping("/permission/remove/{accountId}")
+    @Operation(summary = "Xóa một hoặc nhiều quyền cho nhân viên")
+    public ResponseEntity<BaseResponse<String>> removePermission(@PathVariable Long accountId,
+                                                                 @RequestParam List<Long> permission) {
+        staffService.removePermission(accountId, permission);
+        return AppResponse.success("Xóa quyền cho account thành công");
+    }
+
+    @GetMapping("/permission/detail")
+    @Operation(summary = "Lấy ra thông tin các quyền truy cập")
+    public ResponseEntity<BaseResponse<List<PermissionDetail>>> permissionDetail() {
+        return AppResponse.success(permissionDetailRepo.findAll());
+    }
 }

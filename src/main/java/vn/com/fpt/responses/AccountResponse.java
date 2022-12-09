@@ -9,6 +9,7 @@ import vn.com.fpt.entity.authentication.Account;
 import vn.com.fpt.model.AccountDTO;
 import vn.com.fpt.common.utils.DateUtils;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -61,6 +62,8 @@ public class AccountResponse {
     private Set<String> roles;
 
     private String roleName;
+
+    private List<Long> permission;
 
 
     public static AccountResponse of(Account account, Set<String> roles, String token) {

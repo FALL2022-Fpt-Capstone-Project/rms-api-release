@@ -11,9 +11,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.entity.Address;
+import vn.com.fpt.entity.Permission;
 import vn.com.fpt.entity.authentication.Account;
 import vn.com.fpt.entity.authentication.Role;
 import vn.com.fpt.repositories.AccountRepository;
+import vn.com.fpt.repositories.PermissionRepository;
 import vn.com.fpt.repositories.RoleRepository;
 import vn.com.fpt.requests.LoginRequest;
 import vn.com.fpt.requests.RegisterRequest;
@@ -37,6 +39,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final AccountRepository accountRepository;
 
+    private final PermissionRepository permissionRepository;
+
     private final RoleRepository roleRepository;
     private final JwtUtils jwtUtils;
 
@@ -50,9 +54,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (account.isDeactivate()) throw new DisabledException("Tài khoản: " + account.getUserName());
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return AccountResponse.of(account
+        var permission = permissionRepository.findAllByAccountId(account.getId());
+
+        var response = AccountResponse.of(account
                 , authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet())
                 , jwtUtils.generateJwtCookie(account).getValue());
+        response.setPermission(permission.stream().map(Permission::getPermissionId).toList());
+        return response;
     }
 
     @Override
@@ -62,7 +70,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new BusinessException(EXISTED_ACCOUNT, "Tài khoản: " + registerRequest.getUserName());
         Address address = Address.of(registerRequest);
         Set<Role> roles = roleChecker(registerRequest.getRoles());
-        return AccountResponse.of(accountRepository.save(Account.add(registerRequest, address, roles, operator)));
+        var account = AccountResponse.of(accountRepository.save(Account.add(registerRequest, address, roles, operator)));
+        if (!registerRequest.getPermission().isEmpty()) {
+            permissionRepository.saveAll(registerRequest.getPermission().stream().map(e -> Permission.add(account.getAccountId(), e, operator)).toList());
+        }
+        return account;
     }
 
     @Override
@@ -74,18 +86,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public Set<Role> roleChecker(String strRoles) {
         Set<Role> roles = new HashSet<>();
-            switch (strRoles) {
-                case "admin":
-                    Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN).orElse(null);
-                    if (!Objects.isNull(adminRole)) roles.add(adminRole);
-                    break;
-                case "staff":
-                    Role staffRole = roleRepository.findByName(ERole.ROLE_STAFF).orElse(null);
-                    if (!Objects.isNull(staffRole)) roles.add(staffRole);
-                    break;
-                default:
-                    roles.add(new Role());
-            }
+        switch (strRoles) {
+            case "admin":
+                Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN).orElse(null);
+                if (!Objects.isNull(adminRole)) roles.add(adminRole);
+                break;
+            case "staff":
+                Role staffRole = roleRepository.findByName(ERole.ROLE_STAFF).orElse(null);
+                if (!Objects.isNull(staffRole)) roles.add(staffRole);
+                break;
+            default:
+                roles.add(new Role());
+        }
         if (roles.isEmpty()) throw new BusinessException(INVALID_ROLE, "Quyền: " + strRoles);
         return roles;
     }

@@ -1,5 +1,7 @@
 package vn.com.fpt.service.staff;
 
+import vn.com.fpt.entity.Permission;
+import vn.com.fpt.requests.AddPermission;
 import vn.com.fpt.requests.RegisterRequest;
 import vn.com.fpt.responses.AccountResponse;
 
@@ -17,9 +19,14 @@ public interface StaffService {
                                     String endDate,
                                     Boolean deactivate,
                                     String name,
-                                    String userName);
+                                    String userName,
+                                    List<Long> permission);
 
     AccountResponse staff(Long id);
 
     List<String> roles();
+
+    List<Permission> addPermission(AddPermission request, Long operator);
+
+    void removePermission(Long accountId, List<Long> permission);
 }

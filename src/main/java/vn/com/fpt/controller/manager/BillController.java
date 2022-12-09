@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.common.response.AppResponse;
@@ -81,6 +82,7 @@ public class BillController {
 
     @Operation(summary = "Xóa một hoặc nhiều hóa đơn định định kỳ")
     @DeleteMapping("/room/delete")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BaseResponse<String>> deleteBill(@RequestParam List<Long> billId) {
         billService.deleteRoomBill(billId);
         return AppResponse.success("Xóa hóa đơn thành công");

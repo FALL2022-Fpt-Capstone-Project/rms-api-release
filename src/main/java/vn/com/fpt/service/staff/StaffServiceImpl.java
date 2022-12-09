@@ -7,11 +7,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.entity.Address;
+import vn.com.fpt.entity.Permission;
 import vn.com.fpt.entity.authentication.Account;
 import vn.com.fpt.model.AccountDTO;
 import vn.com.fpt.repositories.AccountRepository;
 import vn.com.fpt.repositories.AddressRepository;
+import vn.com.fpt.repositories.PermissionRepository;
 import vn.com.fpt.repositories.RoleRepository;
+import vn.com.fpt.requests.AddPermission;
 import vn.com.fpt.requests.RegisterRequest;
 import vn.com.fpt.responses.AccountResponse;
 import vn.com.fpt.service.authentication.AuthenticationService;
@@ -20,7 +23,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static vn.com.fpt.common.constants.ErrorStatusConstants.*;
 import static vn.com.fpt.model.AccountDTO.SQL_RESULT_SET_MAPPING;
@@ -39,6 +41,8 @@ public class StaffServiceImpl implements StaffService {
     private final EntityManager entityManager;
 
     private final RoleRepository roleRepository;
+
+    private final PermissionRepository permissionRepository;
 
     @Override
     public AccountResponse addStaff(RegisterRequest registerRequest, Long operator) {
@@ -80,7 +84,8 @@ public class StaffServiceImpl implements StaffService {
                                            String endDate,
                                            Boolean deactivate,
                                            String name,
-                                           String userName) {
+                                           String userName,
+                                           List<Long> permission) {
 
         StringBuilder selectBuild = new StringBuilder("SELECT ");
         selectBuild.append("acc.account_id,");
@@ -96,6 +101,7 @@ public class StaffServiceImpl implements StaffService {
         selectBuild.append("address.address_wards, ");
         selectBuild.append("address.address_more_detail, ");
         selectBuild.append("ar.name as role_name ");
+
 
         StringBuilder fromBuild = new StringBuilder("FROM ");
         fromBuild.append("authentication_account acc ");
@@ -207,7 +213,9 @@ public class StaffServiceImpl implements StaffService {
         Query query = entityManager.createNativeQuery(queryBuild, SQL_RESULT_SET_MAPPING);
         params.forEach(query::setParameter);
         try {
-            return AccountResponse.of((AccountDTO) query.getSingleResult());
+            var response =  AccountResponse.of((AccountDTO) query.getSingleResult());
+            response.setPermission(permissionRepository.findAllByAccountId(response.getAccountId()).stream().map(Permission::getPermissionId).toList());
+            return response;
         } catch (NoResultException queryResult) {
             throw new BusinessException(USER_NOT_FOUND, "Không tìm thấy tài khoản: account_id :" + id);
         }
@@ -219,5 +227,15 @@ public class StaffServiceImpl implements StaffService {
         var roles = roleRepository.getAll();
         roles.forEach(e -> rolesName.add(e.getName().name().replace("ROLE_", "")));
         return rolesName;
+    }
+
+    @Override
+    public List<Permission> addPermission(AddPermission request, Long operator) {
+        return permissionRepository.saveAll((request.getPermissionId().stream().map(e -> Permission.of(request.getAccountId(), e)).toList()));
+    }
+
+    @Override
+    public void removePermission(Long accountId, List<Long> permission) {
+        permissionRepository.deleteAll(permissionRepository.findAllByAccountIdAndPermissionIdIn(accountId, permission));
     }
 }

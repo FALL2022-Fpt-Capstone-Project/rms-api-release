@@ -37,6 +37,9 @@ public class BasicAssets extends BaseEntity {
     @Column(name = "asset_type_id")
     private Long assetTypeId;
 
+    @Column(name = "default_quantity")
+    private Integer defaultQuantity;
+
     public static BasicAssets of(BasicAssetsRequest request) {
         return BasicAssets.builder()
                 .assetName(request.getAssetName())
