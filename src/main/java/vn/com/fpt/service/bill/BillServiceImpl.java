@@ -248,7 +248,7 @@ public class BillServiceImpl implements BillService {
         listRentedRoom.forEach(e -> {
             RoomContractDTO contract = contractService.roomContract(e.getContractId());
             if(ObjectUtils.isNotEmpty(contract.getContractIsDisable())){
-                RentersResponse representRenter = renterService.representRenter(e.getRoomId());
+                RentersResponse representRenter = renterService.representRenter(contract.getRoomId());
                 responses.add(
                         new ListRoomWithBillStatusResponse(
                                 roomGroups.getGroupName(),
