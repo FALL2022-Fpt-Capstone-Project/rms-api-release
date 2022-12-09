@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.com.fpt.common.response.AppResponse;
@@ -101,8 +102,10 @@ public class RoomController {
                                 Operator.operator()
                         ));
                         roomToAdd.add(addedRoom);
-                        e.getRoomAsset().forEach(x -> x.setRoomId(addedRoom.getId()));
-                        assetService.roomAdd(e.getRoomAsset(), Operator.operator());
+                        if (ObjectUtils.isNotEmpty(e.getRoomAsset().isEmpty())) {
+                            e.getRoomAsset().forEach(x -> x.setRoomId(addedRoom.getId()));
+                            assetService.roomAdd(e.getRoomAsset(), Operator.operator());
+                        }
                     }
 
                 }
