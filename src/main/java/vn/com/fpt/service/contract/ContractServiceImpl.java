@@ -635,7 +635,7 @@ public class ContractServiceImpl implements ContractService {
     @Transactional
     public EndRoomContractRequest endRoomContract(EndRoomContractRequest request, Long operator) {
         var endContract = contract(request.getContractId());
-        var room = roomService.room(endContract.getId());
+        var room = roomService.room(endContract.getRoomId());
         room.setContractId(null);
         roomService.updateRoom(room);
         endContract.setContractIsDisable(true);
