@@ -50,6 +50,9 @@ public class ContractController {
         return AppResponse.success(contractService.endRoomContract(request, Operator.operator()));
     }
 
+    @Operation(summary = "Kết thúc hợp đồng của nhóm phòng")
+    @PostMapping
+
     @Operation(summary = "Xem hợp đồng của phòng")
     @GetMapping("/room/{contractId}")
     public ResponseEntity<BaseResponse<RoomContractDTO>> roomContract(@PathVariable Long contractId) {

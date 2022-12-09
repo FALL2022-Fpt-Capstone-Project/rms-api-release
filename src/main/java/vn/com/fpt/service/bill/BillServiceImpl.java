@@ -165,7 +165,7 @@ public class BillServiceImpl implements BillService {
                     Integer newWaterIndex = null;
                     if (!ObjectUtils.isEmpty(sbr.getServiceTotalMoney()) && Objects.equals(sbr.getServiceId(), SERVICE_ELECTRIC)) {
                         newElectricIndex = roomInfor.getRoomCurrentElectricIndex() + sbr.getServiceIndex();
-                        serviceTotalMoney = sbr.getServiceIndex() - (ObjectUtils.isEmpty(roomInfor.getRoomCurrentElectricIndex()) ? 0 : roomInfor.getRoomCurrentElectricIndex()) * sbr.getServicePrice();
+                        serviceTotalMoney = sbr.getServiceIndex()  * sbr.getServicePrice();
                     } else {
                         serviceTotalMoney = sbr.getServiceTotalMoney();
                     }
@@ -173,7 +173,7 @@ public class BillServiceImpl implements BillService {
                     if (!ObjectUtils.isEmpty(sbr.getServiceTotalMoney()) && Objects.equals(sbr.getServiceId(), SERVICE_WATER)) {
                         if (sbr.getServiceType().equals(SERVICE_TYPE_METER)) {
                             newWaterIndex = roomInfor.getRoomCurrentWaterIndex() + sbr.getServiceIndex();
-                            serviceTotalMoney = sbr.getServiceIndex() - (ObjectUtils.isEmpty(roomInfor.getRoomCurrentElectricIndex()) ? 0 : roomInfor.getRoomCurrentElectricIndex()) * sbr.getServicePrice();
+                            serviceTotalMoney = sbr.getServiceIndex()  * sbr.getServicePrice();
                         } else {
                             serviceTotalMoney = sbr.getServiceIndex() * sbr.getServicePrice();
                         }
