@@ -14,6 +14,7 @@ import vn.com.fpt.repositories.ContractRepository;
 import vn.com.fpt.repositories.RackRenterRepository;
 import vn.com.fpt.repositories.RoomsRepository;
 import vn.com.fpt.requests.AddRoomsRequest;
+import vn.com.fpt.responses.RentersResponse;
 import vn.com.fpt.service.contract.ContractService;
 import vn.com.fpt.service.group.GroupService;
 import vn.com.fpt.service.renter.RenterService;
@@ -22,13 +23,13 @@ import vn.com.fpt.service.rooms.RoomServiceImpl;
 import vn.com.fpt.service.services.ServicesService;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
-import static vn.com.fpt.common.constants.ErrorStatusConstants.ROOM_NOT_AVAILABLE;
-import static vn.com.fpt.common.constants.ErrorStatusConstants.ROOM_NOT_FOUND;
+import static vn.com.fpt.common.constants.ErrorStatusConstants.*;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -54,14 +55,16 @@ public class RoomServiceImplTest {
     @Mock
     private ContractRepository contractRepo;
 
+    @Mock
     private RoomService roomServiceTest;
 
+    @Mock
     private RenterService renterService;
 
 
     @BeforeEach
     void setUp() {
-        roomServiceTest = new RoomServiceImpl(roomsRepository, assetService, contractService, groupService, servicesService, renterRepository, contractRepo,renterService);
+        roomServiceTest = new RoomServiceImpl(roomsRepository, assetService, contractService, groupService, servicesService, renterRepository, contractRepo, renterService);
     }
 
 //    @Test
@@ -120,17 +123,35 @@ public class RoomServiceImplTest {
         Assertions.assertEquals("rooms", result.getRoomName());
     }
 
-//    @Test
-//    void testRemoveRoom() {
-//        Long id = 1l;
-//        Rooms rooms = Rooms.builder().roomName("rooms").build();
-//        //mock result
-//        when(roomsRepository.findById(id)).thenReturn(Optional.of(rooms));
-//        //run test
-//        RoomsResponse result = roomServiceTest.removeRoom(id);
-//        //vefiry
-//        Assertions.assertEquals("rooms", result.getRoomName());
-//    }
+    @Test
+    void test_remove_room_success() {
+        List<RentersResponse> responseList = new ArrayList<>();
+        responseList.add(RentersResponse.builder().renterId(1l).build());
+        //mock result
+        when(renterService.listRenter(1l)).thenReturn(responseList);
+        when(renterService.removeFromRoom(1l, 2l)).thenReturn(RentersResponse.builder().build());
+        when(roomsRepository.findById(1l)).thenReturn(Optional.of(Rooms.builder().build()));
+        when(roomsRepository.save(any(Rooms.class))).thenReturn(new Rooms());
+        //run test
+        Rooms result = roomServiceTest.removeRoom(1l , 2l);
+        //verify
+        Assertions.assertNotNull(result);
+    }
+
+    @Test
+    void test_remove_room_when_exist_room_then_throws_exception() {
+        List<RentersResponse> responseList = new ArrayList<>();
+        responseList.add(RentersResponse.builder().renterId(1l).build());
+        //mock result
+        when(renterService.listRenter(1l)).thenReturn(responseList);
+        when(renterService.removeFromRoom(1l, 2l)).thenReturn(RentersResponse.builder().build());
+        when(roomsRepository.findById(1l)).thenReturn(Optional.of(Rooms.builder().contractId(1l).build()));
+        when(roomsRepository.save(any(Rooms.class))).thenReturn(new Rooms());
+        //run test
+        BusinessException businessException = Assertions.assertThrows(BusinessException.class, () -> roomServiceTest.removeRoom(1l, 2l));
+        //verify
+        Assertions.assertEquals(ROOM_NOT_AVAILABLE, businessException.getErrorStatus());
+    }
 
     @Test
     void testUpdateRoom() {
@@ -141,10 +162,79 @@ public class RoomServiceImplTest {
     }
 
     @Test
-    void testUpdateRoom2() {
-        Rooms roomsRequest = Rooms.builder().roomName("rooms").build();
+    void test_update_room_suceess() {
+        Rooms roomsRequest = Rooms.builder().roomName("rooms").roomName("ABCD").build();
+        roomsRequest.setId(1l);
+
+        Rooms roomsFindById = Rooms.builder().groupId(1l).build();
+        when(roomsRepository.findById(anyLong())).thenReturn(Optional.of(roomsFindById));
+        List<Rooms> roomsList = new ArrayList<>();
+        roomsList.add(Rooms.builder().roomName("ABC").build());
+        when(roomsRepository.findByGroupIdAndIdNotAndIsDisableIsFalse(1l, 1l))
+                .thenReturn(roomsList);
         when(roomsRepository.save(roomsRequest)).thenReturn(roomsRequest);
-        Assertions.assertEquals("rooms", roomServiceTest.updateRoom(roomsRequest).getRoomName());
+        //run test
+        Rooms result = roomServiceTest.updateRoom(roomsRequest);
+        //verify
+        Assertions.assertNotNull(roomsRequest);
+    }
+
+    @Test
+    void test_update_romm_when_duplicate_rooms_throws_Exception() {
+        Rooms roomsRequest = Rooms.builder().roomName("rooms").roomName("ABC").build();
+        roomsRequest.setId(1l);
+
+        Rooms roomsFindById = Rooms.builder().groupId(1l).build();
+        when(roomsRepository.findById(anyLong())).thenReturn(Optional.of(roomsFindById));
+        List<Rooms> roomsList = new ArrayList<>();
+        roomsList.add(Rooms.builder().roomName("ABC").build());
+        when(roomsRepository.findByGroupIdAndIdNotAndIsDisableIsFalse(1l, 1l))
+                .thenReturn(roomsList);
+        when(roomsRepository.save(roomsRequest)).thenReturn(roomsRequest);
+        //run test
+        BusinessException businessException = Assertions.assertThrows(BusinessException.class, () -> roomServiceTest.updateRoom(roomsRequest));
+        //verify
+        Assertions.assertNotNull(businessException);
+        Assertions.assertEquals(DUPLICATE_NAME, businessException.getErrorStatus());
+    }
+
+    @Test
+    void test_update_list_rooms_success() {
+        List<Rooms> roomsList = new ArrayList<>();
+        Rooms rooms = Rooms.builder().groupId(1l).roomName("ABCD").build();
+        rooms.setId(1l);
+        roomsList.add(rooms);
+
+        List<Rooms> listCheckDuplicateRoomName = new ArrayList<>();
+        listCheckDuplicateRoomName.add(Rooms.builder().roomName("ABC").build());
+
+        when(roomsRepository.findAllByGroupIdAndIdNotInAndIsDisableIsFalse(anyLong(), anyList()))
+                .thenReturn(listCheckDuplicateRoomName);
+        when(roomsRepository.saveAll(anyList())).thenReturn(Arrays.asList(new Rooms()));
+        //run test
+        List<Rooms> result = roomServiceTest.updateRoom(roomsList);
+        //verify
+        Assertions.assertNotNull(result);
+    }
+
+    @Test
+    void test_update_list_rooms_when_duplicate_list_room_then_throws_exception() {
+        List<Rooms> roomsList = new ArrayList<>();
+        Rooms rooms = Rooms.builder().groupId(1l).roomName("ABC").build();
+        rooms.setId(1l);
+        roomsList.add(rooms);
+
+        List<Rooms> listCheckDuplicateRoomName = new ArrayList<>();
+        listCheckDuplicateRoomName.add(Rooms.builder().roomName("ABC").build());
+
+        when(roomsRepository.findAllByGroupIdAndIdNotInAndIsDisableIsFalse(anyLong(), anyList()))
+                .thenReturn(listCheckDuplicateRoomName);
+        when(roomsRepository.saveAll(anyList())).thenReturn(Arrays.asList(new Rooms()));
+        //run test
+        BusinessException businessException = Assertions.assertThrows(BusinessException.class, () -> roomServiceTest.updateRoom(roomsList));
+        //verify
+        Assertions.assertNotNull(businessException);
+        Assertions.assertEquals(DUPLICATE_NAME, businessException.getErrorStatus());
     }
 
     @Test

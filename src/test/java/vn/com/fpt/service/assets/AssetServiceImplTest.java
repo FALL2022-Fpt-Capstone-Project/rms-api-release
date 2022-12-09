@@ -19,6 +19,7 @@ import vn.com.fpt.requests.BasicAssetsRequest;
 import vn.com.fpt.service.contract.ContractService;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -74,7 +75,10 @@ class AssetServiceImplTest {
         List<BasicAssets> basicAssetsList = new ArrayList<>();
         basicAssetsList.add(new BasicAssets());
         //mock result
-        when(basicAssetRepository.findAll()).thenReturn(basicAssetsList);
+        Query query = mock(Query.class);
+        when(entityManager.createNativeQuery(anyString(), anyString()))
+                .thenReturn(query);
+        when(query.getResultList()).thenReturn(basicAssetsList);
         //run test
         List<BasicAssetDTO> result = assetServiceTest.listBasicAsset();
         //verify result

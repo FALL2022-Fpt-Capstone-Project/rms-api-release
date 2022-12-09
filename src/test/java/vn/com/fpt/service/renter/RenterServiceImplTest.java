@@ -238,7 +238,7 @@ class RenterServiceImplTest {
         Optional<Renters> optionalRenters = Optional.of(renter);
         when(renterRepository.findByIdentityNumberAndRoomId(anyString(), anyLong())).thenReturn(optionalRenters);
 
-        String messageError = "CCMND/CCCD : abc";
+        String messageError = "CMND/CCCD : abc";
 
         BusinessException thrown = assertThrows(
                 BusinessException.class,

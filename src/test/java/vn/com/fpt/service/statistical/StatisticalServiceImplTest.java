@@ -50,7 +50,7 @@ class StatisticalServiceImplTest {
         //output
         StatisticalRoomContractResponse output = new StatisticalRoomContractResponse();
         output.setDuration(1L);
-        output.setExpiredContract(1);
+        output.setExpiredContract(2);
         output.setAlmostExpiredContract(1);
 
         //result
@@ -59,36 +59,6 @@ class StatisticalServiceImplTest {
         assertEquals(result.getDuration(), output.getDuration());
         assertEquals(result.getExpiredContract(), output.getExpiredContract());
         assertEquals(result.getDuration(), output.getDuration());
-
-    }
-
-    @Test
-    void GivenWrongValue_Then_statisticalRoomContract_ThrowsException() {
-        //input
-        Long groupId = null;
-        Long duration = null;
-
-        //mock  contractRepo.findAll
-        List<Contracts> listContract = new ArrayList<>();
-        Contracts contract = new Contracts();
-        listContract.add(contract);
-        when(contractRepo.findAll(any(BaseSpecification.class))).thenThrow(new BusinessException(CONTRACT_NOT_FOUND, "Contracts empty"));
-
-        //output
-        StatisticalRoomContractResponse output = new StatisticalRoomContractResponse();
-        output.setDuration(1L);
-        output.setExpiredContract(1);
-        output.setAlmostExpiredContract(1);
-
-        //result
-        String messageError = "Contracts empty";
-
-        BusinessException thrown = assertThrows(
-                BusinessException.class,
-                () -> statisticalService.statisticalRoomContract(groupId, duration)
-        );
-        assertEquals(thrown.getMessage(), messageError);
-        assertEquals(thrown.getErrorStatus(), CONTRACT_NOT_FOUND);
 
     }
 }
