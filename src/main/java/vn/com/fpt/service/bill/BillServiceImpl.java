@@ -279,7 +279,7 @@ public class BillServiceImpl implements BillService {
 
     @Override
     public List<RecurringBill> roomBillHistory(Long roomId) {
-        return recurringBillRepo.findAllById(Collections.singleton(roomId));
+        return recurringBillRepo.findAllByRoomId(roomId);
     }
 
     @Override
