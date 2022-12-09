@@ -71,6 +71,12 @@ public class RecurringBill extends BaseEntity {
     @Column(name = "is_in_bill_circle")
     private Boolean isInBillCircle;
 
+@JsonGetter("payment_term")
+ public String getPaymentTerm1() { return DateUtils.format(this.paymentTerm, DATE_FORMAT_3);}
+
+ @JsonGetter("bill_created_time")
+ public String getBillCreatedTime1() { return DateUtils.format(this.billCreatedTime, DATE_FORMAT_3);}
+
 
     public static RecurringBill of(Long roomId,
                                    Long groupId,
