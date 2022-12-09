@@ -161,7 +161,10 @@ public class BillServiceImpl implements BillService {
                 List<ServiceBill> serviceBills = new ArrayList<>(Collections.emptyList());
                 for (AddBillRequest.ServiceBill sbr : abr.getServiceBill()) {
                     Double serviceTotalMoney;
+                    Integer newElectricIndex = null;
+                    Integer newWaterIndex = null;
                     if (ObjectUtils.isEmpty(sbr.getServiceTotalMoney()) && Objects.equals(sbr.getServiceId(), SERVICE_ELECTRIC)) {
+                        newElectricIndex = roomInfor.getRoomCurrentElectricIndex() + sbr.getServiceIndex();
                         serviceTotalMoney = sbr.getServiceIndex() - (ObjectUtils.isEmpty(roomInfor.getRoomCurrentElectricIndex()) ? 0 : roomInfor.getRoomCurrentElectricIndex()) * sbr.getServicePrice();
                     } else {
                         serviceTotalMoney = sbr.getServiceTotalMoney();
@@ -169,12 +172,16 @@ public class BillServiceImpl implements BillService {
 
                     if (ObjectUtils.isEmpty(sbr.getServiceTotalMoney()) && Objects.equals(sbr.getServiceId(), SERVICE_WATER)) {
                         if (sbr.getServiceType().equals(SERVICE_TYPE_METER)) {
+                            newWaterIndex = roomInfor.getRoomCurrentWaterIndex() + sbr.getServiceIndex();
                             serviceTotalMoney = sbr.getServiceIndex() - (ObjectUtils.isEmpty(roomInfor.getRoomCurrentElectricIndex()) ? 0 : roomInfor.getRoomCurrentElectricIndex()) * sbr.getServicePrice();
                         } else {
                             serviceTotalMoney = sbr.getServiceIndex() * sbr.getServicePrice();
                         }
                     } else {
                         serviceTotalMoney = sbr.getServiceTotalMoney();
+                    }
+                    if (ObjectUtils.isNotEmpty(newElectricIndex) && ObjectUtils.isNotEmpty(newWaterIndex)) {
+                        roomService.setServiceIndex(roomInfor.getContractId(), newElectricIndex, newWaterIndex, Operator.operator());
                     }
                     serviceBills.add(ServiceBill.add(
                                     sbr.getServiceId(),
@@ -191,6 +198,7 @@ public class BillServiceImpl implements BillService {
                             )
                     );
                     totalMoneyService += serviceTotalMoney;
+
                 }
                 var var1 = serviceBillRepo.saveAll(serviceBills);
                 // lưu vết
@@ -200,11 +208,12 @@ public class BillServiceImpl implements BillService {
             var var2 = recurringBillRepo.save(
                     RecurringBill.add(
                             abr.getRoomId(),
+                            roomInfor.getRoomName(),
                             roomInfor.getGroupId(),
                             roomInfor.getGroupContractId(),
                             roomInfor.getContractId(),
                             totalMoneyService + abr.getTotalRoomMoney(),
-                            "Hóa đơn phòng " + roomInfor.getRoomName() + "tháng " + currentMonth + "/" + currentYear,
+                            "Hóa đơn phòng " + roomInfor.getRoomName() + " tháng " + currentMonth + "/" + currentYear,
                             false,
                             true,
                             "IN",
@@ -214,7 +223,6 @@ public class BillServiceImpl implements BillService {
                     )
             );
             //lưu vết
-            tableLogComponent.saveRecurringBillHistory(List.of(var2));
         }
         return addBillRequests;
     }
@@ -393,5 +401,15 @@ public class BillServiceImpl implements BillService {
         response.setContractPaymentCycle(contract.getContractPaymentCycle());
         response.setListGeneralService(list);
         return response;
+    }
+
+    @Override
+    public Boolean groupBillCheck(Long groupContractId) {
+        return !recurringBillRepo.findAllByGroupContractIdAndIsPaidIsFalseOrIsDebtIsTrue(groupContractId).isEmpty();
+    }
+
+    @Override
+    public Boolean roomBillCheck(Long contractId) {
+        return !recurringBillRepo.findAllByRoomIdAndIsPaidIsFalseOrIsDebtIsTrue(contractId).isEmpty();
     }
 }

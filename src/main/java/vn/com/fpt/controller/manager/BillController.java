@@ -44,19 +44,19 @@ public class BillController {
 
     @Operation(summary = "Chi tiết tính toán hóa đơn của phòng")
     @GetMapping("/room/information/{roomId}")
-    public ResponseEntity<BaseResponse<PayBillInformationResponse>> payBillInformation(@PathVariable Long roomId){
+    public ResponseEntity<BaseResponse<PayBillInformationResponse>> payBillInformation(@PathVariable Long roomId) {
         return AppResponse.success(billService.payBillInformation(roomId));
     }
 
     @Operation(summary = "Danh trang thái hóa đơn của các phòng theo tòa")
     @GetMapping("/room/list/{groupId}")
-    public ResponseEntity<BaseResponse<List<ListRoomWithBillStatusResponse>>> listRoomWithBill(@PathVariable Long groupId){
+    public ResponseEntity<BaseResponse<List<ListRoomWithBillStatusResponse>>> listRoomWithBill(@PathVariable Long groupId) {
         return AppResponse.success(billService.listRoomWithBillStatus(groupId));
     }
 
     @PostMapping("/room/create/preview")
     @Operation(summary = "Xem trước list hóa đơn tạo cho nhiều phòng")
-    public ResponseEntity<BaseResponse<List<PreviewAddBillResponse>>> preview(@RequestBody List<AddBillRequest> requests){
+    public ResponseEntity<BaseResponse<List<PreviewAddBillResponse>>> preview(@RequestBody List<AddBillRequest> requests) {
         return AppResponse.success(billService.addBillPreview(requests));
     }
 
@@ -68,9 +68,10 @@ public class BillController {
 
     @Operation(summary = "Xem lịch sử hóa đơn của phòng")
     @GetMapping("/room/history/{roomId}")
-    public ResponseEntity<BaseResponse<List<RecurringBill>>> roomBillHistory(@PathVariable Long roomId){
+    public ResponseEntity<BaseResponse<List<RecurringBill>>> roomBillHistory(@PathVariable Long roomId) {
         return AppResponse.success(billService.roomBillHistory(roomId));
     }
+
     @Operation(summary = "Chi trả một hoặc nhiều hóa đơn định kỳ ")
     @PutMapping("/room/pay")
     public ResponseEntity<BaseResponse<String>> payBill(@RequestParam List<Long> billId) {
@@ -83,5 +84,17 @@ public class BillController {
     public ResponseEntity<BaseResponse<String>> deleteBill(@RequestParam List<Long> billId) {
         billService.deleteRoomBill(billId);
         return AppResponse.success("Xóa hóa đơn thành công");
+    }
+
+    @Operation(summary = "Kiểm tra nhóm phòng đấy đã thanh toán hết hóa đơn chưa")
+    @GetMapping("/group/bill-check")
+    public ResponseEntity<BaseResponse<Boolean>> groupBillCheck(@RequestParam Long groupContractId) {
+        return AppResponse.success(billService.groupBillCheck(groupContractId));
+    }
+
+    @Operation(summary = "Kiểm tra  phòng đấy đã thanh toán hết hóa đơn chưa")
+    @GetMapping("/room/bill-check")
+    public ResponseEntity<BaseResponse<Boolean>> roomBillCheck(@RequestParam Long contractId) {
+        return AppResponse.success(billService.roomBillCheck(contractId));
     }
 }

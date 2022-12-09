@@ -23,4 +23,8 @@ public interface BillService {
     void deleteRoomBill(List<Long> billId);
 
     PayBillInformationResponse payBillInformation(Long roomId);
+
+    Boolean groupBillCheck(Long groupContractId);
+
+    Boolean roomBillCheck(Long contractId);
 }

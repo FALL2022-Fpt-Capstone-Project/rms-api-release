@@ -1,9 +1,11 @@
 package vn.com.fpt.entity;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
+import vn.com.fpt.common.utils.DateUtils;
 import vn.com.fpt.common.utils.Operator;
 import vn.com.fpt.configs.AppConfigs;
 
@@ -14,6 +16,7 @@ import javax.persistence.Table;
 import java.util.Date;
 import java.util.Optional;
 
+import static vn.com.fpt.common.utils.DateUtils.DATE_FORMAT_3;
 import static vn.com.fpt.common.utils.DateUtils.now;
 
 @Entity
@@ -31,6 +34,9 @@ public class RecurringBill extends BaseEntity {
 
     @Column(name = "room_id")
     private Long roomId;
+
+    @Column(name = "room_name")
+    private String roomName;
 
     @Column(name = "group_id")
     private Long groupId;
@@ -71,14 +77,18 @@ public class RecurringBill extends BaseEntity {
     @Column(name = "is_in_bill_circle")
     private Boolean isInBillCircle;
 
-@JsonGetter("payment_term")
- public String getPaymentTerm1() { return DateUtils.format(this.paymentTerm, DATE_FORMAT_3);}
+    @JsonGetter("payment_term")
+    public String getPaymentTerm1() {
+        return DateUtils.format(this.paymentTerm, DATE_FORMAT_3);
+    }
 
- @JsonGetter("bill_created_time")
- public String getBillCreatedTime1() { return DateUtils.format(this.billCreatedTime, DATE_FORMAT_3);}
-
+    @JsonGetter("bill_created_time")
+    public String getBillCreatedTime1() {
+        return DateUtils.format(this.billCreatedTime, DATE_FORMAT_3);
+    }
 
     public static RecurringBill of(Long roomId,
+                                   String roomName,
                                    Long groupId,
                                    Long groupContractId,
                                    Long contractId,
@@ -93,6 +103,7 @@ public class RecurringBill extends BaseEntity {
     ) {
         return RecurringBill.builder()
                 .roomId(roomId)
+                .roomName(roomName)
                 .groupId(groupId)
                 .groupContractId(groupContractId)
                 .contractId(contractId)
@@ -109,6 +120,7 @@ public class RecurringBill extends BaseEntity {
     }
 
     public static RecurringBill add(Long roomId,
+                                    String roomName,
                                     Long groupId,
                                     Long groupContractId,
                                     Long contractId,
@@ -123,6 +135,7 @@ public class RecurringBill extends BaseEntity {
     ) {
         var add = of(
                 roomId,
+                roomName,
                 groupId,
                 groupContractId,
                 contractId,

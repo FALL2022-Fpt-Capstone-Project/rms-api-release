@@ -640,6 +640,12 @@ public class ContractServiceImpl implements ContractService {
         roomService.updateRoom(room);
         endContract.setContractIsDisable(true);
         contractRepository.save(endContract);
+        List<Renters> renters = renterRepository.findAllByRoomId(endContract.getRoomId());
+        renters.forEach(e -> {
+            e.setRoomId(null);
+            e.setRepresent(false);
+        });
+        renterRepository.saveAll(renters);
         return request;
     }
 }
