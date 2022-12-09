@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.common.utils.DateUtils;
-import vn.com.fpt.common.utils.Operator;
 import vn.com.fpt.entity.*;
 import vn.com.fpt.model.GeneralServiceDTO;
 import vn.com.fpt.model.GroupContractDTO;
@@ -60,6 +59,8 @@ public class ContractServiceImpl implements ContractService {
 
     private final RoomBillRepository roomBillRepository;
 
+    private final RoomsRepository roomsRepository;
+
     public ContractServiceImpl(ContractRepository contractRepository,
                                AssetService assetService,
                                @Lazy RoomService roomService,
@@ -70,7 +71,7 @@ public class ContractServiceImpl implements ContractService {
                                @Lazy RenterRepository renterRepository,
                                RackRenterRepository rackRenters,
                                MoneySourceRepository moneySourceRepository,
-                               TableLogComponent tableLogComponent, RoomBillRepository roomBillRepository) {
+                               TableLogComponent tableLogComponent, RoomBillRepository roomBillRepository, RoomsRepository roomsRepository) {
         this.contractRepository = contractRepository;
         this.assetService = assetService;
         this.roomService = roomService;
@@ -83,6 +84,7 @@ public class ContractServiceImpl implements ContractService {
         this.moneySourceRepository = moneySourceRepository;
         this.tableLogComponent = tableLogComponent;
         this.roomBillRepository = roomBillRepository;
+        this.roomsRepository = roomsRepository;
     }
 
     @Override
@@ -646,6 +648,25 @@ public class ContractServiceImpl implements ContractService {
             e.setRepresent(false);
         });
         renterRepository.saveAll(renters);
+        return request;
+    }
+
+    @Override
+    public EndGroupContractRequest endGroupContract(EndGroupContractRequest request, Long operator) {
+        var endContract = contract(request.getGroupContractId());
+        endContract.setContractIsDisable(true);
+        contractRepository.save(endContract);
+        var room = roomsRepository.findAllByGroupContractId(request.getGroupContractId());
+        room.forEach(e -> {
+            e.setGroupContractId(null);
+            e.setContractId(null);
+        });
+        roomsRepository.saveAll(room);
+        var renters = renterRepository.findAllByRoomIdIn(room.stream().map(Rooms::getId).toList());
+        renters.forEach(e -> {
+            e.setRoomId(null);
+            e.setRepresent(null);
+        });
         return request;
     }
 }

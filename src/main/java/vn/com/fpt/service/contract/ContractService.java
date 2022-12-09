@@ -3,6 +3,7 @@ package vn.com.fpt.service.contract;
 import vn.com.fpt.entity.Contracts;
 import vn.com.fpt.model.GroupContractDTO;
 import vn.com.fpt.model.RoomContractDTO;
+import vn.com.fpt.requests.EndGroupContractRequest;
 import vn.com.fpt.requests.EndRoomContractRequest;
 import vn.com.fpt.requests.GroupContractRequest;
 import vn.com.fpt.requests.RoomContractRequest;
@@ -47,4 +48,6 @@ public interface ContractService {
     GroupContractDTO groupContract(Long contractId);
 
     EndRoomContractRequest endRoomContract(EndRoomContractRequest request, Long operator);
+
+    EndGroupContractRequest endGroupContract(EndGroupContractRequest request, Long operator);
 }

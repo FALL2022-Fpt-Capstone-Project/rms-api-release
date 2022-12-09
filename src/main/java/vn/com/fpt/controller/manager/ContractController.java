@@ -11,6 +11,7 @@ import vn.com.fpt.common.response.BaseResponse;
 import vn.com.fpt.common.utils.Operator;
 import vn.com.fpt.model.GroupContractDTO;
 import vn.com.fpt.model.RoomContractDTO;
+import vn.com.fpt.requests.EndGroupContractRequest;
 import vn.com.fpt.requests.EndRoomContractRequest;
 import vn.com.fpt.requests.GroupContractRequest;
 import vn.com.fpt.requests.RoomContractRequest;
@@ -51,7 +52,10 @@ public class ContractController {
     }
 
     @Operation(summary = "Kết thúc hợp đồng của nhóm phòng")
-    @PostMapping
+    @PostMapping("/group/end")
+    public ResponseEntity<BaseResponse<EndGroupContractRequest>> endGroupContract(@RequestBody EndGroupContractRequest request){
+        return AppResponse.success(contractService.endGroupContract(request, Operator.operator()));
+    }
 
     @Operation(summary = "Xem hợp đồng của phòng")
     @GetMapping("/room/{contractId}")
