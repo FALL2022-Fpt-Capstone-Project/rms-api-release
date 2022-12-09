@@ -93,13 +93,16 @@ public class StaffServiceImplTest {
         //mock result
         var mockAccount = new Account();
         mockAccount.setId(1l);
+        Address address1 = new Address();
+        address1.setId(1l);
+        mockAccount.setAddress(address1);
 
         when(accountRepository.findById(id)).thenReturn(Optional.of(mockAccount));
         when(accountRepository.findAccountByUserNameAndIdNot(registerRequest.getUserName(), id))
                 .thenReturn(Optional.ofNullable(null));
         Address address = new Address();
         address.setId(1l);
-        when(addressRepository.findById(mockAccount.getId())).thenReturn(Optional.of(address));
+        when(addressRepository.findById(mockAccount.getAddress().getId())).thenReturn(Optional.of(address));
         Set<Role> roleSet = new HashSet<>();
         roleSet.add(new Role());
         when(accountService.roleChecker(registerRequest.getRoles())).thenReturn(roleSet);
