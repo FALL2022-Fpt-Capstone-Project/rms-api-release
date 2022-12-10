@@ -151,7 +151,7 @@ public class AssetServiceImpl implements AssetService {
                         roomId,
                         operator)).toList());
             for (RoomAssetsRequest rar : request) {
-                var var1 = roomAssetRepository.findByAssetNameEqualsIgnoreCaseAndAssetTypeId(rar.getAssetName(), rar.getAssetTypeId());
+                var var1 = roomAssetRepository.findByAssetNameEqualsIgnoreCaseAndAssetTypeIdAndRoomId(rar.getAssetName(), rar.getAssetTypeId(), rar.getRoomId());
                 if (ObjectUtils.isNotEmpty(var1)) {
                     listAsset.add(RoomAssets.modify(
                             var1.get(0),

@@ -71,13 +71,21 @@ public class StaffServiceImpl implements StaffService {
         }
         if (ObjectUtils.isNotEmpty(registerRequest.getPermission())) {
             var listPermission = permissionRepository.findAllByAccountId(id).stream().map(Permission::getPermissionId).toList();
-            var checkDelete = listPermission.stream().filter(e -> !registerRequest.getPermission().contains(e)).toList();
-            var checkAdd = registerRequest.getPermission().stream().filter(e -> !listPermission.contains(e)).toList();
-            if (!checkAdd.isEmpty())
-                permissionRepository.deleteAll(permissionRepository.findAllByAccountIdAndPermissionIdIn(id, checkDelete));
-            if (!checkAdd.isEmpty())
-                permissionRepository.saveAll(checkAdd.stream().map(e -> Permission.add(id, e, Operator.operator())).toList());
+            if(ObjectUtils.isNotEmpty(listPermission)){
+                var checkDelete = listPermission.stream().filter(e -> !registerRequest.getPermission().contains(e)).toList();
+                var checkAdd = registerRequest.getPermission().stream().filter(e -> !listPermission.contains(e)).toList();
+                if (!checkAdd.isEmpty())
+                    permissionRepository.deleteAll(permissionRepository.findAllByAccountIdAndPermissionIdIn(id, checkDelete));
+                if (!checkAdd.isEmpty())
+                    permissionRepository.saveAll(checkAdd.stream().map(e -> Permission.add(id, e, Operator.operator())).toList());
+            }
+            else {
+                permissionRepository.saveAll(registerRequest.getPermission().stream().map(e -> Permission.add(id, e, Operator.operator())).toList());
+            }
 
+        }
+        else{
+            permissionRepository.deleteAll(permissionRepository.findAllByAccountId(id));
         }
 
         return AccountResponse.of(accountRepository.save(
