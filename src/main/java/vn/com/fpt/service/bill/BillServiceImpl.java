@@ -59,8 +59,9 @@ public class BillServiceImpl implements BillService {
                 null,
                 null,
                 null);
-        var listRoomId = listRoom.stream().filter(e -> e.getContractId() != null).toList().stream().map(RoomsResponse::getContractId).toList();
-
+        var roomsResponses = listRoom.stream().filter(e -> e.getContractId() != null).toList();
+        var listRoomId = roomsResponses.stream().map(RoomsResponse::getRoomId).toList();
+        if (listRoomId.isEmpty()) return Collections.emptyList();
         // Lấy hợp đồng của các phòng
         var listRoomContract = contractService.listRoomContract(
                 null,

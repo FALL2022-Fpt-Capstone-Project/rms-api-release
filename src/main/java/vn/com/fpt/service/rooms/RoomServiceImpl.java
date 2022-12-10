@@ -86,6 +86,14 @@ public class RoomServiceImpl implements RoomService {
         if (ObjectUtils.isNotEmpty(floor)) {
             specification.add(new SearchCriteria("roomFloor", floor, EQUAL));
         }
+
+        if (ObjectUtils.isNotEmpty(status)) {
+            if (status == 1) {
+                specification.add(new SearchCriteria("contractId", null, EQUAL));
+            } else {
+                specification.add(new SearchCriteria("contractId", null, EQUAL));
+            }
+        }
         if (ObjectUtils.isNotEmpty(groupContractId)) {
             specification.add(new SearchCriteria("groupContractId", groupContractId, EQUAL));
         }
