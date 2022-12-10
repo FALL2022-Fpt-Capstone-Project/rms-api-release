@@ -1,4 +1,4 @@
-package vn.com.fpt.controller;
+package vn.com.fpt.dummy;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

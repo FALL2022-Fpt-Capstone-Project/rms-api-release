@@ -1,11 +1,13 @@
 package vn.com.fpt.service.staff;
 
 import lombok.*;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.com.fpt.common.BusinessException;
+import vn.com.fpt.common.utils.Operator;
 import vn.com.fpt.entity.Address;
 import vn.com.fpt.entity.Permission;
 import vn.com.fpt.entity.authentication.Account;
@@ -23,6 +25,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static vn.com.fpt.common.constants.ErrorStatusConstants.*;
 import static vn.com.fpt.model.AccountDTO.SQL_RESULT_SET_MAPPING;
@@ -66,6 +69,17 @@ public class StaffServiceImpl implements StaffService {
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
             registerRequest.setPassword(encoder.encode(registerRequest.getPassword()));
         }
+        if (ObjectUtils.isNotEmpty(registerRequest.getPermission())) {
+            var listPermission = permissionRepository.findAllByAccountId(id).stream().map(Permission::getPermissionId).toList();
+            var checkDelete = listPermission.stream().filter(e -> !registerRequest.getPermission().contains(e)).toList();
+            var checkAdd = registerRequest.getPermission().stream().filter(e -> !listPermission.contains(e)).toList();
+            if (!checkAdd.isEmpty())
+                permissionRepository.deleteAll(permissionRepository.findAllByAccountIdAndPermissionIdIn(id, checkDelete));
+            if (!checkAdd.isEmpty())
+                permissionRepository.saveAll(checkAdd.stream().map(e -> Permission.add(id, e, Operator.operator())).toList());
+
+        }
+
         return AccountResponse.of(accountRepository.save(
                 Account.modify(
                         account,
@@ -213,7 +227,7 @@ public class StaffServiceImpl implements StaffService {
         Query query = entityManager.createNativeQuery(queryBuild, SQL_RESULT_SET_MAPPING);
         params.forEach(query::setParameter);
         try {
-            var response =  AccountResponse.of((AccountDTO) query.getSingleResult());
+            var response = AccountResponse.of((AccountDTO) query.getSingleResult());
             response.setPermission(permissionRepository.findAllByAccountId(response.getAccountId()).stream().map(Permission::getPermissionId).toList());
             return response;
         } catch (NoResultException queryResult) {

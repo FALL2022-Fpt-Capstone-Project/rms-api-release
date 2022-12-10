@@ -11,4 +11,5 @@ public interface PermissionRepository extends JpaRepository<Permission, Long> {
     List<Permission> findAllByAccountIdAndPermissionIdIn(Long accountId, List<Long> permissionId);
 
     List<Permission> findAllByAccountId(Long accountId);
+
 }
