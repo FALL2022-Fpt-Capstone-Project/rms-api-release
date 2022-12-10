@@ -24,7 +24,8 @@ import java.util.Date;
                         @ColumnResult(name = "asset_name", type = String.class),
                         @ColumnResult(name = "asset_type_id", type = BigInteger.class),
                         @ColumnResult(name = "asset_type_name", type = String.class),
-                        @ColumnResult(name = "asset_type_show_name", type = String.class)
+                        @ColumnResult(name = "asset_type_show_name", type = String.class),
+                        @ColumnResult(name = "default_quantity", type = Integer.class)
                 }))
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class BasicAssetDTO implements Serializable {
@@ -40,6 +41,8 @@ public class BasicAssetDTO implements Serializable {
 
     private String assetTypeShowName;
 
+    private Integer assetQuantity;
+
     public Long getBasicAssetId() {
         return basicAssetId.longValue();
     }
@@ -52,11 +55,13 @@ public class BasicAssetDTO implements Serializable {
                          String assetName,
                          BigInteger assetTypeId,
                          String assetTypeName,
-                         String assetTypeShowName) {
+                         String assetTypeShowName,
+                         Integer assetQuantity) {
         this.basicAssetId = assetId;
         this.basicAssetName = assetName;
         this.assetTypeId = assetTypeId;
         this.assetTypeName = assetTypeName;
         this.assetTypeShowName = assetTypeShowName;
+        this.assetQuantity = assetQuantity;
     }
 }

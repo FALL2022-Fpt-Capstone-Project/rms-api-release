@@ -60,8 +60,8 @@ public class AssetServiceImpl implements AssetService {
         selectBuild.append("mba.asset_name, ");
         selectBuild.append("mba.asset_type_id, ");
         selectBuild.append("mat.asset_type_name, ");
-        selectBuild.append("mat.asset_type_show_name ");
-
+        selectBuild.append("mat.asset_type_show_name, ");
+        selectBuild.append("mba.default_quantity ");
         StringBuilder fromBuild = new StringBuilder("FROM ");
         fromBuild.append("manager_basic_assets mba ");
         fromBuild.append("INNER JOIN manager_asset_types mat ON mat.asset_types_id = mba.asset_type_id");
