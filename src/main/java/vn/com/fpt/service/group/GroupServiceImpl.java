@@ -199,7 +199,7 @@ public class GroupServiceImpl implements GroupService {
         if (ObjectUtils.isNotEmpty(request.getListAdditionalAsset())) {
             for (Long lri : listRoomId) {
                 request.getListAdditionalAsset().forEach(e -> {
-                    if (ObjectUtils.isEmpty(e)) {
+                    if (!ObjectUtils.isEmpty(e)) {
                         listRoomAsset.add(RoomAssets.add(
                                 e.getAssetName(),
                                 ObjectUtils.isEmpty(e.getAssetQuantity()) ? DEFAULT_ASSET_QUANTITY : e.getAssetQuantity(),
@@ -213,7 +213,7 @@ public class GroupServiceImpl implements GroupService {
         if (ObjectUtils.isNotEmpty(request.getListAsset())) {
             for (Long lri : listRoomId) {
                 request.getListAsset().forEach(e -> {
-                    if(ObjectUtils.isEmpty(e))
+                    if(!ObjectUtils.isEmpty(e))
                         listRoomAsset.add(RoomAssets.add(
                                 e.getAssetName(),
                                 ObjectUtils.isEmpty(e.getAssetQuantity()) ? DEFAULT_ASSET_QUANTITY : e.getAssetQuantity(),
