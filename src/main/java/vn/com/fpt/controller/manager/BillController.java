@@ -12,6 +12,7 @@ import vn.com.fpt.common.response.AppResponse;
 import vn.com.fpt.common.response.BaseResponse;
 import vn.com.fpt.entity.RecurringBill;
 import vn.com.fpt.requests.AddBillRequest;
+import vn.com.fpt.requests.PreviewAddBillRequest;
 import vn.com.fpt.responses.BillRoomStatusResponse;
 import vn.com.fpt.responses.ListRoomWithBillStatusResponse;
 import vn.com.fpt.responses.PayBillInformationResponse;
@@ -57,7 +58,7 @@ public class BillController {
 
     @PostMapping("/room/create/preview")
     @Operation(summary = "Xem trước list hóa đơn tạo cho nhiều phòng")
-    public ResponseEntity<BaseResponse<List<PreviewAddBillResponse>>> preview(@RequestBody List<AddBillRequest> requests) {
+    public ResponseEntity<BaseResponse<List<PreviewAddBillResponse>>> preview(@RequestBody List<PreviewAddBillRequest> requests) {
         return AppResponse.success(billService.addBillPreview(requests));
     }
 

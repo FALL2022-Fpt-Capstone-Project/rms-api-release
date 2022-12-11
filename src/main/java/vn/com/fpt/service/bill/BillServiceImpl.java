@@ -15,6 +15,7 @@ import vn.com.fpt.model.RoomContractDTO;
 import vn.com.fpt.repositories.*;
 import vn.com.fpt.requests.AddBillRequest;
 import vn.com.fpt.requests.GenerateBillRequest;
+import vn.com.fpt.requests.PreviewAddBillRequest;
 import vn.com.fpt.responses.*;
 import vn.com.fpt.service.DeleteLog;
 import vn.com.fpt.service.TableLogComponent;
@@ -273,21 +274,16 @@ public class BillServiceImpl implements BillService {
     }
 
     @Override
-    public List<PreviewAddBillResponse> addBillPreview(List<AddBillRequest> requests) {
+    public List<PreviewAddBillResponse> addBillPreview(List<PreviewAddBillRequest> requests) {
         AtomicInteger key = new AtomicInteger(0);
         return requests.stream().map(e -> {
             PreviewAddBillResponse response = new PreviewAddBillResponse();
             var room = roomService.room(e.getRoomId());
             var contract = contractService.contract(room.getContractId());
             var renter = renterService.listRenter(e.getRoomId());
-            for (AddBillRequest.ServiceBill sb : e.getServiceBill()) {
-                if (sb.getServiceId().equals(SERVICE_ELECTRIC)) {
-                    response.setRoomCurrentElectricIndex(sb.getServiceIndex());
-                }
-                if (sb.getServiceId().equals(SERVICE_WATER)) {
-                    response.setRoomCurrentWaterIndex(sb.getServiceIndex());
-                }
-            }
+
+            response.setRoomCurrentElectricIndex(e.getRoomCurrentElectricIndex());
+            response.setRoomCurrentWaterIndex(e.getRoomCurrentElectricIndex());
             response.setKey(key.getAndAdd(1));
             response.setRoomId(e.getRoomId());
             response.setRoomName(room.getRoomName());
@@ -300,8 +296,8 @@ public class BillServiceImpl implements BillService {
             response.setGroupContractId(room.getGroupContractId());
             response.setRoomPrice(room.getRoomPrice());
             response.setTotalRenter(renter.size());
-            response.setTotalMoneyServicePrice(e.getTotalServiceMoney());
-            response.setTotalMoney(e.getTotalRoomMoney() + e.getTotalServiceMoney());
+            response.setTotalMoneyServicePrice(e.getTotalMoneyServicePrice());
+            response.setTotalMoney(e.getTotalMoneyRoomPrice() + e.getTotalMoneyServicePrice());
             response.setContractPaymentCycle(contract.getContractPaymentCycle());
             response.setIsBilled(false);
             response.setServiceBill(e.getServiceBill());

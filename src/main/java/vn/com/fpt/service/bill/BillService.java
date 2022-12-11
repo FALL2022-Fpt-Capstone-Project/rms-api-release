@@ -1,5 +1,6 @@
 package vn.com.fpt.service.bill;
 
+import vn.com.fpt.requests.PreviewAddBillRequest;
 import vn.com.fpt.responses.PayBillInformationResponse;
 import vn.com.fpt.entity.RecurringBill;
 import vn.com.fpt.requests.AddBillRequest;
@@ -14,7 +15,7 @@ public interface BillService {
 
     List<ListRoomWithBillStatusResponse> listRoomWithBillStatus(Long groupId);
 
-    List<PreviewAddBillResponse> addBillPreview(List<AddBillRequest> requests);
+    List<PreviewAddBillResponse> addBillPreview(List<PreviewAddBillRequest> requests);
 
     List<RecurringBill> roomBillHistory(Long roomId);
 
