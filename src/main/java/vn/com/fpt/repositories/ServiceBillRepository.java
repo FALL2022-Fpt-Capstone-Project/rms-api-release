@@ -10,13 +10,7 @@ import java.util.List;
 
 @Repository
 public interface ServiceBillRepository extends JpaRepository<ServiceBill, Long>, JpaSpecificationExecutor<ServiceBill> {
-    @Query(value = "SELECT FROM manager_room_bill WHERE " +
-            "EXTRACT(MONTH from created_at) = :month " +
-            "AND " +
-            "EXTRACT(YEAR from created_at) = :year " +
-            "AND " +
-            "room_id = :roomId AND service_id = :serviceId AND service_type_id = :serviceTypeId",
-            nativeQuery = true)
-    ServiceBill findAllByRoomIdAndByServiceIdAndCreatedBy(Long roomId, Long serviceId, Long serviceTypeId, int month, int year);
+
+    List<ServiceBill> findAllByRoomIdAndServiceIdAndServiceTypeId(Long roomId, Long serviceId, Long serviceTypeId);
 }
 

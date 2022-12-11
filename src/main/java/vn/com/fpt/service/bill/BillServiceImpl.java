@@ -117,8 +117,8 @@ public class BillServiceImpl implements BillService {
             var check = recurringBills.stream().filter(e -> toLocalDate(e.getBillCreatedTime()).getMonthValue() == currentMonth && toLocalDate(e.getBillCreatedTime()).getYear() == currentYear).toList();
             if (ObjectUtils.isNotEmpty(check)) {
                 var recurringBill = recurringBills.stream().filter(e -> toLocalDate(e.getBillCreatedTime()).getMonthValue() == currentMonth && toLocalDate(e.getBillCreatedTime()).getYear() == currentYear).findFirst().get();
-                var electric = serviceBillRepo.findAllByRoomIdAndByServiceIdAndCreatedBy(recurringBill.getRoomId(), SERVICE_ELECTRIC, SERVICE_TYPE_METER, currentMonth, currentYear);
-                var water = serviceBillRepo.findAllByRoomIdAndByServiceIdAndCreatedBy(recurringBill.getRoomBillId(), SERVICE_WATER, SERVICE_TYPE_METER, currentMonth, currentYear);
+                var electric = serviceBillRepo.findAllByRoomIdAndServiceIdAndServiceTypeId(recurringBill.getRoomId(), SERVICE_ELECTRIC, SERVICE_TYPE_METER).stream().filter(e -> toLocalDate(e.getBillCreatedTime()).getMonthValue() == currentMonth && toLocalDate(e.getBillCreatedTime()).getYear() == currentYear).findFirst().get();
+                var water = serviceBillRepo.findAllByRoomIdAndServiceIdAndServiceTypeId(recurringBill.getRoomBillId(), SERVICE_WATER, SERVICE_TYPE_METER).stream().filter(e -> toLocalDate(e.getBillCreatedTime()).getMonthValue() == currentMonth && toLocalDate(e.getBillCreatedTime()).getYear() == currentYear).findFirst().get();
 
                 response.setRoomOldWaterIndex(water.getServiceIndex());
                 response.setRoomOldElectricIndex(electric.getServiceIndex());
