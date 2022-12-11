@@ -297,7 +297,7 @@ public class BillServiceImpl implements BillService {
             response.setRoomPrice(room.getRoomPrice());
             response.setTotalRenter(renter.size());
             response.setTotalMoneyServicePrice(e.getTotalMoneyServicePrice());
-            response.setTotalMoney(e.getTotalMoneyRoomPrice() + e.getTotalMoneyServicePrice());
+            response.setTotalMoney(e.getTotalMoneyRoomPrice() + (ObjectUtils.isEmpty(e.getTotalMoneyServicePrice()) ? 0 : e.getTotalMoneyServicePrice()));
             response.setContractPaymentCycle(contract.getContractPaymentCycle());
             response.setIsBilled(false);
             response.setServiceBill(e.getServiceBill());
