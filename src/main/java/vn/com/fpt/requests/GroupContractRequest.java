@@ -22,8 +22,6 @@ import java.util.List;
 public class GroupContractRequest {
     private Long groupId;
 
-    @Schema(hidden = true)
-    @JsonIgnore
     private String contractName;
 
     @Min(value = 0, message = "Giá tiền không hợp lệ")
