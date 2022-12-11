@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface RecurringBillRepository extends JpaRepository<RecurringBill, Long>, JpaSpecificationExecutor<RecurringBill> {
 
-    @Query(value = "SELECT FROM manager_recurring_bill WHERE " +
+    @Query(value = "SELECT FROM manager_recur_bill WHERE " +
             "EXTRACT(MONTH from bill_created_time) = :month " +
             "AND " +
             "EXTRACT(YEAR from bill_created_time) = :year " +
@@ -20,7 +20,7 @@ public interface RecurringBillRepository extends JpaRepository<RecurringBill, Lo
             nativeQuery = true)
     RecurringBill findByContractIdAndCreatedAt(Long contractId, int month, int year);
 
-    @Query(value = "SELECT FROM manager_recurring_bill WHERE " +
+    @Query(value = "SELECT FROM manager_recur_bill WHERE " +
             "EXTRACT(MONTH from bill_created_time) = :month " +
             "AND " +
             "EXTRACT(YEAR from bill_created_time) = :year " +
