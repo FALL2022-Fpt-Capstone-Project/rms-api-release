@@ -114,7 +114,7 @@ public class BillServiceImpl implements BillService {
                 response.setTotalMoneyRoomPrice((double) 0);
             }
 
-            if (ObjectUtils.isNotEmpty(recurringBillRepo.findByContractIdAndCreatedAt(rcd.getContractId(), currentMonth, currentYear))) {
+            if (ObjectUtils.isNotEmpty(recurringBillRepo.findByRoomIdAndCreatedAt(rcd.getRoomId(), currentMonth, currentYear))) {
                 var recurringBill = recurringBillRepo.findByContractIdAndCreatedAt(rcd.getContractId(), currentMonth, currentYear);
                 var electric = serviceBillRepo.findAllByRoomIdAndByServiceIdAndCreatedBy(recurringBill.getRoomId(), SERVICE_ELECTRIC, SERVICE_TYPE_METER, currentMonth, currentYear);
                 var water = serviceBillRepo.findAllByRoomIdAndByServiceIdAndCreatedBy(recurringBill.getRoomBillId(), SERVICE_WATER, SERVICE_TYPE_METER, currentMonth, currentYear);

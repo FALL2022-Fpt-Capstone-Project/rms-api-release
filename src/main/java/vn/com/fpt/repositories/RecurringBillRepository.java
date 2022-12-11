@@ -20,6 +20,15 @@ public interface RecurringBillRepository extends JpaRepository<RecurringBill, Lo
             nativeQuery = true)
     RecurringBill findByContractIdAndCreatedAt(Long contractId, int month, int year);
 
+    @Query(value = "SELECT FROM manager_recurring_bill WHERE " +
+            "EXTRACT(MONTH from bill_created_time) = :month " +
+            "AND " +
+            "EXTRACT(YEAR from bill_created_time) = :year " +
+            "AND " +
+            "room_id = :roomId",
+            nativeQuery = true)
+    RecurringBill findByRoomIdAndCreatedAt(Long roomId, int month, int year);
+
     List<RecurringBill> findAllByRoomIdAndIsPaid(Long roomId, Boolean isPaid);
 
     List<RecurringBill> findAllByRoomId(Long roomId);
