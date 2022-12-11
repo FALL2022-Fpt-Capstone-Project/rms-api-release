@@ -28,7 +28,7 @@ import static vn.com.fpt.common.utils.DateUtils.now;
 @Setter
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class RecurringBill extends BaseEntity {
-    public static final String TABLE_NAME = AppConfigs.TABLE_MANAGER + "recurring_bill";
+    public static final String TABLE_NAME = AppConfigs.TABLE_MANAGER + "recur_bill";
 
     @Column(name = "room_id")
     private Long roomId;
