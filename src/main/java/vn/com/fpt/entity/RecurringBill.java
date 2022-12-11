@@ -14,7 +14,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.util.Date;
-import java.util.Optional;
 
 import static vn.com.fpt.common.utils.DateUtils.DATE_FORMAT_3;
 import static vn.com.fpt.common.utils.DateUtils.now;
@@ -28,7 +27,6 @@ import static vn.com.fpt.common.utils.DateUtils.now;
 @Getter
 @Setter
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-@AttributeOverride(name = "id", column = @Column(name = "recurring_bill_id"))
 public class RecurringBill extends BaseEntity {
     public static final String TABLE_NAME = AppConfigs.TABLE_MANAGER + "recurring_bill";
 
