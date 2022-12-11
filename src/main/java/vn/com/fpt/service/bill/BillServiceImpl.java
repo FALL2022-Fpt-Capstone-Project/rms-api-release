@@ -164,15 +164,15 @@ public class BillServiceImpl implements BillService {
                 List<ServiceBill> serviceBills = new ArrayList<>(Collections.emptyList());
                 for (AddBillRequest.ServiceBill sbr : abr.getServiceBill()) {
                     Double serviceTotalMoney;
-                    Integer newElectricIndex = null;
-                    Integer newWaterIndex = null;
-                    if (!ObjectUtils.isEmpty(sbr.getServiceTotalMoney()) && Objects.equals(sbr.getServiceId(), SERVICE_ELECTRIC)) {
+                    int newElectricIndex = 0;
+                    int newWaterIndex = 0;
+                    if (sbr.getServiceId() == SERVICE_ELECTRIC) {
                         newElectricIndex = roomInfor.getRoomCurrentElectricIndex() + sbr.getServiceIndex();
                         serviceTotalMoney = sbr.getServiceIndex() * sbr.getServicePrice();
                     } else {
                         serviceTotalMoney = sbr.getServiceTotalMoney();
                     }
-                    if (!ObjectUtils.isEmpty(sbr.getServiceTotalMoney()) && Objects.equals(sbr.getServiceId(), SERVICE_WATER)) {
+                    if (sbr.getServiceId() == SERVICE_WATER){
                         if (sbr.getServiceType().equals(SERVICE_TYPE_METER)) {
                             newWaterIndex = roomInfor.getRoomCurrentWaterIndex() + sbr.getServiceIndex();
                             serviceTotalMoney = sbr.getServiceIndex() * sbr.getServicePrice();
@@ -182,9 +182,7 @@ public class BillServiceImpl implements BillService {
                     } else {
                         serviceTotalMoney = sbr.getServiceTotalMoney();
                     }
-                    if (ObjectUtils.isNotEmpty(newElectricIndex) && ObjectUtils.isNotEmpty(newWaterIndex)) {
                         roomService.setServiceIndex(roomInfor.getContractId(), newElectricIndex, newWaterIndex, Operator.operator());
-                    }
                     serviceBills.add(ServiceBill.add(
                                     sbr.getServiceId(),
                                     sbr.getServiceType(),
