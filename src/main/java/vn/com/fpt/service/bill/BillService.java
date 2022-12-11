@@ -28,4 +28,6 @@ public interface BillService {
     Boolean groupBillCheck(Long groupContractId);
 
     Boolean roomBillCheck(Long contractId);
+
+    List<RecurringBill> listRecurringBillByGroupId(Long groupId, int month, int year);
 }

@@ -101,7 +101,7 @@ public class BillServiceImpl implements BillService {
             response.setRoomCurrentWaterIndex(room.getRoomCurrentWaterIndex() == null ? 0 : room.getRoomCurrentWaterIndex());
             response.setRoomCurrentElectricIndex(room.getRoomCurrentElectricIndex() == null ? 0 : room.getRoomCurrentElectricIndex());
             response.setRoomPrice(room.getRoomPrice());
-            response.setTotalRenter(renter.size());
+            response.setTotalRenter(renter.isEmpty() ? 1 : renter.size());
             response.setListGeneralService(generalService);
             response.setContractPaymentCycle(rcd.getContractPaymentCycle());
             response.setBillCycle(rcd.getContractBillCycle());
@@ -226,6 +226,7 @@ public class BillServiceImpl implements BillService {
                     )
             );
             //lưu vết
+            tableLogComponent.saveRecurringBillHistory(List.of(var2));
         }
         return addBillRequests;
     }
@@ -440,4 +441,11 @@ public class BillServiceImpl implements BillService {
     public Boolean roomBillCheck(Long contractId) {
         return !recurringBillRepo.findAllByRoomIdAndIsPaidIsFalseOrIsDebtIsTrue(contractId).isEmpty();
     }
+
+    @Override
+    public List<RecurringBill> listRecurringBillByGroupId(Long groupId, int month, int year) {
+        return recurringBillRepo.findAllByGroupIdAndTime(groupId, month, year);
+    }
+
+
 }

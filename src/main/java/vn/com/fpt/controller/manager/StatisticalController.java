@@ -9,10 +9,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.common.response.AppResponse;
 import vn.com.fpt.common.response.BaseResponse;
+import vn.com.fpt.common.utils.DateUtils;
+import vn.com.fpt.responses.StatisticalBillResponse;
+import vn.com.fpt.responses.StatisticalBillStatusResponse;
 import vn.com.fpt.responses.StatisticalRoomContractResponse;
+import vn.com.fpt.responses.StatisticalTotalNeedToPaid;
 import vn.com.fpt.service.statistical.StatisticalService;
+
+import java.util.Date;
+import java.util.regex.Pattern;
 
 import static vn.com.fpt.configs.AppConfigs.*;
 
@@ -31,5 +39,37 @@ public class StatisticalController {
     public ResponseEntity<BaseResponse<StatisticalRoomContractResponse>> roomContract(@RequestParam(required = false, defaultValue = "1") Long duration,
                                                                                       @RequestParam(required = false) Long groupId) {
         return AppResponse.success(statisticalService.statisticalRoomContract(groupId, duration));
+    }
+
+    @GetMapping("/bill/total-money")
+    @Operation(summary = "Hiện thị tổng số tiền của các trạng thái hóa đơn")
+    public ResponseEntity<BaseResponse<StatisticalBillResponse>> billStatus(@RequestParam(required = false) String time,
+                                                                            @RequestParam(required = false) Long groupId,
+                                                                            @RequestParam(required = false) Integer paymentCircle) {
+        Pattern pattern = Pattern.compile("(0|15|30)", Pattern.CASE_INSENSITIVE);
+        if (!pattern.matcher(paymentCircle.toString()).matches())
+            throw new BusinessException("Kỳ hạn thanh toán hóa đơn không hợp lệ");
+        return AppResponse.success(statisticalService.billStatus(groupId, paymentCircle, time));
+    }
+
+    @GetMapping("/bill/status")
+    @Operation(summary = "Hiện thị tiền của các trạng hóa đơn trong tháng")
+    public ResponseEntity<BaseResponse<StatisticalBillStatusResponse>> totalMoneyBillStatus(@RequestParam(required = false) String time,
+                                                                                            @RequestParam(required = false) Long groupId,
+                                                                                            @RequestParam(required = false) Integer paymentCircle) {
+        Pattern pattern = Pattern.compile("(0|15|30)", Pattern.CASE_INSENSITIVE);
+        if (!pattern.matcher(paymentCircle.toString()).matches())
+            throw new BusinessException("Kỳ hạn thanh toán hóa đơn không hợp lệ");
+        return AppResponse.success(statisticalService.totalMoneyBillStatus(time, groupId, paymentCircle));
+    }
+
+    @GetMapping("/bill/room-not-billed")
+    @Operation(summary = "Hiển thị tổng số phòng đến kỳ mà chưa lập hóa đơn trong tháng")
+    public ResponseEntity<BaseResponse<Integer>> totalRoomNotBilled(@RequestParam(required = false) Long groupId,
+                                                                    @RequestParam(required = false) Integer paymentCircle) {
+        Pattern pattern = Pattern.compile("(0|15|30)", Pattern.CASE_INSENSITIVE);
+        if (!pattern.matcher(paymentCircle.toString()).matches())
+            throw new BusinessException("Kỳ hạn thanh toán hóa đơn không hợp lệ");
+        return AppResponse.success(statisticalService.totalRoomNotBilled(groupId, paymentCircle));
     }
 }

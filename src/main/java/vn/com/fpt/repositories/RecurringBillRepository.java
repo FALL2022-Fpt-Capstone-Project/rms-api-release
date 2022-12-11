@@ -17,7 +17,6 @@ public interface RecurringBillRepository extends JpaRepository<RecurringBill, Lo
             "EXTRACT(YEAR from created_at) = :year " +
             "AND " +
             "contract_id = :contractId",
-
             nativeQuery = true)
     RecurringBill findByContractIdAndCreatedAt(Long contractId, int month, int year);
 
@@ -30,5 +29,14 @@ public interface RecurringBillRepository extends JpaRepository<RecurringBill, Lo
     List<RecurringBill> findAllByGroupContractIdAndIsPaidIsFalseOrIsDebtIsTrue(Long groupContractId);
 
     List<RecurringBill> findAllByRoomIdAndIsPaidIsFalseOrIsDebtIsTrue(Long roomId);
+
+    @Query(value = "SELECT FROM manager_recurring_bill WHERE " +
+            "EXTRACT(MONTH from created_at) = :month " +
+            "AND " +
+            "EXTRACT(YEAR from created_at) = :year " +
+            "AND " +
+            "group_id = :groupId",
+            nativeQuery = true)
+    List<RecurringBill> findAllByGroupIdAndTime(Long groupId, int month, int year);
 
 }

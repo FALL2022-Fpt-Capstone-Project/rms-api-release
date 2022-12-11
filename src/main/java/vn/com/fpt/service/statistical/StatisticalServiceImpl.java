@@ -3,8 +3,13 @@ package vn.com.fpt.service.statistical;
 import lombok.AllArgsConstructor;;
 import org.springframework.stereotype.Service;
 import vn.com.fpt.entity.Contracts;
+import vn.com.fpt.entity.RecurringBill;
 import vn.com.fpt.repositories.ContractRepository;
+import vn.com.fpt.responses.StatisticalBillResponse;
+import vn.com.fpt.responses.StatisticalBillStatusResponse;
 import vn.com.fpt.responses.StatisticalRoomContractResponse;
+import vn.com.fpt.responses.StatisticalTotalNeedToPaid;
+import vn.com.fpt.service.bill.BillService;
 import vn.com.fpt.service.contract.ContractService;
 import vn.com.fpt.specification.BaseSpecification;
 import vn.com.fpt.specification.SearchCriteria;
@@ -12,6 +17,7 @@ import vn.com.fpt.specification.SearchCriteria;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static vn.com.fpt.common.constants.ManagerConstants.SUBLEASE_CONTRACT;
 import static vn.com.fpt.common.constants.SearchOperation.*;
@@ -23,6 +29,9 @@ public class StatisticalServiceImpl implements StatisticalService {
     private final ContractService contractService;
 
     private final ContractRepository contractRepo;
+
+    private final BillService billService;
+
 
 
     @Override
@@ -62,5 +71,59 @@ public class StatisticalServiceImpl implements StatisticalService {
         Integer total4 = contractRepo.findAll(new BaseSpecification<>(rootCondition)).size();
 
         return StatisticalRoomContractResponse.of(duration, total1, total2, total3, total4);
+    }
+
+    @Override
+    public StatisticalBillResponse billStatus(Long groupId, Integer paymentCircle, String time) {
+        int month;
+        int year;
+        try {
+            var date = parse(time, "MM-yyyy");
+            var localDate = toLocalDate(date);
+            month = localDate.getMonthValue();
+            year = localDate.getYear();
+        } catch (Exception e) {
+            var date = parse(time, "dd-MM-yyyy");
+            var localDate = toLocalDate(date);
+            month = localDate.getMonthValue();
+            year = localDate.getYear();
+        }
+        var recurringBill = billService.listRecurringBillByGroupId(groupId, month, year);
+        if (recurringBill.isEmpty()) return new StatisticalBillResponse(groupId, 0.0, 0.0, paymentCircle, time);
+        List<Double> listPaid = recurringBill.stream().filter(e-> e.getIsPaid()).map(RecurringBill::getTotalMoney).toList();
+        List<Double> listNeedToPaid = recurringBill.stream().map(RecurringBill::getTotalMoney).toList();
+        return new StatisticalBillResponse(groupId,
+                listNeedToPaid.stream().mapToDouble(e -> e).sum(),
+                listPaid.stream().mapToDouble(e -> e).sum(),
+                paymentCircle,
+                "" + month + "/" + year);
+    }
+
+    @Override
+    public Integer totalRoomNotBilled(Long groupId, Integer paymentCircle) {
+
+        return billService.listBillRoomStatus(groupId, paymentCircle).stream().filter(e->e.getIsBilled()==false).toList().size();
+    }
+
+    @Override
+    public StatisticalBillStatusResponse totalMoneyBillStatus(String time, Long groupId, Integer paymentCircle) {
+        int month;
+        int year;
+        try {
+            var date = parse(time, "MM-yyyy");
+            var localDate = toLocalDate(date);
+            month = localDate.getMonthValue();
+            year = localDate.getYear();
+        } catch (Exception e) {
+            var date = parse(time, "dd-MM-yyyy");
+            var localDate = toLocalDate(date);
+            month = localDate.getMonthValue();
+            year = localDate.getYear();
+        }
+        var recurringBill = billService.listRecurringBillByGroupId(groupId, month, year);
+        return new StatisticalBillStatusResponse(groupId,
+                recurringBill.size(),
+                recurringBill.stream().filter(e -> e.getIsPaid()).toList().size(),
+                time);
     }
 }
