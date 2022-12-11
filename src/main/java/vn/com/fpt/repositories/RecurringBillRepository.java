@@ -10,25 +10,6 @@ import java.util.List;
 
 @Repository
 public interface RecurringBillRepository extends JpaRepository<RecurringBill, Long>, JpaSpecificationExecutor<RecurringBill> {
-
-    @Query(value = "SELECT FROM manager_recur_bill WHERE " +
-            "EXTRACT(MONTH from bill_created_time) = :month " +
-            "AND " +
-            "EXTRACT(YEAR from bill_created_time) = :year " +
-            "AND " +
-            "contract_id = :contractId",
-            nativeQuery = true)
-    RecurringBill findByContractIdAndCreatedAt(Long contractId, int month, int year);
-
-    @Query(value = "SELECT FROM manager_recur_bill WHERE " +
-            "EXTRACT(MONTH from bill_created_time) = :month " +
-            "AND " +
-            "EXTRACT(YEAR from bill_created_time) = :year " +
-            "AND " +
-            "room_id = :roomId",
-            nativeQuery = true)
-    RecurringBill findByRoomIdAndCreatedAt(Long roomId, int month, int year);
-
     List<RecurringBill> findAllByRoomIdAndIsPaid(Long roomId, Boolean isPaid);
 
     List<RecurringBill> findAllByRoomId(Long roomId);
@@ -39,7 +20,7 @@ public interface RecurringBillRepository extends JpaRepository<RecurringBill, Lo
 
     List<RecurringBill> findAllByRoomIdAndIsPaidIsFalseOrIsDebtIsTrue(Long roomId);
 
-    @Query(value = "SELECT FROM manager_recurring_bill WHERE " +
+    @Query(value = "SELECT FROM manager_recur_bill WHERE " +
             "EXTRACT(MONTH from created_at) = :month " +
             "AND " +
             "EXTRACT(YEAR from created_at) = :year " +
