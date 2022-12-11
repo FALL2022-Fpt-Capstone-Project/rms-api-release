@@ -38,6 +38,7 @@ public class BillRoomStatusResponse {
 
     private Integer contractPaymentCycle;
     private Boolean isInBillCycle;
+    private Integer billCycle;
     private Boolean isBilled;
 
     List<GeneralServiceDTO> listGeneralService;

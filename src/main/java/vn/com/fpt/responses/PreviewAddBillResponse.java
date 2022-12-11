@@ -15,12 +15,28 @@ import java.util.List;
 public class PreviewAddBillResponse {
     private Integer key;
     private Long roomId;
+    private String roomName;
+    private Integer roomFloor;
 
-    private Double totalRoomMoney;
-    private Double totalServiceMoney;
-    private String description;
-    private String paymentTerm;
-    private String createdTime;
+    private Integer roomLimitPeople;
+    private Integer roomCurrentWaterIndex;
+    private Integer roomCurrentElectricIndex;
+    private Integer roomOldWaterIndex;
+    private Integer roomOldElectricIndex;
+
+    private Long groupId;
+    private Long contractId;
+    private Long groupContractId;
+    private Double roomPrice;
+    private Integer totalRenter;
+
+    private Double totalMoneyRoomPrice;
+    private Double totalMoneyServicePrice;
+    private Double totalMoney;
+
+    private Integer contractPaymentCycle;
+    private Boolean isInBillCycle;
+    private Boolean isBilled;
     private List<AddBillRequest.ServiceBill> serviceBill;
 
 }

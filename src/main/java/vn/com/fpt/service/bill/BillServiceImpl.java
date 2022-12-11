@@ -103,6 +103,7 @@ public class BillServiceImpl implements BillService {
             response.setTotalRenter(renter.size());
             response.setListGeneralService(generalService);
             response.setContractPaymentCycle(rcd.getContractPaymentCycle());
+            response.setBillCycle(rcd.getContractBillCycle());
 
             if (DateUtils.monthsBetween(now(), parse(rcd.getContractStartDate())) % rcd.getContractBillCycle() == 0) {
                 response.setIsInBillCycle(true);
@@ -166,7 +167,7 @@ public class BillServiceImpl implements BillService {
                     Integer newWaterIndex = null;
                     if (!ObjectUtils.isEmpty(sbr.getServiceTotalMoney()) && Objects.equals(sbr.getServiceId(), SERVICE_ELECTRIC)) {
                         newElectricIndex = roomInfor.getRoomCurrentElectricIndex() + sbr.getServiceIndex();
-                        serviceTotalMoney = sbr.getServiceIndex()  * sbr.getServicePrice();
+                        serviceTotalMoney = sbr.getServiceIndex() * sbr.getServicePrice();
                     } else {
                         serviceTotalMoney = sbr.getServiceTotalMoney();
                     }
@@ -174,7 +175,7 @@ public class BillServiceImpl implements BillService {
                     if (!ObjectUtils.isEmpty(sbr.getServiceTotalMoney()) && Objects.equals(sbr.getServiceId(), SERVICE_WATER)) {
                         if (sbr.getServiceType().equals(SERVICE_TYPE_METER)) {
                             newWaterIndex = roomInfor.getRoomCurrentWaterIndex() + sbr.getServiceIndex();
-                            serviceTotalMoney = sbr.getServiceIndex()  * sbr.getServicePrice();
+                            serviceTotalMoney = sbr.getServiceIndex() * sbr.getServicePrice();
                         } else {
                             serviceTotalMoney = sbr.getServiceIndex() * sbr.getServicePrice();
                         }
@@ -248,7 +249,7 @@ public class BillServiceImpl implements BillService {
         String finalRemindAlert = remindAlert;
         listRentedRoom.forEach(e -> {
             RoomContractDTO contract = contractService.roomContract(e.getContractId());
-            if(ObjectUtils.isNotEmpty(contract.getContractIsDisable())){
+            if (ObjectUtils.isNotEmpty(contract.getContractIsDisable())) {
 //                RentersResponse representRenter = renterService.representRenter(contract.getRoomId());
                 responses.add(
                         new ListRoomWithBillStatusResponse(
@@ -274,18 +275,46 @@ public class BillServiceImpl implements BillService {
     @Override
     public List<PreviewAddBillResponse> addBillPreview(List<AddBillRequest> requests) {
         AtomicInteger key = new AtomicInteger(0);
-        return requests.stream().map(e ->
-                new PreviewAddBillResponse(
-                        key.getAndAdd(1),
-                        e.getRoomId(),
-                        e.getTotalRoomMoney(),
-                        e.getTotalServiceMoney(),
-                        e.getDescription(),
-                        e.getPaymentTerm(),
-                        e.getCreatedTime(),
-                        e.getServiceBill()
-                )
-        ).toList();
+        return requests.stream().map(e -> {
+            PreviewAddBillResponse response = new PreviewAddBillResponse();
+            var room = roomService.room(e.getRoomId());
+            var contract = contractService.contract(room.getContractId());
+            var renter = renterService.listRenter(e.getRoomId());
+            for (AddBillRequest.ServiceBill sb : e.getServiceBill()) {
+                if (sb.getServiceId().equals(SERVICE_ELECTRIC)) {
+                    response.setRoomCurrentElectricIndex(sb.getServiceIndex());
+                }
+                if (sb.getServiceId().equals(SERVICE_WATER)) {
+                    response.setRoomCurrentWaterIndex(sb.getServiceIndex());
+                }
+            }
+            response.setKey(key.getAndAdd(1));
+            response.setRoomId(e.getRoomId());
+            response.setRoomName(room.getRoomName());
+            response.setRoomFloor(room.getRoomFloor());
+            response.setRoomLimitPeople(room.getRoomLimitPeople());
+            response.setRoomOldWaterIndex(ObjectUtils.isEmpty(room.getRoomCurrentWaterIndex()) ? 0 : room.getRoomCurrentWaterIndex());
+            response.setRoomOldElectricIndex(ObjectUtils.isEmpty(room.getRoomCurrentElectricIndex()) ? 0 : room.getRoomCurrentElectricIndex());
+            response.setGroupId(room.getGroupId());
+            response.setContractId(room.getContractId());
+            response.setGroupContractId(room.getGroupContractId());
+            response.setRoomPrice(room.getRoomPrice());
+            response.setTotalRenter(renter.size());
+            response.setTotalMoneyServicePrice(e.getTotalServiceMoney());
+            response.setTotalMoney(e.getTotalRoomMoney() + e.getTotalServiceMoney());
+            response.setContractPaymentCycle(contract.getContractPaymentCycle());
+            response.setIsBilled(false);
+            response.setServiceBill(e.getServiceBill());
+
+            if (DateUtils.monthsBetween(now(), contract.getContractStartDate()) % contract.getContractBillCycle() == 0) {
+                response.setIsInBillCycle(true);
+                response.setTotalMoneyRoomPrice(room.getRoomPrice() * contract.getContractBillCycle());
+            } else {
+                response.setIsInBillCycle(false);
+                response.setTotalMoneyRoomPrice((double) 0);
+            }
+            return response;
+        }).toList();
     }
 
     @Override

@@ -71,7 +71,9 @@ public class ContractServiceImpl implements ContractService {
                                @Lazy RenterRepository renterRepository,
                                RackRenterRepository rackRenters,
                                MoneySourceRepository moneySourceRepository,
-                               TableLogComponent tableLogComponent, RoomBillRepository roomBillRepository, RoomsRepository roomsRepository) {
+                               TableLogComponent tableLogComponent,
+                               RoomBillRepository roomBillRepository,
+                               RoomsRepository roomsRepository) {
         this.contractRepository = contractRepository;
         this.assetService = assetService;
         this.roomService = roomService;
@@ -90,7 +92,7 @@ public class ContractServiceImpl implements ContractService {
     @Override
     @Transactional
     @SneakyThrows
-    public RoomContractRequest addContract(RoomContractRequest request, Long operator) {
+    public RoomContractRequest  addContract(RoomContractRequest request, Long operator) {
         Contracts contractsInformation = Contracts.addForSubLease(request, operator);
 
         var roomId = request.getRoomId();
