@@ -13,10 +13,7 @@ import vn.com.fpt.common.response.BaseResponse;
 import vn.com.fpt.entity.RecurringBill;
 import vn.com.fpt.requests.AddBillRequest;
 import vn.com.fpt.requests.PreviewAddBillRequest;
-import vn.com.fpt.responses.BillRoomStatusResponse;
-import vn.com.fpt.responses.ListRoomWithBillStatusResponse;
-import vn.com.fpt.responses.PayBillInformationResponse;
-import vn.com.fpt.responses.PreviewAddBillResponse;
+import vn.com.fpt.responses.*;
 import vn.com.fpt.service.bill.BillService;
 
 import java.util.List;
@@ -38,9 +35,11 @@ public class BillController {
     @GetMapping("/room/bill-status")
     public ResponseEntity<BaseResponse<List<BillRoomStatusResponse>>> listNotBilled(@RequestParam Integer paymentCycle,
                                                                                     @RequestParam Long groupId) {
-        Pattern pattern = Pattern.compile("(0|15|30)", Pattern.CASE_INSENSITIVE);
-        if (!pattern.matcher(paymentCycle.toString()).matches())
-            throw new BusinessException("Kỳ hạn thanh toán hóa đơn không hợp lệ");
+        if(paymentCycle!=null){
+            Pattern pattern = Pattern.compile("(0|15|30)", Pattern.CASE_INSENSITIVE);
+            if (!pattern.matcher(paymentCycle.toString()).matches())
+                throw new BusinessException("Kỳ hạn thanh toán hóa đơn không hợp lệ");
+        }
         return AppResponse.success(billService.listBillRoomStatus(groupId, paymentCycle));
     }
 
@@ -54,9 +53,11 @@ public class BillController {
     @GetMapping("/room/list/{groupId}")
     public ResponseEntity<BaseResponse<List<ListRoomWithBillStatusResponse>>> listRoomWithBill(@PathVariable Long groupId,
                                                                                                @RequestParam(required = false) Integer paymentCycle) {
-        Pattern pattern = Pattern.compile("(0|15|30)", Pattern.CASE_INSENSITIVE);
-        if (!pattern.matcher(paymentCycle.toString()).matches())
-            throw new BusinessException("Kỳ hạn thanh toán hóa đơn không hợp lệ");
+        if(paymentCycle!=null){
+            Pattern pattern = Pattern.compile("(0|15|30)", Pattern.CASE_INSENSITIVE);
+            if (!pattern.matcher(paymentCycle.toString()).matches())
+                throw new BusinessException("Kỳ hạn thanh toán hóa đơn không hợp lệ");
+        }
         return AppResponse.success(billService.listRoomWithBillStatus(groupId, paymentCycle));
     }
 
@@ -104,4 +105,10 @@ public class BillController {
     public ResponseEntity<BaseResponse<Boolean>> roomBillCheck(@RequestParam Long contractId) {
         return AppResponse.success(billService.roomBillCheck(contractId));
     }
+
+//    @Operation(summary = "Hiển thị chi tết hóa đơn ")
+//    @GetMapping("room/detail/{recurringBillId}")
+//    public ResponseEntity<BaseResponse<BillDetailResponse>> recurringBill(@PathVariable Long recurringBillId){
+//        return
+//    }
 }
