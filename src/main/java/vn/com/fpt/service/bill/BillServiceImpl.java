@@ -115,8 +115,8 @@ public class BillServiceImpl implements BillService {
             var check = recurringBills.stream().filter(e -> toLocalDate(e.getBillCreatedTime()).getMonthValue() == currentMonth && toLocalDate(e.getBillCreatedTime()).getYear() == currentYear).toList();
             if (ObjectUtils.isNotEmpty(check)) {
                 var recurringBill = recurringBills.stream().filter(e -> toLocalDate(e.getBillCreatedTime()).getMonthValue() == currentMonth && toLocalDate(e.getBillCreatedTime()).getYear() == currentYear).findFirst().get();
-                var electric = serviceBillRepo.findAllByRoomIdAndServiceIdAndServiceTypeId(recurringBill.getRoomId(), SERVICE_ELECTRIC, SERVICE_TYPE_METER).stream().filter(e -> toLocalDate(e.getBillCreatedTime()).getMonthValue() == currentMonth && toLocalDate(e.getBillCreatedTime()).getYear() == currentYear).findFirst().orElse(null);
-                var water = serviceBillRepo.findAllByRoomIdAndServiceIdAndServiceTypeId(recurringBill.getRoomId(), SERVICE_WATER, SERVICE_TYPE_METER).stream().filter(e -> toLocalDate(e.getBillCreatedTime()).getMonthValue() == currentMonth && toLocalDate(e.getBillCreatedTime()).getYear() == currentYear).findFirst().orElse(null);
+                var electric = serviceBillRepo.findAllByRoomIdAndServiceIdAndServiceTypeId(recurringBill.getRoomId(), SERVICE_ELECTRIC, SERVICE_TYPE_METER).stream().filter(e -> toLocalDate(e.getBillCreatedTime()).getMonthValue() == currentMonth && toLocalDate(e.getBillCreatedTime()).getYear() == currentYear).findFirst().orElse(new ServiceBill());
+                var water = serviceBillRepo.findAllByRoomIdAndServiceIdAndServiceTypeId(recurringBill.getRoomId(), SERVICE_WATER, SERVICE_TYPE_METER).stream().filter(e -> toLocalDate(e.getBillCreatedTime()).getMonthValue() == currentMonth && toLocalDate(e.getBillCreatedTime()).getYear() == currentYear).findFirst().orElse(new ServiceBill());
 
                 response.setRoomOldWaterIndex(ObjectUtils.isEmpty(water.getServiceIndex()) ? 0 : water.getServiceIndex());
                 response.setRoomOldElectricIndex(ObjectUtils.isEmpty(electric.getServiceIndex()) ? 0 : electric.getServiceIndex());
