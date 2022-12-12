@@ -92,7 +92,7 @@ public class ContractServiceImpl implements ContractService {
     @Override
     @Transactional
     @SneakyThrows
-    public RoomContractRequest  addContract(RoomContractRequest request, Long operator) {
+    public RoomContractRequest addContract(RoomContractRequest request, Long operator) {
         Contracts contractsInformation = Contracts.addForSubLease(request, operator);
 
         var roomId = request.getRoomId();
@@ -607,7 +607,12 @@ public class ContractServiceImpl implements ContractService {
         contractsSpec.add(SearchCriteria.of("rackRenters", rackRenterIdToFilter, IN));
 
         List<GroupContractDTO> listGroupContract = new ArrayList<>();
-        var groupContracts = contractRepository.findAll(contractsSpec, Sort.by("contractStartDate").ascending()).stream().filter(e -> e.getGroupId().equals(groupId)).toList();
+        List<Contracts> groupContracts = new ArrayList<>();
+        if (groupId != null) {
+            groupContracts.addAll(contractRepository.findAll(contractsSpec, Sort.by("contractStartDate").ascending()).stream().filter(e -> e.getGroupId().equals(groupId)).toList());
+        } else {
+            groupContracts.addAll(contractRepository.findAll(contractsSpec, Sort.by("contractStartDate").ascending()));
+        }
         if (groupContracts.isEmpty()) return Collections.emptyList();
 
         groupContracts.forEach
