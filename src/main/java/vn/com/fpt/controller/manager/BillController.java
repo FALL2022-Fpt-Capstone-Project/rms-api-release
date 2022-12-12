@@ -52,7 +52,7 @@ public class BillController {
     @Operation(summary = "Danh trang thái hóa đơn của các phòng theo tòa")
     @GetMapping("/room/list/{groupId}")
     public ResponseEntity<BaseResponse<List<ListRoomWithBillStatusResponse>>> listRoomWithBill(@PathVariable Long groupId,
-                                                                                               @RequestParam(required = false) Integer paymentCycle) {
+                                                                                               @RequestParam(required = false, defaultValue = "0") Integer paymentCycle) {
         if(paymentCycle!=null){
             Pattern pattern = Pattern.compile("(0|15|30)", Pattern.CASE_INSENSITIVE);
             if (!pattern.matcher(paymentCycle.toString()).matches())
@@ -108,7 +108,7 @@ public class BillController {
 
 //    @Operation(summary = "Hiển thị chi tết hóa đơn ")
 //    @GetMapping("room/detail/{recurringBillId}")
-//    public ResponseEntity<BaseResponse<BillDetailResponse>> recurringBill(@PathVariable Long recurringBillId){
-//        return
+//    public ResponseEntity<BaseResponse<BillDetailResponse>> recurringBill(@PathVariable Long recurringBillId) {
+//        return AppResponse.success(billService.billDetail(recurringBillId));
 //    }
 }
