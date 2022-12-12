@@ -486,8 +486,7 @@ public class ContractServiceImpl implements ContractService {
         if (!searchRenter.isEmpty()) {
             contractSpec.add(new SearchCriteria("renters", searchRenter, IN));
         }
-
-        var listContract = contractRepository.findAll(contractSpec, Sort.by("contractStartDate").descending()).stream().filter(e -> e.getGroupId().equals(groupId)).toList();
+        var listContract = contractRepository.findAll(contractSpec, Sort.by("contractStartDate").descending());
         if (!listDisbaleContract.isEmpty()) listContract.addAll(listDisbaleContract);
 
         if (listContract.isEmpty()) return Collections.emptyList();
