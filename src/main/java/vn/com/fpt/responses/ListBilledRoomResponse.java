@@ -16,8 +16,8 @@ public class ListBilledRoomResponse {
     private Long roomId;
     private String roomName;
 
-    private Long getRoomId;
-    private String groupId;
+    private Long groupId;
+    private String groupName;
 
     private String createdTime;
     private Double needToPaid;

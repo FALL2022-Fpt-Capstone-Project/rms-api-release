@@ -36,6 +36,8 @@ public class BillRoomStatusResponse {
     private Double totalMoneyServicePrice;
     private Double totalMoney;
 
+    private String createdTime;
+
     private Integer contractPaymentCycle;
     private Boolean isInBillCycle;
     private Integer billCycle;

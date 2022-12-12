@@ -121,6 +121,7 @@ public class BillServiceImpl implements BillService {
                 response.setRoomOldWaterIndex(ObjectUtils.isEmpty(water.getServiceIndex()) ? 0 : water.getServiceIndex());
                 response.setRoomOldElectricIndex(ObjectUtils.isEmpty(electric.getServiceIndex()) ? 0 : electric.getServiceIndex());
                 response.setTotalMoney(recurringBill.getTotalMoney());
+                response.setCreatedTime(recurringBill.getBillCreatedTime1());
                 response.setIsBilled(true);
             } else {
                 response.setRoomOldWaterIndex(room.getRoomCurrentWaterIndex() == null ? 0 : room.getRoomCurrentWaterIndex());
