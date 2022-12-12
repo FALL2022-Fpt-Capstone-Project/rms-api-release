@@ -144,7 +144,7 @@ public class BillServiceImpl implements BillService {
             var contractInfor = contractService.contract(roomInfor.getContractId());
             RoomBill roomBill = new RoomBill();
             if (abr.getTotalRoomMoney() > 0) {
-                 roomBill = roomBillRepo.save(RoomBill.add(
+                roomBill = roomBillRepo.save(RoomBill.add(
                                 roomInfor.getContractId(),
                                 roomInfor.getGroupContractId(),
                                 roomInfor.getGroupId(),
@@ -172,10 +172,10 @@ public class BillServiceImpl implements BillService {
                     } else {
                         serviceTotalMoney = sbr.getServiceTotalMoney();
                     }
-                    if (sbr.getServiceId() == SERVICE_WATER){
-                            newWaterIndex = roomInfor.getRoomCurrentWaterIndex() + sbr.getServiceIndex();
-                            serviceTotalMoney = sbr.getServiceIndex() * sbr.getServicePrice();
-                        
+                    if (sbr.getServiceId() == SERVICE_WATER) {
+                        newWaterIndex = roomInfor.getRoomCurrentWaterIndex() + sbr.getServiceIndex();
+                        serviceTotalMoney = sbr.getServiceIndex() * sbr.getServicePrice();
+
                     } else {
                         serviceTotalMoney = sbr.getServiceTotalMoney();
                     }
@@ -269,8 +269,8 @@ public class BillServiceImpl implements BillService {
                             )
                     );
                 }
-            }else {
-                if (ObjectUtils.isNotEmpty(contract.getContractIsDisable())&&paymentCircle.equals(contract.getContractPaymentCycle())) {
+            } else {
+                if (ObjectUtils.isNotEmpty(contract.getContractIsDisable()) && paymentCircle.equals(contract.getContractPaymentCycle())) {
 //                RentersResponse representRenter = renterService.representRenter(contract.getRoomId());
                     responses.add(
                             new ListRoomWithBillStatusResponse(
@@ -336,7 +336,9 @@ public class BillServiceImpl implements BillService {
 
     @Override
     public List<RecurringBill> roomBillHistory(Long roomId) {
-        return recurringBillRepo.findAllByRoomId(roomId);
+        var response = recurringBillRepo.findAllByRoomId(roomId);
+        response.forEach(e -> e.setRoomName(groupService.getGroup(response.get(0).getGroupId()).getGroupName()));
+        return response;
     }
 
     @Override
@@ -393,7 +395,7 @@ public class BillServiceImpl implements BillService {
         listRecurringBill.forEach(e -> {
 
             var listServiceBill = new ArrayList<ServiceBill>(Collections.emptyList());
-                listServiceBill.addAll(serviceBillRepo.findAllByRecurringBillId(e.getId()));
+            listServiceBill.addAll(serviceBillRepo.findAllByRecurringBillId(e.getId()));
             var listRoomBill = new ArrayList<RoomBill>(Collections.emptyList());
 
             if (!ObjectUtils.isEmpty(e.getRoomBillId())) {
@@ -472,6 +474,7 @@ public class BillServiceImpl implements BillService {
         var serviceBill = serviceBillRepo.findAllByRecurringBillId(recurringBill.getId());
         var roomBill = roomBillRepo.findById(recurringBill.getRoomBillId()).orElse(new RoomBill());
         var room = roomService.room(recurringBill.getRoomId());
+        var contract = contractService.contract(room.getContractId());
         BillDetailResponse response = new BillDetailResponse();
         response.setRoomId(recurringBill.getRoomId());
         response.setRoomName(room.getRoomName());
@@ -487,7 +490,13 @@ public class BillServiceImpl implements BillService {
         response.setTotalMoney(serviceBill.stream().mapToDouble(ServiceBill::getServiceBillTotalMoney).sum() + roomBill.getRoomTotalMoney());
         response.setServiceBill(serviceBill);
         response.setRoomBill(roomBill);
+        response.setRenter(renterService.renter(contract.getRenters()));
         return response;
+    }
+
+    @Override
+    public List<RecurringBill> listRoomBillHistory(Long groupId) {
+        return recurringBillRepo.findAllByGroupId(groupId);
     }
 
 }

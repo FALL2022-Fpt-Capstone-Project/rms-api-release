@@ -32,4 +32,6 @@ public interface BillService {
     List<RecurringBill> listRecurringBillByGroupId(Long groupId);
 
     BillDetailResponse billDetail(Long recurringBillId);
+
+    List<RecurringBill> listRoomBillHistory(Long groupId);
 }

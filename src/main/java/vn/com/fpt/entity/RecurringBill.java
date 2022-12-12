@@ -70,6 +70,8 @@ public class RecurringBill extends BaseEntity {
     @Column(name = "is_in_bill_circle")
     private Boolean isInBillCircle;
 
+    private String groupName;
+
     @JsonGetter("payment_term")
     public String getPaymentTerm1() {
         return DateUtils.format(this.paymentTerm, DATE_FORMAT_3);

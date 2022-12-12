@@ -3,6 +3,7 @@ package vn.com.fpt.responses;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
+import vn.com.fpt.entity.Renters;
 import vn.com.fpt.entity.RoomBill;
 import vn.com.fpt.entity.ServiceBill;
 
@@ -37,5 +38,7 @@ public class BillDetailResponse {
 
     private List<ServiceBill> serviceBill;
     private RoomBill roomBill;
+
+    private RentersResponse renter;
 
 }

@@ -1,9 +1,8 @@
 package vn.com.fpt.service.statistical;
 
-import vn.com.fpt.responses.StatisticalBillResponse;
-import vn.com.fpt.responses.StatisticalBillStatusResponse;
-import vn.com.fpt.responses.StatisticalRoomContractResponse;
-import vn.com.fpt.responses.StatisticalTotalNeedToPaid;
+import vn.com.fpt.responses.*;
+
+import java.util.List;
 
 public interface StatisticalService {
 
@@ -14,4 +13,6 @@ public interface StatisticalService {
     Integer totalRoomNotBilled(Long groupId, Integer paymentCircle);
 
     StatisticalBillStatusResponse totalMoneyBillStatus(String time, Long groupId, Integer paymentCircle);
+
+    List<ListBilledRoomResponse> listBilledRoom(Long groupId, String createdTime);
 }

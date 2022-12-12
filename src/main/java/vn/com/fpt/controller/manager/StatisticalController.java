@@ -13,13 +13,11 @@ import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.common.response.AppResponse;
 import vn.com.fpt.common.response.BaseResponse;
 import vn.com.fpt.common.utils.DateUtils;
-import vn.com.fpt.responses.StatisticalBillResponse;
-import vn.com.fpt.responses.StatisticalBillStatusResponse;
-import vn.com.fpt.responses.StatisticalRoomContractResponse;
-import vn.com.fpt.responses.StatisticalTotalNeedToPaid;
+import vn.com.fpt.responses.*;
 import vn.com.fpt.service.statistical.StatisticalService;
 
 import java.util.Date;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import static vn.com.fpt.configs.AppConfigs.*;
@@ -71,5 +69,12 @@ public class StatisticalController {
         if (!pattern.matcher(paymentCircle.toString()).matches())
             throw new BusinessException("Kỳ hạn thanh toán hóa đơn không hợp lệ");
         return AppResponse.success(statisticalService.totalRoomNotBilled(groupId, paymentCircle));
+    }
+
+    @GetMapping("/bill/list-room-billed")
+    @Operation(summary = "Hiển thị tổng số phòng đã có hóa đơn")
+    public ResponseEntity<BaseResponse<List<ListBilledRoomResponse>>> listBilledRoom(@RequestParam(required = false) Long groupId,
+                                                                                     @RequestParam(required = false) String createdTime){
+        return AppResponse.success(statisticalService.listBilledRoom(groupId, createdTime));
     }
 }

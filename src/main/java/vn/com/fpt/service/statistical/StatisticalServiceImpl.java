@@ -5,16 +5,20 @@ import org.springframework.stereotype.Service;
 import vn.com.fpt.entity.Contracts;
 import vn.com.fpt.entity.RecurringBill;
 import vn.com.fpt.repositories.ContractRepository;
+import vn.com.fpt.repositories.RecurringBillRepository;
+import vn.com.fpt.responses.ListBilledRoomResponse;
 import vn.com.fpt.responses.StatisticalBillResponse;
 import vn.com.fpt.responses.StatisticalBillStatusResponse;
 import vn.com.fpt.responses.StatisticalRoomContractResponse;
-import vn.com.fpt.responses.StatisticalTotalNeedToPaid;
 import vn.com.fpt.service.bill.BillService;
 import vn.com.fpt.service.contract.ContractService;
+import vn.com.fpt.service.group.GroupService;
+import vn.com.fpt.service.rooms.RoomService;
 import vn.com.fpt.specification.BaseSpecification;
 import vn.com.fpt.specification.SearchCriteria;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -32,6 +36,11 @@ public class StatisticalServiceImpl implements StatisticalService {
 
     private final BillService billService;
 
+    private final RoomService roomService;
+
+    private final GroupService groupService;
+
+    private final RecurringBillRepository billRepository;
 
 
     @Override
@@ -109,13 +118,13 @@ public class StatisticalServiceImpl implements StatisticalService {
     @Override
     public Integer totalRoomNotBilled(Long groupId, Integer paymentCircle) {
 
-        return billService.listBillRoomStatus(groupId, paymentCircle).stream().filter(e->e.getIsBilled()==false).toList().size();
+        return billService.listBillRoomStatus(groupId, paymentCircle).stream().filter(e -> e.getIsBilled() == false).toList().size();
     }
 
     @Override
     public StatisticalBillStatusResponse totalMoneyBillStatus(String time, Long groupId, Integer paymentCircle) {
-        int month=0;
-        int year=0;
+        int month = 0;
+        int year = 0;
         try {
             var date = parse(time, "MM-yyyy");
             var localDate = toLocalDate(date);
@@ -140,5 +149,44 @@ public class StatisticalServiceImpl implements StatisticalService {
                 recurringBill.size(),
                 recurringBill.stream().filter(e -> e.getIsPaid()).toList().size(),
                 time);
+    }
+
+    @Override
+    public List<ListBilledRoomResponse> listBilledRoom(Long groupId, String createdTime) {
+        List<RecurringBill> recurringBills = new ArrayList<>(Collections.emptyList());
+        if (createdTime != null) {
+            int month = toLocalDate(Objects.requireNonNull(parse(createdTime, "MM-yyyy"))).getMonthValue();
+            int year = toLocalDate(Objects.requireNonNull(parse(createdTime, "MM-yyyy"))).getYear();
+            if (groupId == null) {
+                recurringBills.addAll(billRepository.findAllByIsPaid(false).stream().filter(e -> toLocalDate(e.getBillCreatedTime()).getMonthValue() == month && toLocalDate(e.getBillCreatedTime()).getYear() == year).toList());
+            } else {
+                recurringBills.addAll(billService.listRecurringBillByGroupId(groupId).stream().filter(e ->
+                                !e.getIsPaid() &&
+                                        toLocalDate(e.getBillCreatedTime()).getMonthValue() == month &&
+                                        toLocalDate(e.getBillCreatedTime()).getYear() == year)
+                        .toList());
+            }
+        } else {
+            if (groupId == null) {
+                recurringBills.addAll(billRepository.findAllByIsPaid(false));
+            } else {
+                recurringBills.addAll(billService.listRecurringBillByGroupId(groupId).stream().filter(e -> !e.getIsPaid()).toList());
+            }
+        }
+
+        return recurringBills.stream().map(
+                e -> {
+                    var room = roomService.room(e.getRoomId());
+                    var group = groupService.getGroup(e.getGroupId());
+                    return new ListBilledRoomResponse(
+                            room.getId(),
+                            room.getRoomName(),
+                            groupId,
+                            group.getGroupName(),
+                            format(e.getBillCreatedTime(), DATE_FORMAT_3),
+                            e.getTotalMoney()
+                    );
+                }
+        ).toList();
     }
 }

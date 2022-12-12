@@ -12,6 +12,8 @@ import java.util.List;
 public interface RecurringBillRepository extends JpaRepository<RecurringBill, Long>, JpaSpecificationExecutor<RecurringBill> {
     List<RecurringBill> findAllByRoomIdAndIsPaid(Long roomId, Boolean isPaid);
 
+    List<RecurringBill> findAllByIsPaid(Boolean isPaid);
+
     List<RecurringBill> findAllByRoomId(Long roomId);
 
     List<RecurringBill> findAllByIdIn(List<Long> id);
@@ -30,5 +32,7 @@ public interface RecurringBillRepository extends JpaRepository<RecurringBill, Lo
             "group_id = :groupId",
             nativeQuery = true)
     List<RecurringBill> findAllByGroupIdAndTime(Long groupId, int month, int year);
+
+    List<RecurringBill> findAllByGroupId(Long groupId);
 
 }

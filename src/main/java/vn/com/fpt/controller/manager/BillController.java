@@ -111,4 +111,10 @@ public class BillController {
     public ResponseEntity<BaseResponse<BillDetailResponse>> recurringBill(@PathVariable Long recurringBillId) {
         return AppResponse.success(billService.billDetail(recurringBillId));
     }
+
+    @Operation(summary = "Hiển thị chi tiết lịch sử hóa đơn của các phòng")
+    @GetMapping("/room/histories/{groupId}")
+    public ResponseEntity<BaseResponse<List<RecurringBill>>> listRoomBillHistory(@PathVariable Long groupId){
+        return AppResponse.success(billService.listRoomBillHistory(groupId));
+    }
 }
