@@ -603,18 +603,16 @@ public class ContractServiceImpl implements ContractService {
         if (Objects.nonNull(isDisable)) {
             contractsSpec.add(SearchCriteria.of("contractIsDisable", isDisable, EQUAL));
         }
-        if (Objects.isNull(groupId)) {
+        if (Objects.nonNull(groupId)) {
             contractsSpec.add(SearchCriteria.of("groupId", groupId, EQUAL));
         }
         contractsSpec.add(SearchCriteria.of("rackRenters", rackRenterIdToFilter, IN));
 
         List<GroupContractDTO> listGroupContract = new ArrayList<>();
         List<Contracts> groupContracts = new ArrayList<>();
-        if (groupId != null) {
-            groupContracts.addAll(contractRepository.findAll(contractsSpec, Sort.by("contractStartDate").ascending()).stream().filter(e -> e.getGroupId().equals(groupId)).toList());
-        } else {
-            groupContracts.addAll(contractRepository.findAll(contractsSpec, Sort.by("contractStartDate").ascending()));
-        }
+
+        groupContracts.addAll(contractRepository.findAll(contractsSpec, Sort.by("contractStartDate").ascending()));
+
         if (groupContracts.isEmpty()) return Collections.emptyList();
 
         groupContracts.forEach
