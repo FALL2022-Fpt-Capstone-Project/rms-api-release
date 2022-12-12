@@ -431,15 +431,6 @@ public class TableLogComponent {
                     new AddLog(
                             ServiceBill.TABLE_NAME,
                             e.getId(),
-                            "service_bill_id",
-                            String.valueOf(e.getServiceBillId()),
-                            Operator.operatorName()
-                    )
-            );
-            addLogs.add(
-                    new AddLog(
-                            ServiceBill.TABLE_NAME,
-                            e.getId(),
                             "room_bill_id",
                             String.valueOf(e.getRoomBillId()),
                             Operator.operatorName()
