@@ -86,7 +86,6 @@ public class BillServiceImpl implements BillService {
         List<BillRoomStatusResponse> responses = new ArrayList<>(Collections.emptyList());
         for (RoomContractDTO rcd : var1) {
             BillRoomStatusResponse response = new BillRoomStatusResponse();
-
             var room = roomService.room(rcd.getRoomId());
             var renter = renterService.listRenter(room.getId());
             var generalService = servicesService.listGeneralServiceByGroupId(rcd.getGroupId());
@@ -117,7 +116,7 @@ public class BillServiceImpl implements BillService {
             if (ObjectUtils.isNotEmpty(check)) {
                 var recurringBill = recurringBills.stream().filter(e -> toLocalDate(e.getBillCreatedTime()).getMonthValue() == currentMonth && toLocalDate(e.getBillCreatedTime()).getYear() == currentYear).findFirst().get();
                 var electric = serviceBillRepo.findAllByRoomIdAndServiceIdAndServiceTypeId(recurringBill.getRoomId(), SERVICE_ELECTRIC, SERVICE_TYPE_METER).stream().filter(e -> toLocalDate(e.getBillCreatedTime()).getMonthValue() == currentMonth && toLocalDate(e.getBillCreatedTime()).getYear() == currentYear).findFirst().orElse(null);
-                var water = serviceBillRepo.findAllByRoomIdAndServiceIdAndServiceTypeId(recurringBill.getRoomBillId(), SERVICE_WATER, SERVICE_TYPE_METER).stream().filter(e -> toLocalDate(e.getBillCreatedTime()).getMonthValue() == currentMonth && toLocalDate(e.getBillCreatedTime()).getYear() == currentYear).findFirst().orElse(null);
+                var water = serviceBillRepo.findAllByRoomIdAndServiceIdAndServiceTypeId(recurringBill.getRoomId(), SERVICE_WATER, SERVICE_TYPE_METER).stream().filter(e -> toLocalDate(e.getBillCreatedTime()).getMonthValue() == currentMonth && toLocalDate(e.getBillCreatedTime()).getYear() == currentYear).findFirst().orElse(null);
 
                 response.setRoomOldWaterIndex(water.getServiceIndex());
                 response.setRoomOldElectricIndex(electric.getServiceIndex());
