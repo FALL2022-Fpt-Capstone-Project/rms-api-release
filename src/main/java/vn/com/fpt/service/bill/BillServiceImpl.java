@@ -173,12 +173,9 @@ public class BillServiceImpl implements BillService {
                         serviceTotalMoney = sbr.getServiceTotalMoney();
                     }
                     if (sbr.getServiceId() == SERVICE_WATER){
-                        if (sbr.getServiceType().equals(SERVICE_TYPE_METER)) {
                             newWaterIndex = roomInfor.getRoomCurrentWaterIndex() + sbr.getServiceIndex();
                             serviceTotalMoney = sbr.getServiceIndex() * sbr.getServicePrice();
-                        } else {
-                            serviceTotalMoney = sbr.getServiceIndex() * sbr.getServicePrice();
-                        }
+                        
                     } else {
                         serviceTotalMoney = sbr.getServiceTotalMoney();
                     }
