@@ -544,23 +544,23 @@ public class ContractServiceImpl implements ContractService {
                                                     String startDate,
                                                     String endDate,
                                                     Boolean isDisable) {
-        if (ObjectUtils.isNotEmpty(groupId)) {
-            var groupContracts = contractRepository.findByGroupIdAndContractTypeAndContractIsDisableIsFalse(groupId, LEASE_CONTRACT);
-            if (Objects.isNull(groupContracts)) return Collections.emptyList();
-            List<GroupContractDTO> listGroupContract = new ArrayList<>();
-            groupContracts.forEach
-                    (e ->
-                            listGroupContract.add(GroupContractDTO.of(
-                                            e,
-                                            (GroupContractedResponse) groupService.group(e.getGroupId()),
-                                            servicesService.listGeneralServiceByGroupId(e.getGroupId()),
-                                            roomService.listRoom(e.getGroupId(), e.getId(), null, null, null),
-                                            renterService.rackRenter(e.getRackRenters())
-                                    )
-                            )
-                    );
-            return listGroupContract;
-        }
+//        if (ObjectUtils.isNotEmpty(groupId)) {
+//            var groupContracts = contractRepository.findByGroupIdAndContractTypeAndContractIsDisableIsFalse(groupId, LEASE_CONTRACT);
+//            if (Objects.isNull(groupContracts)) return Collections.emptyList();
+//            List<GroupContractDTO> listGroupContract = new ArrayList<>();
+//            groupContracts.forEach
+//                    (e ->
+//                            listGroupContract.add(GroupContractDTO.of(
+//                                            e,
+//                                            (GroupContractedResponse) groupService.group(e.getGroupId()),
+//                                            servicesService.listGeneralServiceByGroupId(e.getGroupId()),
+//                                            roomService.listRoom(e.getGroupId(), e.getId(), null, null, null),
+//                                            renterService.rackRenter(e.getRackRenters())
+//                                    )
+//                            )
+//                    );
+//            return listGroupContract;
+//        }
 
         if (ObjectUtils.isNotEmpty(contractId)) {
             var groupContracts = List.of(contractRepository.findById(contractId).get());
@@ -602,6 +602,9 @@ public class ContractServiceImpl implements ContractService {
         }
         if (Objects.nonNull(isDisable)) {
             contractsSpec.add(SearchCriteria.of("contractIsDisable", isDisable, EQUAL));
+        }
+        if (Objects.isNull(groupId)) {
+            contractsSpec.add(SearchCriteria.of("groupId", groupId, EQUAL));
         }
         contractsSpec.add(SearchCriteria.of("rackRenters", rackRenterIdToFilter, IN));
 
