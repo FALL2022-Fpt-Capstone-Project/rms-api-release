@@ -468,8 +468,7 @@ public class BillServiceImpl implements BillService {
     @Override
     public BillDetailResponse billDetail(Long recurringBillId) {
         var recurringBill = recurringBillRepo.findById(recurringBillId).get();
-        Date createdTime = recurringBill.getBillCreatedTime();
-        
+
         var serviceBill = serviceBillRepo.findAllByRecurringBillId(recurringBill.getId());
         var roomBill = roomBillRepo.findById(recurringBill.getRoomBillId()).orElse(new RoomBill());
         var room = roomService.room(recurringBill.getRoomId());
@@ -490,6 +489,5 @@ public class BillServiceImpl implements BillService {
         response.setRoomBill(roomBill);
         return response;
     }
-
 
 }
