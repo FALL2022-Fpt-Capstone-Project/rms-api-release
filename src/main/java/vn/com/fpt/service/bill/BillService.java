@@ -9,11 +9,11 @@ import vn.com.fpt.responses.*;
 import java.util.List;
 
 public interface BillService {
-    List<BillRoomStatusResponse> listBillRoomStatus( Long groupId, Integer billCircle);
+    List<BillRoomStatusResponse> listBillRoomStatus( Long groupId, Integer paymentCircle);
 
     List<AddBillRequest> addBill(List<AddBillRequest> addBillRequests);
 
-    List<ListRoomWithBillStatusResponse> listRoomWithBillStatus(Long groupId);
+    List<ListRoomWithBillStatusResponse> listRoomWithBillStatus(Long groupId, Integer paymentCircle);
 
     List<PreviewAddBillResponse> addBillPreview(List<PreviewAddBillRequest> requests);
 

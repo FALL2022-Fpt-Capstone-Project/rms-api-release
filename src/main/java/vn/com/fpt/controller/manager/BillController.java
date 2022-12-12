@@ -52,8 +52,12 @@ public class BillController {
 
     @Operation(summary = "Danh trang thái hóa đơn của các phòng theo tòa")
     @GetMapping("/room/list/{groupId}")
-    public ResponseEntity<BaseResponse<List<ListRoomWithBillStatusResponse>>> listRoomWithBill(@PathVariable Long groupId) {
-        return AppResponse.success(billService.listRoomWithBillStatus(groupId));
+    public ResponseEntity<BaseResponse<List<ListRoomWithBillStatusResponse>>> listRoomWithBill(@PathVariable Long groupId,
+                                                                                               @RequestParam(required = false) Integer paymentCycle) {
+        Pattern pattern = Pattern.compile("(0|15|30)", Pattern.CASE_INSENSITIVE);
+        if (!pattern.matcher(paymentCycle.toString()).matches())
+            throw new BusinessException("Kỳ hạn thanh toán hóa đơn không hợp lệ");
+        return AppResponse.success(billService.listRoomWithBillStatus(groupId, paymentCycle));
     }
 
     @PostMapping("/room/create/preview")

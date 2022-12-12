@@ -32,5 +32,7 @@ public class PayBillInformationResponse {
     private Integer contractPaymentCycle;
     private Boolean isInPaymentCycle;
 
+    private String createdTime;
+
     List<HandOverGeneralServiceDTO> listGeneralService;
 }

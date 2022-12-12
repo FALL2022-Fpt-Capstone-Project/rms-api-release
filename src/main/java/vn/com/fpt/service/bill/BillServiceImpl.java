@@ -225,7 +225,7 @@ public class BillServiceImpl implements BillService {
     }
 
     @Override
-    public List<ListRoomWithBillStatusResponse> listRoomWithBillStatus(Long groupId) {
+    public List<ListRoomWithBillStatusResponse> listRoomWithBillStatus(Long groupId, Integer paymentCircle) {
         List<ListRoomWithBillStatusResponse> responses = new ArrayList<>(Collections.emptyList());
         String remindAlert = null;
         if (10 <= now().getDate() && now().getDate() <= 15) {
@@ -244,24 +244,46 @@ public class BillServiceImpl implements BillService {
         String finalRemindAlert = remindAlert;
         listRentedRoom.forEach(e -> {
             RoomContractDTO contract = contractService.roomContract(e.getContractId());
-            if (ObjectUtils.isNotEmpty(contract.getContractIsDisable())) {
+            if (paymentCircle == 0) {
+                if (ObjectUtils.isNotEmpty(contract.getContractIsDisable())) {
 //                RentersResponse representRenter = renterService.representRenter(contract.getRoomId());
-                responses.add(
-                        new ListRoomWithBillStatusResponse(
-                                roomGroups.getGroupName(),
-                                e.getRoomId(),
-                                e.getRoomName(),
-                                e.getContractId(),
-                                "",
-                                e.getRoomPrice(),
-                                e.getRoomCurrentElectricIndex(),
-                                e.getRoomCurrentWaterIndex(),
-                                renterService.listRenter(e.getRoomId()).size(),
-                                contract.getContractPaymentCycle(),
-                                ObjectUtils.isEmpty(recurringBillRepo.findAllByRoomIdAndIsPaid(e.getRoomId(), false))
-                                , finalRemindAlert
-                        )
-                );
+                    responses.add(
+                            new ListRoomWithBillStatusResponse(
+                                    roomGroups.getGroupName(),
+                                    e.getRoomId(),
+                                    e.getRoomName(),
+                                    e.getContractId(),
+                                    "",
+                                    e.getRoomPrice(),
+                                    e.getRoomCurrentElectricIndex(),
+                                    e.getRoomCurrentWaterIndex(),
+                                    renterService.listRenter(e.getRoomId()).size(),
+                                    contract.getContractPaymentCycle(),
+                                    ObjectUtils.isEmpty(recurringBillRepo.findAllByRoomIdAndIsPaid(e.getRoomId(), false))
+                                    , finalRemindAlert
+                            )
+                    );
+                }
+            }else {
+                if (ObjectUtils.isNotEmpty(contract.getContractIsDisable())&&paymentCircle.equals(contract.getContractPaymentCycle())) {
+//                RentersResponse representRenter = renterService.representRenter(contract.getRoomId());
+                    responses.add(
+                            new ListRoomWithBillStatusResponse(
+                                    roomGroups.getGroupName(),
+                                    e.getRoomId(),
+                                    e.getRoomName(),
+                                    e.getContractId(),
+                                    "",
+                                    e.getRoomPrice(),
+                                    e.getRoomCurrentElectricIndex(),
+                                    e.getRoomCurrentWaterIndex(),
+                                    renterService.listRenter(e.getRoomId()).size(),
+                                    contract.getContractPaymentCycle(),
+                                    ObjectUtils.isEmpty(recurringBillRepo.findAllByRoomIdAndIsPaid(e.getRoomId(), false))
+                                    , finalRemindAlert
+                            )
+                    );
+                }
             }
         });
         return responses;
