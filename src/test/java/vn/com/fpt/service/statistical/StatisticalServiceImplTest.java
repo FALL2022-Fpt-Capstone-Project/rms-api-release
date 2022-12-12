@@ -347,21 +347,6 @@ class StatisticalServiceImplTest {
     /**
      * Method under test: {@link StatisticalServiceImpl#totalRoomNotBilled(Long, Integer)}
      */
-    @Test
-    void testTotalRoomNotBilled9() {
-        BillRoomStatusResponse billRoomStatusResponse = mock(BillRoomStatusResponse.class);
-        when(billRoomStatusResponse.getIsBilled()).thenReturn(false);
-
-        ArrayList<BillRoomStatusResponse> billRoomStatusResponseList = new ArrayList<>();
-        billRoomStatusResponseList.add(new BillRoomStatusResponse(123L, "Room Name", 3, 3, 1, 1, 1, 1, 123L, 123L, 123L,
-                10.0d, 3, 10.0d, 10.0d, 10.0d, 3, true, 3, true, new ArrayList<>()));
-        billRoomStatusResponseList.add(billRoomStatusResponse);
-        when(billService.listBillRoomStatus((Long) org.mockito.Mockito.any(), (Integer) org.mockito.Mockito.any()))
-                .thenReturn(billRoomStatusResponseList);
-        assertEquals(1, statisticalServiceImpl.totalRoomNotBilled(123L, 1).intValue());
-        verify(billService).listBillRoomStatus((Long) org.mockito.Mockito.any(), (Integer) org.mockito.Mockito.any());
-        verify(billRoomStatusResponse).getIsBilled();
-    }
 
     /**
      * Method under test: {@link StatisticalServiceImpl#totalMoneyBillStatus(String, Long, Integer)}
