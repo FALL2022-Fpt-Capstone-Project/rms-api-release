@@ -106,9 +106,9 @@ public class BillController {
         return AppResponse.success(billService.roomBillCheck(contractId));
     }
 
-//    @Operation(summary = "Hiển thị chi tết hóa đơn ")
-//    @GetMapping("room/detail/{recurringBillId}")
-//    public ResponseEntity<BaseResponse<BillDetailResponse>> recurringBill(@PathVariable Long recurringBillId) {
-//        return AppResponse.success(billService.billDetail(recurringBillId));
-//    }
+    @Operation(summary = "Hiển thị chi tết hóa đơn ")
+    @GetMapping("room/detail/{recurringBillId}")
+    public ResponseEntity<BaseResponse<BillDetailResponse>> recurringBill(@PathVariable Long recurringBillId) {
+        return AppResponse.success(billService.billDetail(recurringBillId));
+    }
 }

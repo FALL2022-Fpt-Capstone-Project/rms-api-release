@@ -59,15 +59,10 @@ public class RecurringBill extends BaseEntity {
 
     @Column(name = "bill_type")
     private String billType;
-
     @Column(name = "payment_term")
     private Date paymentTerm;
-
     @Column(name = "bill_created_time")
     private Date billCreatedTime;
-
-    @Column(name = "service_bill_id")
-    private Long serviceBillId;
 
     @Column(name = "room_bill_id")
     private Long roomBillId;
@@ -97,7 +92,8 @@ public class RecurringBill extends BaseEntity {
                                    String billType,
                                    Date paymentTerm,
                                    Date billCreatedTime,
-                                   Boolean isInBillCircle
+                                   Boolean isInBillCircle,
+                                   Long roomBillId
     ) {
         return RecurringBill.builder()
                 .roomId(roomId)
@@ -114,6 +110,7 @@ public class RecurringBill extends BaseEntity {
                 .billCreatedTime(billCreatedTime)
                 .billCreatedTime(billCreatedTime)
                 .isInBillCircle(isInBillCircle)
+                .roomBillId(roomBillId)
                 .build();
     }
 
@@ -129,7 +126,8 @@ public class RecurringBill extends BaseEntity {
                                     String billType,
                                     Date paymentTerm,
                                     Date billCreatedTime,
-                                    Boolean isInBillCircle
+                                    Boolean isInBillCircle,
+                                    Long roomBillId
     ) {
         var add = of(
                 roomId,
@@ -144,7 +142,8 @@ public class RecurringBill extends BaseEntity {
                 billType,
                 paymentTerm,
                 billCreatedTime,
-                isInBillCircle
+                isInBillCircle,
+                roomBillId
         );
         add.setCreatedAt(now());
         add.setCreatedBy(Operator.operator());

@@ -142,8 +142,9 @@ public class BillServiceImpl implements BillService {
             //tạo hóa đơn cho tiền phòng
             var roomInfor = roomService.room(abr.getRoomId());
             var contractInfor = contractService.contract(roomInfor.getContractId());
+            RoomBill roomBill = new RoomBill();
             if (abr.getTotalRoomMoney() > 0) {
-                var var1 = roomBillRepo.save(RoomBill.add(
+                 roomBill = roomBillRepo.save(RoomBill.add(
                                 roomInfor.getContractId(),
                                 roomInfor.getGroupContractId(),
                                 roomInfor.getGroupId(),
@@ -155,16 +156,16 @@ public class BillServiceImpl implements BillService {
                         )
                 );
                 //lưu vết
-                tableLogComponent.saveRoomBillHistory(var1);
+                tableLogComponent.saveRoomBillHistory(roomBill);
             }
             // tạo hóa đơn dịch vụ
             Double totalMoneyService = 0.0;
+            int newElectricIndex = 0;
+            int newWaterIndex = 0;
             if (!abr.getServiceBill().isEmpty()) {
                 List<ServiceBill> serviceBills = new ArrayList<>(Collections.emptyList());
                 for (AddBillRequest.ServiceBill sbr : abr.getServiceBill()) {
                     Double serviceTotalMoney;
-                    int newElectricIndex = 0;
-                    int newWaterIndex = 0;
                     if (sbr.getServiceId() == SERVICE_ELECTRIC) {
                         newElectricIndex = roomInfor.getRoomCurrentElectricIndex() + sbr.getServiceIndex();
                         serviceTotalMoney = sbr.getServiceIndex() * sbr.getServicePrice();
@@ -178,7 +179,29 @@ public class BillServiceImpl implements BillService {
                     } else {
                         serviceTotalMoney = sbr.getServiceTotalMoney();
                     }
-                        roomService.setServiceIndex(roomInfor.getContractId(), newElectricIndex, newWaterIndex, Operator.operator());
+                    // tạo hóa đơn định kì
+                    var var2 = recurringBillRepo.save(
+                            RecurringBill.add(
+                                    abr.getRoomId(),
+                                    roomInfor.getRoomName(),
+                                    roomInfor.getGroupId(),
+                                    roomInfor.getGroupContractId(),
+                                    roomInfor.getContractId(),
+                                    totalMoneyService + abr.getTotalRoomMoney(),
+                                    "Hóa đơn phòng " + roomInfor.getRoomName() + " tháng " + currentMonth + "/" + currentYear,
+                                    false,
+                                    true,
+                                    "IN",
+                                    parse(abr.getPaymentTerm()),
+                                    parse(abr.getCreatedTime()),
+                                    DateUtils.monthsBetween(now(), contractInfor.getContractStartDate()) % contractInfor.getContractBillCycle() == 0,
+                                    roomBill.getRoomId()
+
+                            )
+                    );
+                    //lưu vết
+                    tableLogComponent.saveRecurringBillHistory(List.of(var2));
+
                     serviceBills.add(ServiceBill.add(
                                     sbr.getServiceId(),
                                     sbr.getServiceType(),
@@ -190,6 +213,7 @@ public class BillServiceImpl implements BillService {
                                     roomInfor.getContractId(),
                                     serviceTotalMoney,
                                     parse(abr.getCreatedTime()),
+                                    var2.getId(),
                                     Operator.operator()
                             )
                     );
@@ -200,26 +224,7 @@ public class BillServiceImpl implements BillService {
                 // lưu vết
                 tableLogComponent.saveServiceBillSourceHistory(var1);
             }
-            // tạo hóa đơn định kì
-            var var2 = recurringBillRepo.save(
-                    RecurringBill.add(
-                            abr.getRoomId(),
-                            roomInfor.getRoomName(),
-                            roomInfor.getGroupId(),
-                            roomInfor.getGroupContractId(),
-                            roomInfor.getContractId(),
-                            totalMoneyService + abr.getTotalRoomMoney(),
-                            "Hóa đơn phòng " + roomInfor.getRoomName() + " tháng " + currentMonth + "/" + currentYear,
-                            false,
-                            true,
-                            "IN",
-                            parse(abr.getPaymentTerm()),
-                            parse(abr.getCreatedTime()),
-                            DateUtils.monthsBetween(now(), contractInfor.getContractStartDate()) % contractInfor.getContractBillCycle() == 0
-                    )
-            );
-            //lưu vết
-            tableLogComponent.saveRecurringBillHistory(List.of(var2));
+            roomService.setServiceIndex(roomInfor.getContractId(), newElectricIndex, newWaterIndex, Operator.operator());
         }
         return addBillRequests;
     }
@@ -388,13 +393,11 @@ public class BillServiceImpl implements BillService {
         listRecurringBill.forEach(e -> {
 
             var listServiceBill = new ArrayList<ServiceBill>(Collections.emptyList());
-            if (!ObjectUtils.isEmpty(e.getServiceBillId())) {
-                listServiceBill.addAll(serviceBillRepo.findAllById(Collections.singleton(e.getServiceBillId())));
-            }
+                listServiceBill.addAll(serviceBillRepo.findAllByRecurringBillId(e.getId()));
             var listRoomBill = new ArrayList<RoomBill>(Collections.emptyList());
 
             if (!ObjectUtils.isEmpty(e.getRoomBillId())) {
-                listRoomBill.addAll(roomBillRepo.findAllById(Collections.singleton(e.getServiceBillId())));
+                listRoomBill.addAll(roomBillRepo.findAllById(Collections.singleton(e.getRoomBillId())));
             }
             if (!listRoomBill.isEmpty()) {
                 roomBillRepo.deleteAll(listRoomBill);
@@ -460,6 +463,32 @@ public class BillServiceImpl implements BillService {
     @Override
     public List<RecurringBill> listRecurringBillByGroupId(Long groupId) {
         return recurringBillRepo.findAllByGroupContractId(groupId);
+    }
+
+    @Override
+    public BillDetailResponse billDetail(Long recurringBillId) {
+        var recurringBill = recurringBillRepo.findById(recurringBillId).get();
+        Date createdTime = recurringBill.getBillCreatedTime();
+        
+        var serviceBill = serviceBillRepo.findAllByRecurringBillId(recurringBill.getId());
+        var roomBill = roomBillRepo.findById(recurringBill.getRoomBillId()).orElse(new RoomBill());
+        var room = roomService.room(recurringBill.getRoomId());
+        BillDetailResponse response = new BillDetailResponse();
+        response.setRoomId(recurringBill.getRoomId());
+        response.setRoomName(room.getRoomName());
+        response.setGroupId(recurringBill.getGroupId());
+        response.setGroupName(groupService.getGroup(recurringBill.getGroupId()).getGroupName());
+        response.setContractId(room.getContractId());
+        response.setGroupContractId(room.getGroupContractId());
+        response.setBillCreatedTime(recurringBill.getBillCreatedTime());
+        response.setPaymentTerm(recurringBill.getPaymentTerm());
+        response.setDescription(recurringBill.getDescription());
+        response.setTotalServiceMoney(serviceBill.stream().mapToDouble(ServiceBill::getServiceBillTotalMoney).sum());
+        response.setTotalRoomMoney(roomBill.getRoomTotalMoney());
+        response.setTotalMoney(serviceBill.stream().mapToDouble(ServiceBill::getServiceBillTotalMoney).sum() + roomBill.getRoomTotalMoney());
+        response.setServiceBill(serviceBill);
+        response.setRoomBill(roomBill);
+        return response;
     }
 
 

@@ -17,5 +17,9 @@ public interface ServiceBillRepository extends JpaRepository<ServiceBill, Long>,
 
     List<ServiceBill> findAllByServiceId(Long serviceId);
 
+    List<ServiceBill> findAllByRoomId(Long roomId);
+
+    List<ServiceBill> findAllByRecurringBillId(Long recurringBillId);
+
 }
 

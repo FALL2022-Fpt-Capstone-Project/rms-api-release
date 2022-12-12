@@ -11,7 +11,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import java.beans.BeanInfo;
 import java.util.Date;
 
 import static vn.com.fpt.common.utils.DateUtils.now;
@@ -59,6 +58,9 @@ public class ServiceBill extends BaseEntity {
     @Column(name = "bill_created_time")
     private Date billCreatedTime;
 
+    @Column(name = "recurring_bill_id")
+    private Long recurringBillId;
+
     public static ServiceBill of(Long serviceId,
                                  Long serviceTypeId,
                                  Double servicePrice,
@@ -68,6 +70,7 @@ public class ServiceBill extends BaseEntity {
                                  Long groupContractId,
                                  Long contractId,
                                  Double serviceBillTotalMoney,
+                                 Long recurringBillId,
                                  Date billCreatedTime) {
         return ServiceBill.builder()
                 .serviceId(serviceId)
@@ -80,6 +83,7 @@ public class ServiceBill extends BaseEntity {
                 .contractId(contractId)
                 .serviceBillTotalMoney(serviceBillTotalMoney)
                 .billCreatedTime(billCreatedTime)
+                .recurringBillId(recurringBillId)
                 .build();
     }
 
@@ -93,6 +97,7 @@ public class ServiceBill extends BaseEntity {
                                   Long contractId,
                                   Double serviceBillTotalMoney,
                                   Date billCreatedTime,
+                                  Long recurringBillId,
                                   Long operator) {
         var add = of(
                 serviceId,
@@ -104,6 +109,7 @@ public class ServiceBill extends BaseEntity {
                 groupContractId,
                 contractId,
                 serviceBillTotalMoney,
+                recurringBillId,
                 billCreatedTime);
         add.setCreatedAt(now());
         add.setCreatedBy(operator);
@@ -121,6 +127,7 @@ public class ServiceBill extends BaseEntity {
                                      Long contractId,
                                      Double serviceBillTotalMoney,
                                      Date billCreatedTime,
+                                     Long recurringBillId,
                                      Long operator) {
         var modify = of(
                 serviceId,
@@ -132,6 +139,7 @@ public class ServiceBill extends BaseEntity {
                 groupContractId,
                 contractId,
                 serviceBillTotalMoney,
+                recurringBillId,
                 billCreatedTime
         );
 
