@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.test.context.ContextConfiguration;
 import vn.com.fpt.entity.AssetTypes;
 import vn.com.fpt.entity.BasicAssets;
 import vn.com.fpt.model.BasicAssetDTO;
@@ -28,6 +29,7 @@ import java.util.Optional;
 import static org.mockito.Mockito.*;
 import static vn.com.fpt.common.constants.ErrorStatusConstants.ASSET_OUT_OF_STOCK;
 
+@ContextConfiguration(classes = {AssetServiceImpl.class})
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 class AssetServiceImplTest {

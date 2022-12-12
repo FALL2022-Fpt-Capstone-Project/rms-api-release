@@ -12,5 +12,10 @@ import java.util.List;
 public interface ServiceBillRepository extends JpaRepository<ServiceBill, Long>, JpaSpecificationExecutor<ServiceBill> {
 
     List<ServiceBill> findAllByRoomIdAndServiceIdAndServiceTypeId(Long roomId, Long serviceId, Long serviceTypeId);
+
+    List<ServiceBill> findAllByRoomIdAndServiceId(Long roomId, Long serviceId);
+
+    List<ServiceBill> findAllByServiceId(Long serviceId);
+
 }
 

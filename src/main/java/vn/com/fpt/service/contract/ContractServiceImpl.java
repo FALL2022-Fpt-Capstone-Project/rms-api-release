@@ -438,6 +438,8 @@ public class ContractServiceImpl implements ContractService {
 
         List<Long> searchRenter = renterRepository.findAll(renterSpec).stream().map(Renters::getId).toList();
 
+        if (searchRenter.isEmpty()) return Collections.emptyList();
+
         BaseSpecification<Contracts> contractSpec = new BaseSpecification<>();
         contractSpec.add(new SearchCriteria("contractType", SUBLEASE_CONTRACT, EQUAL));
 
@@ -485,7 +487,7 @@ public class ContractServiceImpl implements ContractService {
             contractSpec.add(new SearchCriteria("renters", searchRenter, IN));
         }
 
-        var listContract = contractRepository.findAll(contractSpec, Sort.by("contractStartDate").descending());
+        var listContract = contractRepository.findAll(contractSpec, Sort.by("contractStartDate").descending()).stream().filter(e -> e.getGroupId().equals(groupId)).toList();
         if (!listDisbaleContract.isEmpty()) listContract.addAll(listDisbaleContract);
 
         if (listContract.isEmpty()) return Collections.emptyList();

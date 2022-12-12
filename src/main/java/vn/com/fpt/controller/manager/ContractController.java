@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.com.fpt.common.response.AppResponse;
 import vn.com.fpt.common.response.BaseResponse;
@@ -106,6 +105,7 @@ public class ContractController {
     @Operation(summary = "Danh sách tất cả hợp đồng của nhóm phòng")
     @GetMapping("/group")
     public ResponseEntity<BaseResponse<List<GroupContractDTO>>> listGroupContract(@RequestParam(required = false) String phoneNumber,
+                                                                                  @RequestParam(required = false) String name,
                                                                                   @RequestParam(required = false) String identity,
                                                                                   @RequestParam(required = false) Long groupId,
                                                                                   @RequestParam(required = false) String startDate,
@@ -113,7 +113,7 @@ public class ContractController {
                                                                                   @RequestParam(required = false, defaultValue = "false") Boolean isDisable) {
         return AppResponse.success(contractService.listGroupContract(phoneNumber,
                                                                      identity,
-                                                                     null,
+                                                                     name,
                                                                      groupId,
                                                                      null,
                                                                      startDate,
