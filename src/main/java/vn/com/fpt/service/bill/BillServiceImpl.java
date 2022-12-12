@@ -440,8 +440,8 @@ public class BillServiceImpl implements BillService {
     }
 
     @Override
-    public List<RecurringBill> listRecurringBillByGroupId(Long groupId, int month, int year) {
-        return recurringBillRepo.findAllByGroupIdAndTime(groupId, month, year);
+    public List<RecurringBill> listRecurringBillByGroupId(Long groupId) {
+        return recurringBillRepo.findAllByGroupContractId(groupId);
     }
 
 

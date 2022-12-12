@@ -88,9 +88,16 @@ public class StatisticalServiceImpl implements StatisticalService {
             month = localDate.getMonthValue();
             year = localDate.getYear();
         }
-        var recurringBill = billService.listRecurringBillByGroupId(groupId, month, year);
+        int finalMonth = month;
+        int finalYear = year;
+        var recurringBill = billService.listRecurringBillByGroupId(groupId).stream().filter(e ->
+                        toLocalDate(
+                                e.getBillCreatedTime()).getMonthValue() == finalMonth
+                                && toLocalDate(e.getBillCreatedTime()).getYear() == finalYear
+                )
+                .toList();
         if (recurringBill.isEmpty()) return new StatisticalBillResponse(groupId, 0.0, 0.0, paymentCircle, time);
-        List<Double> listPaid = recurringBill.stream().filter(e-> e.getIsPaid()).map(RecurringBill::getTotalMoney).toList();
+        List<Double> listPaid = recurringBill.stream().filter(e -> e.getIsPaid()).map(RecurringBill::getTotalMoney).toList();
         List<Double> listNeedToPaid = recurringBill.stream().map(RecurringBill::getTotalMoney).toList();
         return new StatisticalBillResponse(groupId,
                 listNeedToPaid.stream().mapToDouble(e -> e).sum(),
@@ -107,8 +114,8 @@ public class StatisticalServiceImpl implements StatisticalService {
 
     @Override
     public StatisticalBillStatusResponse totalMoneyBillStatus(String time, Long groupId, Integer paymentCircle) {
-        int month;
-        int year;
+        int month=0;
+        int year=0;
         try {
             var date = parse(time, "MM-yyyy");
             var localDate = toLocalDate(date);
@@ -120,7 +127,15 @@ public class StatisticalServiceImpl implements StatisticalService {
             month = localDate.getMonthValue();
             year = localDate.getYear();
         }
-        var recurringBill = billService.listRecurringBillByGroupId(groupId, month, year);
+        int finalMonth = month;
+        int finalYear = year;
+        var recurringBill =
+                billService.listRecurringBillByGroupId(groupId).stream().filter(e ->
+                                toLocalDate(
+                                        e.getBillCreatedTime()).getMonthValue() == finalMonth
+                                        && toLocalDate(e.getBillCreatedTime()).getYear() == finalYear
+                        )
+                        .toList();
         return new StatisticalBillStatusResponse(groupId,
                 recurringBill.size(),
                 recurringBill.stream().filter(e -> e.getIsPaid()).toList().size(),

@@ -29,5 +29,5 @@ public interface BillService {
 
     Boolean roomBillCheck(Long contractId);
 
-    List<RecurringBill> listRecurringBillByGroupId(Long groupId, int month, int year);
+    List<RecurringBill> listRecurringBillByGroupId(Long groupId);
 }
