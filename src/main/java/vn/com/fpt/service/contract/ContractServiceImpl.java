@@ -607,7 +607,7 @@ public class ContractServiceImpl implements ContractService {
         contractsSpec.add(SearchCriteria.of("rackRenters", rackRenterIdToFilter, IN));
 
         List<GroupContractDTO> listGroupContract = new ArrayList<>();
-        var groupContracts = contractRepository.findAll(contractsSpec, Sort.by("contractStartDate").ascending());
+        var groupContracts = contractRepository.findAll(contractsSpec, Sort.by("contractStartDate").ascending()).stream().filter(e -> e.getGroupId().equals(groupId)).toList();
         if (groupContracts.isEmpty()) return Collections.emptyList();
 
         groupContracts.forEach
