@@ -497,6 +497,9 @@ public class BillServiceImpl implements BillService {
 
     @Override
     public List<RecurringBill> listRoomBillHistory(Long groupId) {
+        if(groupId==null){
+            return recurringBillRepo.findAll();
+        }
         return recurringBillRepo.findAllByGroupId(groupId);
     }
 

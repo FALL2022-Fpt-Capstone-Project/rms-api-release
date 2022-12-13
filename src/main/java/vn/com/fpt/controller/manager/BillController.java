@@ -113,8 +113,8 @@ public class BillController {
     }
 
     @Operation(summary = "Hiển thị chi tiết lịch sử hóa đơn của các phòng")
-    @GetMapping("/room/histories/{groupId}")
-    public ResponseEntity<BaseResponse<List<RecurringBill>>> listRoomBillHistory(@PathVariable Long groupId){
+    @GetMapping("/room/histories")
+    public ResponseEntity<BaseResponse<List<RecurringBill>>> listRoomBillHistory(@RequestParam(required = false) Long groupId){
         return AppResponse.success(billService.listRoomBillHistory(groupId));
     }
 }
