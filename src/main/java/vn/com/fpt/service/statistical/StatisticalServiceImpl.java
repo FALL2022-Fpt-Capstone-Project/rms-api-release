@@ -184,6 +184,7 @@ public class StatisticalServiceImpl implements StatisticalService {
                             groupId,
                             group.getGroupName(),
                             format(e.getBillCreatedTime(), DATE_FORMAT_3),
+                            e.getPaymentTerm1(),
                             e.getTotalMoney()
                     );
                 }

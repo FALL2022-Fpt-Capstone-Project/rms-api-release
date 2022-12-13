@@ -20,5 +20,6 @@ public class ListBilledRoomResponse {
     private String groupName;
 
     private String createdTime;
+    private String paymentTerm;
     private Double needToPaid;
 }
