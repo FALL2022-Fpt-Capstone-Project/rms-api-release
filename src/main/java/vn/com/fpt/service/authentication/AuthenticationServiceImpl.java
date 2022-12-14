@@ -55,12 +55,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         var permission = permissionRepository.findAllByAccountId(account.getId());
+        var userInfor = accountRepository.findAccountByUserName(account.getUserName()).get();
 
         var response = AccountResponse.of(account
                 , authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet())
                 , jwtUtils.generateJwtCookie(account).getValue());
         response.setPermission(permission.stream().map(Permission::getPermissionId).toList());
-        response.setFullName(account.getFullName());
+        response.setFullName(userInfor.getFullName());
         return response;
     }
 
