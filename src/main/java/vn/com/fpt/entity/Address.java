@@ -52,6 +52,16 @@ public class Address extends BaseEntity {
     @JsonIgnore
     private RackRenters rackRenters;
 
+    public Address(String addressCity,
+                   String addressDistrict,
+                   String addressWards,
+                   String addressMoreDetails) {
+        this.addressCity = addressCity;
+        this.addressDistrict = addressDistrict;
+        this.addressWards = addressWards;
+        this.addressMoreDetails = addressMoreDetails;
+    }
+
     public static Address of(RegisterRequest registerRequest) {
         return Address.builder()
                 .addressCity(registerRequest.getAddressCity())
@@ -103,11 +113,11 @@ public class Address extends BaseEntity {
     }
 
     public Address modify(Address old,
-                                 String newCity,
-                                 String newDistrict,
-                                 String newWards,
-                                 String newMoreDetails,
-                                 Long operator) {
+                          String newCity,
+                          String newDistrict,
+                          String newWards,
+                          String newMoreDetails,
+                          Long operator) {
         var address = of(newCity, newDistrict, newWards, newMoreDetails);
         address.setId(old.getId());
         //fetch

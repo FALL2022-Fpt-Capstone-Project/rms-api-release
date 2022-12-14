@@ -31,6 +31,11 @@ public class BasicAssets extends BaseEntity {
 
     public static final String TABLE_NAME = AppConfigs.TABLE_MANAGER + "basic_assets";
 
+    public BasicAssets(String assetName, Long assetType){
+        this.assetName = assetName;
+        this.assetTypeId = assetType;
+    }
+
     @Column(name = "asset_name")
     private String assetName;
 
