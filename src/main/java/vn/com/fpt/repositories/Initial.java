@@ -87,6 +87,7 @@ public class Initial implements ApplicationRunner {
             if (accountRepository.findAll().isEmpty()) {
                 accountRepository.save(account);
             }
+            Sentry.captureMessage("Innit success");
         } catch (Exception e) {
             Sentry.captureMessage("Innit fail");
         }
