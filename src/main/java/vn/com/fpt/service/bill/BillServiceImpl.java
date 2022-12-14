@@ -139,6 +139,8 @@ public class BillServiceImpl implements BillService {
     public List<AddBillRequest> addBill(List<AddBillRequest> addBillRequests) {
         var currentMonth = toLocalDate(now()).getMonth().getValue();
         var currentYear = toLocalDate(now()).getYear();
+        Integer newElectricIndex = null;
+        Integer newWaterIndex = null;
         for (AddBillRequest abr : addBillRequests) {
             //tạo hóa đơn cho tiền phòng
             var roomInfor = roomService.room(abr.getRoomId());
@@ -161,8 +163,7 @@ public class BillServiceImpl implements BillService {
             }
             // tạo hóa đơn dịch vụ
             Double totalMoneyService = 0.0;
-            int newElectricIndex = 0;
-            int newWaterIndex = 0;
+
             if (!abr.getServiceBill().isEmpty()) {
                 List<ServiceBill> serviceBills = new ArrayList<>(Collections.emptyList());
                 for (AddBillRequest.ServiceBill sbr : abr.getServiceBill()) {
@@ -179,6 +180,11 @@ public class BillServiceImpl implements BillService {
 
                     } else {
                         serviceTotalMoney = sbr.getServiceTotalMoney();
+                    }
+                    if (newElectricIndex != null && newWaterIndex != null) {
+                        roomService.setServiceIndex(roomInfor.getContractId(), newElectricIndex, newWaterIndex, Operator.operator());
+                        newWaterIndex = null;
+                        newElectricIndex = null;
                     }
                     // tạo hóa đơn định kì
                     var var2 = recurringBillRepo.save(
@@ -225,7 +231,6 @@ public class BillServiceImpl implements BillService {
                 // lưu vết
                 tableLogComponent.saveServiceBillSourceHistory(var1);
             }
-            roomService.setServiceIndex(roomInfor.getContractId(), newElectricIndex, newWaterIndex, Operator.operator());
         }
         return addBillRequests;
     }
@@ -497,7 +502,7 @@ public class BillServiceImpl implements BillService {
 
     @Override
     public List<RecurringBill> listRoomBillHistory(Long groupId) {
-        if(groupId==null){
+        if (groupId == null) {
             return recurringBillRepo.findAll();
         }
         return recurringBillRepo.findAllByGroupId(groupId);
