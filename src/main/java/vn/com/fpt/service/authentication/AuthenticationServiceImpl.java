@@ -60,6 +60,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 , authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet())
                 , jwtUtils.generateJwtCookie(account).getValue());
         response.setPermission(permission.stream().map(Permission::getPermissionId).toList());
+        response.setFullName(account.getFullName());
         return response;
     }
 
