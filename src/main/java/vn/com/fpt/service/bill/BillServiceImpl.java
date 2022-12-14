@@ -465,7 +465,7 @@ public class BillServiceImpl implements BillService {
 
     @Override
     public List<RecurringBill> listRecurringBillByGroupId(Long groupId) {
-        return recurringBillRepo.findAllByGroupContractId(groupId);
+        return recurringBillRepo.findAllByGroupId(groupId);
     }
 
     @Override
