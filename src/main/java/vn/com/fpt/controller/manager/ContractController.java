@@ -110,7 +110,10 @@ public class ContractController {
                                                                                   @RequestParam(required = false) Long groupId,
                                                                                   @RequestParam(required = false) String startDate,
                                                                                   @RequestParam(required = false) String endDate,
-                                                                                  @RequestParam(required = false, defaultValue = "false") Boolean isDisable) {
+                                                                                  @RequestParam(required = false) Integer status,
+                                                                                  @RequestParam(required = false, defaultValue = "1") Integer duration,
+                                                                                  @RequestParam(required = false, defaultValue = "false") Boolean isDisable
+                                                                                  ) {
         return AppResponse.success(contractService.listGroupContract(phoneNumber,
                                                                      identity,
                                                                      name,
@@ -118,6 +121,8 @@ public class ContractController {
                                                                      null,
                                                                      startDate,
                                                                      endDate,
+                                                                     status,
+                                                                     duration,
                                                                      isDisable));
     }
 

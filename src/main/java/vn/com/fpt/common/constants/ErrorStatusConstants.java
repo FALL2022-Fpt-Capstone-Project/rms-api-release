@@ -47,6 +47,8 @@ public enum ErrorStatusConstants {
 
     ROOM_NOT_AVAILABLE(HttpStatus.BAD_REQUEST, 403006, "Phòng đã có người thuê, vui lòng kiểm tra lại"),
 
+    GROUP_NOT_AVAILABLE(HttpStatus.BAD_REQUEST, 403009, "Phòng đã có đã thuê lại, vui lòng kiểm tra lại"),
+
     DUPLICATE_NAME(HttpStatus.BAD_REQUEST, 403009, "Trùng tên, vui lòng kiểm tra lại!!"),
 
     UNAUTHORIZED_ERROR(HttpStatus.UNAUTHORIZED, 401001, "Bạn không có quyền truy cập!!"),

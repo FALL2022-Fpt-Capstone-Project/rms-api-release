@@ -237,23 +237,12 @@ public class ContractServiceImpl implements ContractService {
 
         var addedContract = contractRepository.save(contract);
         var listRoom = roomService.listRoom(request.getListRoom());
-
+        listRoom.forEach(e -> {
+            if (e.getGroupContractId() != null) throw new BusinessException(GROUP_NOT_AVAILABLE, e.getRoomName());
+        });
 
         listRoom.forEach(e -> e.setGroupContractId(addedContract.getId()));
         roomService.updateRoom(listRoom);
-
-        var listGeneralService = servicesService.listGeneralServiceByGroupId(request.getGroupId());
-        List<GeneralServiceRequest> listGeneralServiceForLeaseContract = new ArrayList<>(Collections.emptyList());
-        for (GeneralServiceDTO generalServiceDTO : listGeneralService) {
-            listGeneralServiceForLeaseContract.add(new GeneralServiceRequest(
-                    addedContract.getId(),
-                    generalServiceDTO.getServiceId().longValue(),
-                    generalServiceDTO.getServicePrice(),
-                    generalServiceDTO.getServiceTypeId().longValue(),
-                    generalServiceDTO.getNote(),
-                    request.getGroupId()
-            ));
-        }
         return request;
     }
 
@@ -543,6 +532,8 @@ public class ContractServiceImpl implements ContractService {
                                                     Long contractId,
                                                     String startDate,
                                                     String endDate,
+                                                    Integer status,
+                                                    Integer duration,
                                                     Boolean isDisable) {
 //        if (ObjectUtils.isNotEmpty(groupId)) {
 //            var groupContracts = contractRepository.findByGroupIdAndContractTypeAndContractIsDisableIsFalse(groupId, LEASE_CONTRACT);
@@ -600,18 +591,43 @@ public class ContractServiceImpl implements ContractService {
             contractsSpec.add(SearchCriteria.of("contractStartDate", parse(startDate, DATE_FORMAT_3), GREATER_THAN_EQUAL));
             contractsSpec.add(SearchCriteria.of("contractStartDate", parse(endDate, DATE_FORMAT_3), LESS_THAN_EQUAL));
         }
-        if (Objects.nonNull(isDisable)) {
-            contractsSpec.add(SearchCriteria.of("contractIsDisable", isDisable, EQUAL));
-        }
         if (Objects.nonNull(groupId)) {
             contractsSpec.add(SearchCriteria.of("groupId", groupId, EQUAL));
         }
+
+        List<Contracts> listDisbaleContract = new ArrayList<>(Collections.emptyList());
+        BaseSpecification<Contracts> contractSpec2 = new BaseSpecification<>();
+        if (ObjectUtils.isNotEmpty(status)) {
+            switch (status) {
+                case LATEST_CONTRACT -> {
+                    contractsSpec.add(SearchCriteria.of("contractStartDate", monthsCalculate(now(), -duration.longValue()), GREATER_THAN_EQUAL));
+                    contractsSpec.add(SearchCriteria.of("contractStartDate", now(), LESS_THAN_EQUAL));
+                }
+                case ALMOST_EXPIRED_CONTRACT -> {
+                    contractsSpec.add(SearchCriteria.of("contractEndDate", now(), GREATER_THAN_EQUAL));
+                    contractsSpec.add(SearchCriteria.of("contractEndDate", monthsCalculate(now(), duration.longValue()), LESS_THAN_EQUAL));
+                }
+                case EXPIRED_CONTRACT -> {
+                    contractsSpec.add(SearchCriteria.of("contractEndDate", now(), LESS_THAN_EQUAL));
+                    contractSpec2.add(SearchCriteria.of("contractIsDisable", true, EQUAL));
+                    listDisbaleContract.addAll(contractRepository.findAll(contractSpec2, Sort.by("contractStartDate").descending()));
+                }
+            }
+        }
+
+        if (org.apache.commons.lang3.ObjectUtils.isNotEmpty(isDisable)) {
+            contractsSpec.add(new SearchCriteria("contractIsDisable", isDisable, EQUAL));
+            if ((ObjectUtils.isEmpty(status) ? EXPIRED_CONTRACT : status) != EXPIRED_CONTRACT)
+                contractsSpec.add(new SearchCriteria("contractIsDisable", isDisable, EQUAL));
+        }
+
         contractsSpec.add(SearchCriteria.of("rackRenters", rackRenterIdToFilter, IN));
 
         List<GroupContractDTO> listGroupContract = new ArrayList<>();
         List<Contracts> groupContracts = new ArrayList<>();
 
         groupContracts.addAll(contractRepository.findAll(contractsSpec, Sort.by("contractStartDate").ascending()));
+        if (!listDisbaleContract.isEmpty()) groupContracts.addAll(listDisbaleContract);
 
         if (groupContracts.isEmpty()) return Collections.emptyList();
 
@@ -637,6 +653,8 @@ public class ContractServiceImpl implements ContractService {
                 null,
                 null,
                 contractId,
+                null,
+                null,
                 null,
                 null,
                 null).get(0);

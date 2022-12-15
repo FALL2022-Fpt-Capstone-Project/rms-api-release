@@ -4,6 +4,7 @@ import io.sentry.Sentry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import vn.com.fpt.entity.*;
 import vn.com.fpt.entity.authentication.Account;
@@ -27,22 +28,15 @@ public class Initial implements ApplicationRunner {
     public void run(ApplicationArguments args) throws Exception {
 
         List<Role> roles = List.of(new Role(ERole.ROLE_STAFF), new Role(ERole.ROLE_ADMIN));
-        Account account = new Account();
-        account.setUserName("phaphp");
-        account.setPassword("123456");
-        account.setFullName("Nguyễn Đức Pháp");
-        account.setGender(true);
-        account.setPhoneNumber("0944808998");
-        account.setRoles(Set.of(new Role(ERole.ROLE_ADMIN)));
-        account.setAddress(new Address("Hải Phòng", "Văn Cao", "Khu Hàn Quốc", ""));
+
 
         List<BasicAssets> basicAssets = List.of(
-                new BasicAssets("Máy giặt", 5L),
-                new BasicAssets("Điều hòa", 5L),
-                new BasicAssets("Tủ lạnh", 3L),
-                new BasicAssets("Tủ quần áo", 4L),
-                new BasicAssets("Bàn học", 4L),
-                new BasicAssets("Ghế văn phòng", 4L)
+                new BasicAssets("Máy giặt", 5L, 1),
+                new BasicAssets("Điều hòa", 5L, 1),
+                new BasicAssets("Tủ lạnh", 3L, 1),
+                new BasicAssets("Tủ quần áo", 4L, 1),
+                new BasicAssets("Bàn học", 4L, 1),
+                new BasicAssets("Ghế văn phòng", 4L, 1)
         );
 
         List<AssetTypes> assetTypes = List.of(
@@ -85,11 +79,21 @@ public class Initial implements ApplicationRunner {
                 roleRepository.saveAll(roles);
             }
             if (accountRepository.findAll().isEmpty()) {
+                BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+                Account account = new Account();
+                account.setUserName("ducmd");
+                account.setPassword(encoder.encode("123456"));
+                account.setFullName("Đỗ Mạnh Đức");
+                account.setGender(true);
+                account.setPhoneNumber("0944808998");
+                account.setRoles(Set.of(roleRepository.findByName(ERole.ROLE_ADMIN).orElse(null)));
+                account.setAddress(new Address("Quảng Ninh", "Hạ Long", "Hòn Gai", "Biện thự liền kề Vin"));
                 accountRepository.save(account);
             }
             Sentry.captureMessage("Innit success");
         } catch (Exception e) {
             Sentry.captureMessage("Innit fail");
+            throw e;
         }
 
     }

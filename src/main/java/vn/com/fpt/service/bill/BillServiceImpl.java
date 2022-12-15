@@ -168,13 +168,13 @@ public class BillServiceImpl implements BillService {
                 List<ServiceBill> serviceBills = new ArrayList<>(Collections.emptyList());
                 for (AddBillRequest.ServiceBill sbr : abr.getServiceBill()) {
                     Double serviceTotalMoney;
-                    if (sbr.getServiceId() == SERVICE_ELECTRIC) {
+                    if (Objects.equals(sbr.getServiceId(), SERVICE_ELECTRIC)) {
                         newElectricIndex = roomInfor.getRoomCurrentElectricIndex() + sbr.getServiceIndex();
                         serviceTotalMoney = sbr.getServiceIndex() * sbr.getServicePrice();
                     } else {
                         serviceTotalMoney = sbr.getServiceTotalMoney();
                     }
-                    if (sbr.getServiceId() == SERVICE_WATER) {
+                    if (Objects.equals(sbr.getServiceId(), SERVICE_WATER)) {
                         newWaterIndex = roomInfor.getRoomCurrentWaterIndex() + sbr.getServiceIndex();
                         serviceTotalMoney = sbr.getServiceIndex() * sbr.getServicePrice();
 

@@ -43,6 +43,8 @@ public interface ContractService {
                                              Long contractId,
                                              String startDate,
                                              String endDate,
+                                             Integer status,
+                                             Integer duration,
                                              Boolean isDisable);
 
     GroupContractDTO groupContract(Long contractId);
