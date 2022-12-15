@@ -89,7 +89,7 @@ public class GroupContractDTO implements Serializable {
                 .rackRenterEmail(rackRenters.getEmail())
                 .rackRenterDistrict(rackRenters.getAddress().getAddressDistrict())
                 .rackRenterMoreDetails(rackRenters.getAddress().getAddressMoreDetails())
-                .rackRenterCity(rackRenters.getAddress().getCreatedAtt())
+                .rackRenterCity(rackRenters.getAddress().getAddressCity())
                 .rackRenterWards(rackRenters.getAddress().getAddressWards())
                 .address(groupContracted.getAddress())
                 .build();
