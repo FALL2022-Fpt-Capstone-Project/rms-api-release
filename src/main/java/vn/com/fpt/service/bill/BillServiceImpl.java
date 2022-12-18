@@ -182,7 +182,7 @@ public class BillServiceImpl implements BillService {
                         serviceTotalMoney = sbr.getServiceTotalMoney();
                     }
                     if (newElectricIndex != null && newWaterIndex != null) {
-                        roomService.setServiceIndex(roomInfor.getContractId(), newElectricIndex, newWaterIndex, Operator.operator());
+                        roomService.setServiceIndex(roomInfor.getId(), newElectricIndex, newWaterIndex, Operator.operator());
                         newWaterIndex = null;
                         newElectricIndex = null;
                     }
