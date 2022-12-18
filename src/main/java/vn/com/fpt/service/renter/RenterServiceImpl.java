@@ -47,7 +47,7 @@ public class RenterServiceImpl implements RenterService {
     public List<RentersResponse> listRenter(Long groupId, Boolean gender, String name, String phone, Long room) {
         BaseSpecification<Renters> specification = new BaseSpecification<>();
         if (ObjectUtils.allNotNull(groupId)) {
-            var roomId = roomService.listRoom(groupId,null, null, null, null).stream().map(RoomsResponse::getRoomId).toList();
+            var roomId = roomService.listRoom(groupId, null, null, null, null).stream().map(RoomsResponse::getRoomId).toList();
             specification.add(new SearchCriteria("roomId", roomId, IN));
         }
         if (ObjectUtils.isNotEmpty(room)) {
@@ -90,8 +90,14 @@ public class RenterServiceImpl implements RenterService {
     @Transactional
     public RentersResponse addRenter(RenterRequest request, Long operator) {
         roomService.roomChecker(request.getRoomId());
-        if(renterRepo.findByIdentityNumberAndRoomId(request.getIdentityCard(), request.getRoomId()).isPresent()){
+        if (renterRepo.findByIdentityNumberAndRoomId(request.getIdentityCard(), request.getRoomId()).isPresent()) {
             throw new BusinessException(RENTER_EXISTED, "CMND/CCCD : " + request.getIdentityCard());
+        }
+        var exitedRenter = renterRepo.findByIdentityNumber(request.getIdentityCard());
+        if (exitedRenter != null) {
+            exitedRenter.setRoomId(request.getRoomId());
+            exitedRenter.setRepresent(false);
+            return RentersResponse.of(renterRepo.save(exitedRenter));
         }
         var address = Address.add(
                 request.getAddressCity(),
@@ -99,7 +105,6 @@ public class RenterServiceImpl implements RenterService {
                 request.getAddressWards(),
                 request.getAddressMoreDetail(),
                 operator);
-
         // add thành viên
         request.setRepresent(false);
         return RentersResponse.of(renterRepo.save(Renters.add(request, address, operator)));
@@ -189,7 +194,7 @@ public class RenterServiceImpl implements RenterService {
 
     @Override
     public RackRenters rackRenter(Long id) {
-        return rackRenterRepo.findById(id).orElseThrow(()-> new BusinessException(RACK_RENTER_NOT_FOUND, "Không tìm thấy chủ thuê rack_renter_id : " + id));
+        return rackRenterRepo.findById(id).orElseThrow(() -> new BusinessException(RACK_RENTER_NOT_FOUND, "Không tìm thấy chủ thuê rack_renter_id : " + id));
     }
 
     @Override
