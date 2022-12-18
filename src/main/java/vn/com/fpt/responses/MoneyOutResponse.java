@@ -13,6 +13,7 @@ import lombok.Setter;
 @RequiredArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class MoneyOutResponse {
+    private Long id;
     private Long groupId;
     private String groupName;
     private String time;

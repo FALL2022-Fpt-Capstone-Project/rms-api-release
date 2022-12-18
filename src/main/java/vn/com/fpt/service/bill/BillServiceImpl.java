@@ -589,6 +589,7 @@ public class BillServiceImpl implements BillService {
         }
         moneySourceOut.forEach(e -> {
             MoneyOutResponse mos = new MoneyOutResponse();
+            mos.setId(e.getId());
             subMoneySourceRepo.findAllByMoneySourceId(e.getId()).forEach(x -> {
                         mos.setTime(format(e.getMoneySourceTime(), "yyyy-MM-dd"));
                         mos.setGroupName(groupService.getGroup(e.getKey()).getGroupName());
@@ -597,6 +598,10 @@ public class BillServiceImpl implements BillService {
                         if (x.getType().equals("OTHER")) mos.setOtherMoney(x.getMoney());
                     }
             );
+            mos.setTotalMoney(
+                    mos.getOtherMoney() == null ? 0 : mos.getOtherMoney() +
+                            (mos.getServiceMoney() == null ? 0 : mos.getServiceMoney()) +
+                            (mos.getRoomGroupMoney() == null ? 0 : mos.getRoomGroupMoney()));
             response.add(mos);
         });
         return response;

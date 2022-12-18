@@ -20,4 +20,5 @@ public class AddMoneySourceRequest {
     private Double roomGroupMoney;
     private Double serviceMoney;
     private Double otherMoney;
+
 }
