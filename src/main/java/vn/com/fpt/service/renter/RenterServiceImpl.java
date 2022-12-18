@@ -95,6 +95,9 @@ public class RenterServiceImpl implements RenterService {
         }
         var exitedRenter = renterRepo.findByIdentityNumber(request.getIdentityCard());
         if (exitedRenter != null) {
+            if (exitedRenter.getRoomId() != null) {
+                throw new BusinessException(RENTER_EXISTED, "Đã ở trong phòng " + roomService.room(exitedRenter.getId()).getRoomName());
+            }
             exitedRenter.setRoomId(request.getRoomId());
             exitedRenter.setRepresent(false);
             return RentersResponse.of(renterRepo.save(exitedRenter));
