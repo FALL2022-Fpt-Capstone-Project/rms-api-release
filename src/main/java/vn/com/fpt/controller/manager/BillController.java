@@ -121,9 +121,8 @@ public class BillController {
 
     @Operation(summary = "Hiển thị tất cả số tiền chi trong tòa")
     @GetMapping("/money-source/out")
-    public ResponseEntity<BaseResponse<List<MoneyOutResponse>>> listMoneyOut(@RequestParam(required = false) Long groupId,
+    public ResponseEntity<BaseResponse<List<MoneyOutResponse>>> listMoneyOut(@RequestParam(required = false) List<Long> groupId,
                                                                              @RequestParam(required = false) String time) {
-        //todo
         return AppResponse.success(billService.listMoneySourceOut(groupId, time));
     }
 
@@ -138,19 +137,5 @@ public class BillController {
     public ResponseEntity<BaseResponse<String>> deleteMoneyOut(@PathVariable Long id) {
         billService.deleteMoneyOut(id);
         return AppResponse.success("Xóa thành công!!");
-    }
-
-    @Operation(summary = "Chỉnh sửa tiền chi")
-    @PutMapping("/money-source/out/update/{id}")
-    public ResponseEntity<BaseResponse<AddMoneySourceRequest>> updateMoneyOut(@PathVariable Long id,
-                                                                              @RequestBody AddMoneySourceRequest request){
-        return AppResponse.success(billService.updateMoneyOut(id, request));
-    }
-
-    @Operation(summary = "Xem chi tiết tiền chi")
-    @GetMapping("/money-source/out/{id}")
-    public ResponseEntity<BaseResponse<MoneyOutResponse>> moneyOutDetail(@PathVariable Long id) {
-        //todo
-        return null;
     }
 }

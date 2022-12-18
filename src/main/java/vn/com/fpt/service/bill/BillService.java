@@ -44,5 +44,5 @@ public interface BillService {
 
     AddMoneySourceRequest updateMoneyOut(Long id, AddMoneySourceRequest request);
 
-    List<MoneyOutResponse> listMoneySourceOut(Long groupId, String time);
+    List<MoneyOutResponse> listMoneySourceOut(List<Long> groupId, String time);
 }

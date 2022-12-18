@@ -560,8 +560,32 @@ public class BillServiceImpl implements BillService {
     }
 
     @Override
-    public List<MoneyOutResponse> listMoneySourceOut(Long groupId, String time) {
-        return null;
+    public List<MoneyOutResponse> listMoneySourceOut(List<Long> groupId, String time) {
+        List<MoneySource> moneySourceOut = new ArrayList<>(Collections.emptyList());
+        if (time != null) {
+            var localDate = toLocalDate(parse(time));
+            int month = localDate.getMonthValue();
+            int year = localDate.getYear();
+            moneySourceOut.addAll(moneySourceRepo.findAllByKeyInAndMoneyType(groupId, "OUT").stream().filter(
+                    e -> toLocalDate(e.getMoneySourceTime()).getYear() == year && toLocalDate(e.getMoneySourceTime()).getMonthValue() == month
+            ).toList());
+        } else {
+            moneySourceOut.addAll(moneySourceRepo.findAllByKeyInAndMoneyType(groupId, "OUT"));
+        }
+        List<MoneyOutResponse> response = new ArrayList<>(Collections.emptyList());
+        moneySourceOut.forEach(e -> {
+            MoneyOutResponse mos = new MoneyOutResponse();
+            subMoneySourceRepo.findAllByMoneySourceId(e.getId()).forEach(x -> {
+                        mos.setTime(format(e.getMoneySourceTime(), "yyyy-MM-dd"));
+                        mos.setGroupName(groupService.getGroup(e.getKey()).getGroupName());
+                        if (x.getType().equals("SERVICE")) mos.setServiceMoney(x.getMoney());
+                        if (x.getType().equals("GROUP")) mos.setRoomGroupMoney(x.getMoney());
+                        if (x.getType().equals("OTHER")) mos.setOtherMoney(x.getMoney());
+                    }
+            );
+            response.add(mos);
+        });
+        return response;
     }
 
 }
