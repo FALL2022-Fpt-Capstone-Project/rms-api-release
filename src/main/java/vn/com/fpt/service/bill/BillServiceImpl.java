@@ -573,6 +573,20 @@ public class BillServiceImpl implements BillService {
             moneySourceOut.addAll(moneySourceRepo.findAllByKeyInAndMoneyType(groupId, "OUT"));
         }
         List<MoneyOutResponse> response = new ArrayList<>(Collections.emptyList());
+        if (moneySourceOut.isEmpty()) {
+            MoneyOutResponse mos = new MoneyOutResponse();
+            groupId.forEach(e -> {
+                mos.setGroupId(e);
+                mos.setGroupName(groupService.getGroup(e).getGroupName());
+                mos.setTime("");
+                mos.setRoomGroupMoney(0.0);
+                mos.setServiceMoney(0.0);
+                mos.setOtherMoney(0.0);
+                mos.setTotalMoney(0.0);
+                response.add(mos);
+            });
+            return response;
+        }
         moneySourceOut.forEach(e -> {
             MoneyOutResponse mos = new MoneyOutResponse();
             subMoneySourceRepo.findAllByMoneySourceId(e.getId()).forEach(x -> {
