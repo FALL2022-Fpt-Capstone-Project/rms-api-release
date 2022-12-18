@@ -484,7 +484,7 @@ public class BillServiceImpl implements BillService {
         response.setDescription(recurringBill.getDescription());
         response.setTotalServiceMoney(serviceBill.stream().mapToDouble(ServiceBill::getServiceBillTotalMoney).sum());
         response.setTotalRoomMoney(roomBill.getRoomTotalMoney() == null ? 0 : roomBill.getRoomTotalMoney());
-        response.setTotalMoney(serviceBill.stream().mapToDouble(ServiceBill::getServiceBillTotalMoney).sum() + roomBill.getRoomTotalMoney());
+        response.setTotalMoney(serviceBill.stream().mapToDouble(ServiceBill::getServiceBillTotalMoney).sum() + (roomBill.getRoomTotalMoney() == null ? 0 : roomBill.getRoomTotalMoney()));
         response.setServiceBill(serviceBill);
         response.setRoomBill(roomBill);
         response.setRenter(renterService.renter(contract.getRenters()));
@@ -557,6 +557,11 @@ public class BillServiceImpl implements BillService {
         moneySourceRepo.save(moneySource);
         subMoneySourceRepo.saveAll(subMoneySource);
         return request;
+    }
+
+    @Override
+    public List<MoneyOutResponse> listMoneySourceOut(Long groupId, String time) {
+        return null;
     }
 
 }

@@ -124,7 +124,7 @@ public class BillController {
     public ResponseEntity<BaseResponse<List<MoneyOutResponse>>> listMoneyOut(@RequestParam(required = false) Long groupId,
                                                                              @RequestParam(required = false) String time) {
         //todo
-        return null;
+        return AppResponse.success(billService.listMoneySourceOut(groupId, time));
     }
 
     @Operation(summary = "Thêm tiền chi trong tháng cho nhóm phòng")
