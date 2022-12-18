@@ -1,5 +1,8 @@
 package vn.com.fpt.service.bill;
 
+import org.springframework.http.ResponseEntity;
+import vn.com.fpt.common.response.BaseResponse;
+import vn.com.fpt.requests.AddMoneySourceRequest;
 import vn.com.fpt.requests.PreviewAddBillRequest;
 import vn.com.fpt.responses.PayBillInformationResponse;
 import vn.com.fpt.entity.RecurringBill;
@@ -34,4 +37,10 @@ public interface BillService {
     BillDetailResponse billDetail(Long recurringBillId);
 
     List<RecurringBill> listRoomBillHistory(Long groupId);
+
+    AddMoneySourceRequest addMoneyOut(AddMoneySourceRequest request);
+
+    void deleteMoneyOut(Long id);
+
+    AddMoneySourceRequest updateMoneyOut(Long id, AddMoneySourceRequest request);
 }

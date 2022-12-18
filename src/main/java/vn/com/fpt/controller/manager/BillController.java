@@ -12,6 +12,7 @@ import vn.com.fpt.common.response.AppResponse;
 import vn.com.fpt.common.response.BaseResponse;
 import vn.com.fpt.entity.RecurringBill;
 import vn.com.fpt.requests.AddBillRequest;
+import vn.com.fpt.requests.AddMoneySourceRequest;
 import vn.com.fpt.requests.PreviewAddBillRequest;
 import vn.com.fpt.responses.*;
 import vn.com.fpt.service.bill.BillService;
@@ -35,7 +36,7 @@ public class BillController {
     @GetMapping("/room/bill-status")
     public ResponseEntity<BaseResponse<List<BillRoomStatusResponse>>> listNotBilled(@RequestParam Integer paymentCycle,
                                                                                     @RequestParam Long groupId) {
-        if(paymentCycle!=null){
+        if (paymentCycle != null) {
             Pattern pattern = Pattern.compile("(0|15|30)", Pattern.CASE_INSENSITIVE);
             if (!pattern.matcher(paymentCycle.toString()).matches())
                 throw new BusinessException("Kỳ hạn thanh toán hóa đơn không hợp lệ");
@@ -53,7 +54,7 @@ public class BillController {
     @GetMapping("/room/list/{groupId}")
     public ResponseEntity<BaseResponse<List<ListRoomWithBillStatusResponse>>> listRoomWithBill(@PathVariable Long groupId,
                                                                                                @RequestParam(required = false, defaultValue = "0") Integer paymentCycle) {
-        if(paymentCycle!=null){
+        if (paymentCycle != null) {
             Pattern pattern = Pattern.compile("(0|15|30)", Pattern.CASE_INSENSITIVE);
             if (!pattern.matcher(paymentCycle.toString()).matches())
                 throw new BusinessException("Kỳ hạn thanh toán hóa đơn không hợp lệ");
@@ -114,7 +115,42 @@ public class BillController {
 
     @Operation(summary = "Hiển thị chi tiết lịch sử hóa đơn của các phòng")
     @GetMapping("/room/histories")
-    public ResponseEntity<BaseResponse<List<RecurringBill>>> listRoomBillHistory(@RequestParam(required = false) Long groupId){
+    public ResponseEntity<BaseResponse<List<RecurringBill>>> listRoomBillHistory(@RequestParam(required = false) Long groupId) {
         return AppResponse.success(billService.listRoomBillHistory(groupId));
+    }
+
+    @Operation(summary = "Hiển thị tất cả số tiền chi trong tòa")
+    @GetMapping("/money-source/out")
+    public ResponseEntity<BaseResponse<List<MoneyOutResponse>>> listMoneyOut(@RequestParam(required = false) Long groupId,
+                                                                             @RequestParam(required = false) String time) {
+        //todo
+        return null;
+    }
+
+    @Operation(summary = "Thêm tiền chi trong tháng cho nhóm phòng")
+    @PostMapping("/money-source/out/add")
+    public ResponseEntity<BaseResponse<AddMoneySourceRequest>> addMoneyOut(@RequestBody AddMoneySourceRequest request) {
+        return AppResponse.success(billService.addMoneyOut(request));
+    }
+
+    @Operation(summary = "Xóa tiền chi")
+    @DeleteMapping("/money-source/out/delete/{id}")
+    public ResponseEntity<BaseResponse<String>> deleteMoneyOut(@PathVariable Long id) {
+        billService.deleteMoneyOut(id);
+        return AppResponse.success("Xóa thành công!!");
+    }
+
+    @Operation(summary = "Chỉnh sửa tiền chi")
+    @PutMapping("/money-source/out/update/{id}")
+    public ResponseEntity<BaseResponse<AddMoneySourceRequest>> updateMoneyOut(@PathVariable Long id,
+                                                                              @RequestBody AddMoneySourceRequest request){
+        return AppResponse.success(billService.updateMoneyOut(id, request));
+    }
+
+    @Operation(summary = "Xem chi tiết tiền chi")
+    @GetMapping("/money-source/out/{id}")
+    public ResponseEntity<BaseResponse<MoneyOutResponse>> moneyOutDetail(@PathVariable Long id) {
+        //todo
+        return null;
     }
 }

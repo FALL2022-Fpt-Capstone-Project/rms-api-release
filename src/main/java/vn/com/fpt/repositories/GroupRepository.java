@@ -9,5 +9,7 @@ import java.util.List;
 
 @Repository
 public interface GroupRepository extends JpaRepository<RoomGroups, Long>, JpaSpecificationExecutor<RoomGroups> {
-    List<RoomGroups> findAllByIdNot(Long groupId);
+    List<RoomGroups> findAllByIdNotAndIsDisableIsFalse(Long groupId);
+
+    List<RoomGroups> findAllByIsDisableIsFalse();
 }

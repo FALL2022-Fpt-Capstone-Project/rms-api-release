@@ -8,4 +8,6 @@ import vn.com.fpt.entity.MoneySource;
 @Repository
 public interface MoneySourceRepository extends JpaRepository<MoneySource, Long>, JpaSpecificationExecutor<MoneySource> {
 
+    MoneySource findAllByKeyAndMoneyType(Long id, String moneyType);
+
 }

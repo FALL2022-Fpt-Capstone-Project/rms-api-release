@@ -174,7 +174,7 @@ public class GroupServiceImpl implements GroupService {
         ).getId();
 
         //Thêm mới 1 nhóm
-        var existedGroup = groupRepository.findAll();
+        var existedGroup = groupRepository.findAllByIsDisableIsFalse();
         if (checkDuplicateGroupName(existedGroup, request.getGroupName()))
             throw new BusinessException(DUPLICATE_NAME, "Tên tòa bị trùng: " + request.getGroupName());
         var group = groupRepository.save(RoomGroups.add(
@@ -248,7 +248,7 @@ public class GroupServiceImpl implements GroupService {
                 request.getAddressMoreDetail(),
                 operator);
         addressRepository.save(newAddress);
-        if (checkDuplicateGroupName(groupRepository.findAllByIdNot(groupId), request.getGroupName()))
+        if (checkDuplicateGroupName(groupRepository.findAllByIdNotAndIsDisableIsFalse(groupId), request.getGroupName()))
             throw new BusinessException(DUPLICATE_NAME, "Tên tòa bị trùng: " + request.getGroupName());
         var newGroup = RoomGroups.modify(
                 oldGroup,

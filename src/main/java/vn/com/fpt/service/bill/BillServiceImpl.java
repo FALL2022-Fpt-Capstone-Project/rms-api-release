@@ -14,6 +14,7 @@ import vn.com.fpt.model.HandOverGeneralServiceDTO;
 import vn.com.fpt.model.RoomContractDTO;
 import vn.com.fpt.repositories.*;
 import vn.com.fpt.requests.AddBillRequest;
+import vn.com.fpt.requests.AddMoneySourceRequest;
 import vn.com.fpt.requests.GenerateBillRequest;
 import vn.com.fpt.requests.PreviewAddBillRequest;
 import vn.com.fpt.responses.*;
@@ -48,6 +49,8 @@ public class BillServiceImpl implements BillService {
     private final ServiceBillRepository serviceBillRepo;
     private final RoomBillRepository roomBillRepo;
     private final TableLogComponent tableLogComponent;
+
+    private final SubMoneySourceRepository subMoneySourceRepo;
 
 
     @Override
@@ -163,51 +166,40 @@ public class BillServiceImpl implements BillService {
             }
             // tạo hóa đơn dịch vụ
             Double totalMoneyService = 0.0;
-
+            // tạo hóa đơn định kì
+            var var2 = recurringBillRepo.save(
+                    RecurringBill.add(
+                            abr.getRoomId(),
+                            roomInfor.getRoomName(),
+                            roomInfor.getGroupId(),
+                            roomInfor.getGroupContractId(),
+                            roomInfor.getContractId(),
+                            abr.getTotalServiceMoney() + abr.getTotalRoomMoney(),
+                            "Hóa đơn phòng " + roomInfor.getRoomName() + " tháng " + currentMonth + "/" + currentYear,
+                            false,
+                            true,
+                            "IN",
+                            parse(abr.getPaymentTerm()),
+                            parse(abr.getCreatedTime()),
+                            DateUtils.monthsBetween(now(), contractInfor.getContractStartDate()) % contractInfor.getContractBillCycle() == 0,
+                            roomBill.getRoomId()
+                    )
+            );
+            //lưu vết
+            tableLogComponent.saveRecurringBillHistory(List.of(var2));
             if (!abr.getServiceBill().isEmpty()) {
                 List<ServiceBill> serviceBills = new ArrayList<>(Collections.emptyList());
                 for (AddBillRequest.ServiceBill sbr : abr.getServiceBill()) {
-                    Double serviceTotalMoney;
                     if (Objects.equals(sbr.getServiceId(), SERVICE_ELECTRIC)) {
                         newElectricIndex = roomInfor.getRoomCurrentElectricIndex() + sbr.getServiceIndex();
-                        serviceTotalMoney = sbr.getServiceIndex() * sbr.getServicePrice();
-                    } else {
-                        serviceTotalMoney = sbr.getServiceTotalMoney();
-                    }
-                    if (Objects.equals(sbr.getServiceId(), SERVICE_WATER)) {
+                    } else if (Objects.equals(sbr.getServiceId(), SERVICE_WATER)) {
                         newWaterIndex = roomInfor.getRoomCurrentWaterIndex() + sbr.getServiceIndex();
-                        serviceTotalMoney = sbr.getServiceIndex() * sbr.getServicePrice();
-
-                    } else {
-                        serviceTotalMoney = sbr.getServiceTotalMoney();
                     }
                     if (newElectricIndex != null && newWaterIndex != null) {
                         roomService.setServiceIndex(roomInfor.getId(), newElectricIndex, newWaterIndex, Operator.operator());
                         newWaterIndex = null;
                         newElectricIndex = null;
                     }
-                    // tạo hóa đơn định kì
-                    var var2 = recurringBillRepo.save(
-                            RecurringBill.add(
-                                    abr.getRoomId(),
-                                    roomInfor.getRoomName(),
-                                    roomInfor.getGroupId(),
-                                    roomInfor.getGroupContractId(),
-                                    roomInfor.getContractId(),
-                                    totalMoneyService + abr.getTotalRoomMoney(),
-                                    "Hóa đơn phòng " + roomInfor.getRoomName() + " tháng " + currentMonth + "/" + currentYear,
-                                    false,
-                                    true,
-                                    "IN",
-                                    parse(abr.getPaymentTerm()),
-                                    parse(abr.getCreatedTime()),
-                                    DateUtils.monthsBetween(now(), contractInfor.getContractStartDate()) % contractInfor.getContractBillCycle() == 0,
-                                    roomBill.getRoomId()
-
-                            )
-                    );
-                    //lưu vết
-                    tableLogComponent.saveRecurringBillHistory(List.of(var2));
 
                     serviceBills.add(ServiceBill.add(
                                     sbr.getServiceId(),
@@ -218,14 +210,12 @@ public class BillServiceImpl implements BillService {
                                     abr.getRoomId(),
                                     roomInfor.getGroupContractId(),
                                     roomInfor.getContractId(),
-                                    serviceTotalMoney,
+                                    sbr.getServiceTotalMoney(),
                                     parse(abr.getCreatedTime()),
                                     var2.getId(),
                                     Operator.operator()
                             )
                     );
-                    totalMoneyService += serviceTotalMoney;
-
                 }
                 var var1 = serviceBillRepo.saveAll(serviceBills);
                 // lưu vết
@@ -343,7 +333,8 @@ public class BillServiceImpl implements BillService {
     @Override
     public List<RecurringBill> roomBillHistory(Long roomId) {
         var response = recurringBillRepo.findAllByRoomId(roomId);
-        response.forEach(e -> e.setRoomName(groupService.getGroup(response.get(0).getGroupId()).getGroupName()));
+        var roomName = roomService.room(roomId).getRoomName();
+        response.forEach(e -> e.setRoomName(roomName));
         return response;
     }
 
@@ -506,6 +497,66 @@ public class BillServiceImpl implements BillService {
             return recurringBillRepo.findAll();
         }
         return recurringBillRepo.findAllByGroupId(groupId);
+    }
+
+    @Override
+    public AddMoneySourceRequest addMoneyOut(AddMoneySourceRequest request) {
+        var group = groupService.getGroup(request.getGroupId());
+        var addedMoneyOut = moneySourceRepo.save(
+                MoneySource.of(
+                        "Tiền cho cho tòa" + group.getGroupName(),
+                        request.getOtherMoney() + request.getServiceMoney() + request.getRoomGroupMoney(),
+                        "OUT",
+                        parse(request.getTime()),
+                        group.getId(),
+                        null
+                )
+        );
+        List<SubMoneySource> subMoneySources = List.of(
+                new SubMoneySource(
+                        request.getRoomGroupMoney(),
+                        addedMoneyOut.getId(),
+                        "GROUP"),
+                new SubMoneySource(
+                        request.getServiceMoney(),
+                        addedMoneyOut.getId(),
+                        "SERVICE"),
+                new SubMoneySource(
+                        request.getOtherMoney(),
+                        addedMoneyOut.getId(),
+                        "OTHER")
+        );
+        subMoneySourceRepo.saveAll(subMoneySources);
+        return request;
+    }
+
+    @Override
+    @Transactional
+    public void deleteMoneyOut(Long id) {
+        moneySourceRepo.deleteById(id);
+        subMoneySourceRepo.deleteAll(subMoneySourceRepo.findAllByMoneySourceId(id));
+    }
+
+    @Override
+    public AddMoneySourceRequest updateMoneyOut(Long id, AddMoneySourceRequest request) {
+        var moneySource = moneySourceRepo.findById(id).get();
+        var subMoneySource = subMoneySourceRepo.findAllByMoneySourceId(id);
+        moneySource.setTotalMoney(request.getOtherMoney() + request.getRoomGroupMoney() + request.getServiceMoney());
+        moneySource.setMoneySourceTime(parse(request.getTime()));
+        subMoneySource.forEach(e -> {
+            if (e.getType().equals("SERVICE")) {
+                e.setMoney(request.getServiceMoney());
+            }
+            if (e.getType().equals("OTHER")) {
+                e.setMoney(request.getOtherMoney());
+            }
+            if (e.getType().equals("GROUP")) {
+                e.setMoney(request.getRoomGroupMoney());
+            }
+        });
+        moneySourceRepo.save(moneySource);
+        subMoneySourceRepo.saveAll(subMoneySource);
+        return request;
     }
 
 }
