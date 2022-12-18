@@ -483,7 +483,7 @@ public class BillServiceImpl implements BillService {
         response.setPaymentTerm(recurringBill.getPaymentTerm());
         response.setDescription(recurringBill.getDescription());
         response.setTotalServiceMoney(serviceBill.stream().mapToDouble(ServiceBill::getServiceBillTotalMoney).sum());
-        response.setTotalRoomMoney(roomBill.getRoomTotalMoney());
+        response.setTotalRoomMoney(roomBill.getRoomTotalMoney() == null ? 0 : roomBill.getRoomTotalMoney());
         response.setTotalMoney(serviceBill.stream().mapToDouble(ServiceBill::getServiceBillTotalMoney).sum() + roomBill.getRoomTotalMoney());
         response.setServiceBill(serviceBill);
         response.setRoomBill(roomBill);
