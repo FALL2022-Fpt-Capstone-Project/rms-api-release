@@ -6,10 +6,7 @@ import vn.com.fpt.entity.Contracts;
 import vn.com.fpt.entity.RecurringBill;
 import vn.com.fpt.repositories.ContractRepository;
 import vn.com.fpt.repositories.RecurringBillRepository;
-import vn.com.fpt.responses.ListBilledRoomResponse;
-import vn.com.fpt.responses.StatisticalBillResponse;
-import vn.com.fpt.responses.StatisticalBillStatusResponse;
-import vn.com.fpt.responses.StatisticalRoomContractResponse;
+import vn.com.fpt.responses.*;
 import vn.com.fpt.service.bill.BillService;
 import vn.com.fpt.service.contract.ContractService;
 import vn.com.fpt.service.group.GroupService;
@@ -22,6 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import static vn.com.fpt.common.constants.ManagerConstants.SUBLEASE_CONTRACT;
 import static vn.com.fpt.common.constants.SearchOperation.*;
@@ -189,5 +187,25 @@ public class StatisticalServiceImpl implements StatisticalService {
                     );
                 }
         ).toList();
+    }
+
+    @Override
+    public StatisticalRoomStatusResponse statisticalRoomStatus(Long groupId) {
+        var listRoom = roomService.listRoom(groupId, null, null, null, null);
+        StatisticalRoomStatusResponse response = new StatisticalRoomStatusResponse();
+        var totalLeaseRentedRoom = listRoom.stream().filter(e -> e.getGroupContractId() != null && !e.getIsDisable()).toList().size();
+        var totalEmptyRoom = listRoom.stream().filter(e -> e.getContractId() == null && !e.getIsDisable() && e.getGroupContractId() != null).toList().size();
+        var totalRentedRoom = listRoom.stream().filter(e -> e.getContractId() != null && !e.getIsDisable() && e.getGroupContractId() != null).toList().size();
+        if (groupId == null) {
+            response.setGroupId(null);
+            response.setGroupName("all");
+        } else {
+            response.setGroupId(groupId);
+            response.setGroupName(groupService.getGroup(groupId).getGroupName());
+        }
+        response.setTotalRoom(totalLeaseRentedRoom);
+        response.setTotalEmptyRoom(totalEmptyRoom);
+        response.setTotalRentedRoom(totalRentedRoom);
+        return response;
     }
 }

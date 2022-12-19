@@ -15,4 +15,6 @@ public interface StatisticalService {
     StatisticalBillStatusResponse totalMoneyBillStatus(String time, Long groupId, Integer paymentCircle);
 
     List<ListBilledRoomResponse> listBilledRoom(Long groupId, String createdTime);
+
+    StatisticalRoomStatusResponse statisticalRoomStatus(Long groupId);
 }

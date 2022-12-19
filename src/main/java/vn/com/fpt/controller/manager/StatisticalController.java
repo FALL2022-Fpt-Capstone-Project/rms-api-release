@@ -12,11 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.common.response.AppResponse;
 import vn.com.fpt.common.response.BaseResponse;
-import vn.com.fpt.common.utils.DateUtils;
 import vn.com.fpt.responses.*;
 import vn.com.fpt.service.statistical.StatisticalService;
 
-import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -37,6 +35,12 @@ public class StatisticalController {
     public ResponseEntity<BaseResponse<StatisticalRoomContractResponse>> roomContract(@RequestParam(required = false, defaultValue = "1") Long duration,
                                                                                       @RequestParam(required = false) Long groupId) {
         return AppResponse.success(statisticalService.statisticalRoomContract(groupId, duration));
+    }
+
+    @GetMapping("/room/status")
+    @Operation(summary = "Hiển thị số liện thống kê tình trạng của phòng")
+    public ResponseEntity<BaseResponse<StatisticalRoomStatusResponse>> roomStatus(@RequestParam(required = false) Long groupId) {
+        return AppResponse.success(statisticalService.statisticalRoomStatus(groupId));
     }
 
     @GetMapping("/bill/total-money")
@@ -74,7 +78,7 @@ public class StatisticalController {
     @GetMapping("/bill/list-room-billed")
     @Operation(summary = "Hiển thị tổng số phòng đã có hóa đơn")
     public ResponseEntity<BaseResponse<List<ListBilledRoomResponse>>> listBilledRoom(@RequestParam(required = false) Long groupId,
-                                                                                     @RequestParam(required = false) String createdTime){
+                                                                                     @RequestParam(required = false) String createdTime) {
         return AppResponse.success(statisticalService.listBilledRoom(groupId, createdTime));
     }
 }
