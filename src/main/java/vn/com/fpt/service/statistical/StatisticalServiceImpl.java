@@ -1,7 +1,9 @@
 package vn.com.fpt.service.statistical;
 
 import lombok.AllArgsConstructor;;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import vn.com.fpt.common.utils.Operator;
 import vn.com.fpt.entity.Contracts;
 import vn.com.fpt.entity.MoneySource;
 import vn.com.fpt.entity.RecurringBill;
@@ -16,6 +18,7 @@ import vn.com.fpt.service.rooms.RoomService;
 import vn.com.fpt.specification.BaseSpecification;
 import vn.com.fpt.specification.SearchCriteria;
 
+import java.time.ZoneId;
 import java.util.*;
 
 import static vn.com.fpt.common.constants.ManagerConstants.MONTH;
@@ -197,7 +200,7 @@ public class StatisticalServiceImpl implements StatisticalService {
 
         var listCreatedInYear = listContract.stream().filter(e -> toLocalDate(e.getContractStartDate()).getYear() == year && !e.getContractIsDisable()).toList();
 
-        var listEndedInYear = listContract.stream().filter(e -> (toLocalDate(e.getModifiedAt() == null ? now() : e.getModifiedAt()).getYear() == year && e.getContractIsDisable()) || e.getContractEndDate().compareTo(now()) < 0).toList();
+        var listEndedInYear = listContract.stream().filter(e -> toLocalDate(e.getModifiedAt() == null ? now() : e.getModifiedAt()).getYear() == year && e.getContractIsDisable()).toList();
         listEndedInYear.forEach(
                 e -> {
                     if (e.getModifiedAt() == null) e.setModifiedAt(now());
@@ -221,6 +224,21 @@ public class StatisticalServiceImpl implements StatisticalService {
         response.setListByMonth(byMonth);
 
         return response;
+    }
+
+    @Scheduled(cron = "0 * * * * ?")
+    private void extendContract() {
+        var listContract = contractRepo.findAllByContractType(SUBLEASE_CONTRACT).stream().filter(e -> !e.getContractIsDisable() && e.getContractEndDate().compareTo(now()) < 0).toList();
+        if (!listContract.isEmpty()) {
+            listContract.forEach(e -> {
+                var extend = Date.from(toLocalDate(e.getContractEndDate()).plusYears(1L).atStartOfDay(ZoneId.systemDefault()).toInstant());
+                e.setContractEndDate(extend);
+                e.setContractTerm(monthsBetween(e.getContractStartDate(), e.getContractEndDate()));
+                e.setModifiedBy(Operator.operator());
+                e.setModifiedAt(now());
+            });
+            contractRepo.saveAll(listContract);
+        }
     }
 }
 
