@@ -35,4 +35,6 @@ public interface RecurringBillRepository extends JpaRepository<RecurringBill, Lo
 
     List<RecurringBill> findAllByGroupId(Long groupId);
 
+    List<RecurringBill> findAllByIsPaid(boolean isPaid);
+
 }

@@ -12,4 +12,6 @@ public interface MoneySourceRepository extends JpaRepository<MoneySource, Long>,
 
     List<MoneySource> findAllByKeyInAndMoneyType(List<Long> id, String moneyType);
 
+    List<MoneySource> findAllByMoneyType(String type);
+
 }

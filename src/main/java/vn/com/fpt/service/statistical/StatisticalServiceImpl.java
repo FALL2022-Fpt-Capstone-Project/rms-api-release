@@ -3,8 +3,10 @@ package vn.com.fpt.service.statistical;
 import lombok.AllArgsConstructor;;
 import org.springframework.stereotype.Service;
 import vn.com.fpt.entity.Contracts;
+import vn.com.fpt.entity.MoneySource;
 import vn.com.fpt.entity.RecurringBill;
 import vn.com.fpt.repositories.ContractRepository;
+import vn.com.fpt.repositories.MoneySourceRepository;
 import vn.com.fpt.repositories.RecurringBillRepository;
 import vn.com.fpt.responses.*;
 import vn.com.fpt.service.bill.BillService;
@@ -14,13 +16,9 @@ import vn.com.fpt.service.rooms.RoomService;
 import vn.com.fpt.specification.BaseSpecification;
 import vn.com.fpt.specification.SearchCriteria;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
+import java.util.*;
 
+import static vn.com.fpt.common.constants.ManagerConstants.MONTH;
 import static vn.com.fpt.common.constants.ManagerConstants.SUBLEASE_CONTRACT;
 import static vn.com.fpt.common.constants.SearchOperation.*;
 import static vn.com.fpt.common.utils.DateUtils.*;
@@ -39,6 +37,8 @@ public class StatisticalServiceImpl implements StatisticalService {
     private final GroupService groupService;
 
     private final RecurringBillRepository billRepository;
+
+    private final MoneySourceRepository moneySourceRepo;
 
 
     @Override
@@ -97,20 +97,11 @@ public class StatisticalServiceImpl implements StatisticalService {
         }
         int finalMonth = month;
         int finalYear = year;
-        var recurringBill = billService.listRecurringBillByGroupId(groupId).stream().filter(e ->
-                        toLocalDate(
-                                e.getBillCreatedTime()).getMonthValue() == finalMonth
-                                && toLocalDate(e.getBillCreatedTime()).getYear() == finalYear
-                )
-                .toList();
+        var recurringBill = billService.listRecurringBillByGroupId(groupId).stream().filter(e -> toLocalDate(e.getBillCreatedTime()).getMonthValue() == finalMonth && toLocalDate(e.getBillCreatedTime()).getYear() == finalYear).toList();
         if (recurringBill.isEmpty()) return new StatisticalBillResponse(groupId, 0.0, 0.0, paymentCircle, time);
         List<Double> listPaid = recurringBill.stream().filter(e -> e.getIsPaid()).map(RecurringBill::getTotalMoney).toList();
         List<Double> listNeedToPaid = recurringBill.stream().map(RecurringBill::getTotalMoney).toList();
-        return new StatisticalBillResponse(groupId,
-                listNeedToPaid.stream().mapToDouble(e -> e).sum(),
-                listPaid.stream().mapToDouble(e -> e).sum(),
-                paymentCircle,
-                "" + month + "/" + year);
+        return new StatisticalBillResponse(groupId, listNeedToPaid.stream().mapToDouble(e -> e).sum(), listPaid.stream().mapToDouble(e -> e).sum(), paymentCircle, "" + month + "/" + year);
     }
 
     @Override
@@ -136,17 +127,8 @@ public class StatisticalServiceImpl implements StatisticalService {
         }
         int finalMonth = month;
         int finalYear = year;
-        var recurringBill =
-                billService.listRecurringBillByGroupId(groupId).stream().filter(e ->
-                                toLocalDate(
-                                        e.getBillCreatedTime()).getMonthValue() == finalMonth
-                                        && toLocalDate(e.getBillCreatedTime()).getYear() == finalYear
-                        )
-                        .toList();
-        return new StatisticalBillStatusResponse(groupId,
-                recurringBill.size(),
-                recurringBill.stream().filter(e -> e.getIsPaid()).toList().size(),
-                time);
+        var recurringBill = billService.listRecurringBillByGroupId(groupId).stream().filter(e -> toLocalDate(e.getBillCreatedTime()).getMonthValue() == finalMonth && toLocalDate(e.getBillCreatedTime()).getYear() == finalYear).toList();
+        return new StatisticalBillStatusResponse(groupId, recurringBill.size(), recurringBill.stream().filter(e -> e.getIsPaid()).toList().size(), time);
     }
 
     @Override
@@ -158,11 +140,7 @@ public class StatisticalServiceImpl implements StatisticalService {
             if (groupId == null) {
                 recurringBills.addAll(billRepository.findAllByIsPaid(false).stream().filter(e -> toLocalDate(e.getBillCreatedTime()).getMonthValue() == month && toLocalDate(e.getBillCreatedTime()).getYear() == year).toList());
             } else {
-                recurringBills.addAll(billService.listRecurringBillByGroupId(groupId).stream().filter(e ->
-                                !e.getIsPaid() &&
-                                        toLocalDate(e.getBillCreatedTime()).getMonthValue() == month &&
-                                        toLocalDate(e.getBillCreatedTime()).getYear() == year)
-                        .toList());
+                recurringBills.addAll(billService.listRecurringBillByGroupId(groupId).stream().filter(e -> !e.getIsPaid() && toLocalDate(e.getBillCreatedTime()).getMonthValue() == month && toLocalDate(e.getBillCreatedTime()).getYear() == year).toList());
             }
         } else {
             if (groupId == null) {
@@ -172,21 +150,11 @@ public class StatisticalServiceImpl implements StatisticalService {
             }
         }
 
-        return recurringBills.stream().map(
-                e -> {
-                    var room = roomService.room(e.getRoomId());
-                    var group = groupService.getGroup(e.getGroupId());
-                    return new ListBilledRoomResponse(
-                            room.getId(),
-                            room.getRoomName(),
-                            groupId,
-                            group.getGroupName(),
-                            format(e.getBillCreatedTime(), DATE_FORMAT_3),
-                            e.getPaymentTerm1(),
-                            e.getTotalMoney()
-                    );
-                }
-        ).toList();
+        return recurringBills.stream().map(e -> {
+            var room = roomService.room(e.getRoomId());
+            var group = groupService.getGroup(e.getGroupId());
+            return new ListBilledRoomResponse(room.getId(), room.getRoomName(), groupId, group.getGroupName(), format(e.getBillCreatedTime(), DATE_FORMAT_3), e.getPaymentTerm1(), e.getTotalMoney());
+        }).toList();
     }
 
     @Override
@@ -208,4 +176,45 @@ public class StatisticalServiceImpl implements StatisticalService {
         response.setTotalRentedRoom(totalRentedRoom);
         return response;
     }
+
+    @Override
+    public List<StatisticalChartRevenueResponse> chartRevenue(Integer year) {
+        var allBill = billRepository.findAllByIsPaid(true);
+        var moneySourceOut = moneySourceRepo.findAllByMoneyType("OUT");
+        List<StatisticalChartRevenueResponse> response = new ArrayList<>(Collections.emptyList());
+        for (int i : MONTH) {
+            var moneyIn = allBill.stream().filter(e -> toLocalDate(e.getBillCreatedTime()).getMonthValue() == i && toLocalDate(e.getBillCreatedTime()).getYear() == year).mapToDouble(RecurringBill::getTotalMoney).sum();
+            var moneyOut = moneySourceOut.stream().filter(e -> toLocalDate(e.getMoneySourceTime()).getMonthValue() == i && toLocalDate(e.getMoneySourceTime()).getYear() == year).mapToDouble(MoneySource::getTotalMoney).sum();
+            response.add(new StatisticalChartRevenueResponse(year, i, moneyIn - moneyOut));
+        }
+
+        return response;
+    }
+
+    @Override
+    public StatisticalChartContractResponse chartContract(Integer year) {
+        var listContract = contractRepo.findAllByContractType(SUBLEASE_CONTRACT);
+
+        var listCreatedInYear = listContract.stream().filter(e -> toLocalDate(e.getContractStartDate()).getYear() == year && !e.getContractIsDisable()).toList();
+
+        var listEndedInYear = listContract.stream().filter(e -> (toLocalDate(e.getModifiedAt() == null ? now() : e.getModifiedAt()).getYear() == year && e.getContractIsDisable()) || e.getContractEndDate().compareTo(now()) < 0).toList();
+
+        List<StatisticalChartContractResponse.StatisticalContract> byMonth = new ArrayList<>(Collections.emptyList());
+        for (int i : MONTH) {
+            var statisticalContract = new StatisticalChartContractResponse.StatisticalContract();
+            statisticalContract.setMonth(i);
+            statisticalContract.setYear(year);
+            statisticalContract.setTotalCreated(listCreatedInYear.stream().filter(e -> toLocalDate(e.getContractStartDate()).getMonthValue() == i).toList().size());
+
+            byMonth.add(statisticalContract);
+        }
+
+        StatisticalChartContractResponse response = new StatisticalChartContractResponse();
+        response.setTotalAllEnded(listEndedInYear.size());
+        response.setTotalAllCreated(listCreatedInYear.size());
+        response.setListByMonth(byMonth);
+
+        return response;
+    }
 }
+

@@ -23,6 +23,8 @@ public interface ContractRepository extends JpaRepository<Contracts, Long>, JpaS
 
     List<Contracts> findAllByRentersIn(List<Long> renterId);
 
+    List<Contracts> findAllByContractType(Integer contractType);
+
     @Query("SELECT DISTINCT c.rackRenters FROM Contracts c WHERE c.groupId = :groupId AND c.contractType = 0")
     Long getRackRenterByGroupId(@Param("groupId") Long groupId);
 

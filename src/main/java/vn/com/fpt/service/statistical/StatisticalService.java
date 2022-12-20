@@ -17,4 +17,8 @@ public interface StatisticalService {
     List<ListBilledRoomResponse> listBilledRoom(Long groupId, String createdTime);
 
     StatisticalRoomStatusResponse statisticalRoomStatus(Long groupId);
+
+    List<StatisticalChartRevenueResponse> chartRevenue(Integer year);
+
+    StatisticalChartContractResponse chartContract(Integer year);
 }

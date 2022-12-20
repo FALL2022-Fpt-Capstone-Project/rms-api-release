@@ -59,6 +59,8 @@ public abstract class ManagerConstants {
 
     public static final Boolean REPRESENT = true;
 
+    public static final int[] MONTH = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+
     public static Boolean ADDITIONAL_ASSETS(Long id) {
         if (Objects.isNull(id)) return false;
         return id < 0;

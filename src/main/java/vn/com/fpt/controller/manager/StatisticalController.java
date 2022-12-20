@@ -13,11 +13,14 @@ import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.common.response.AppResponse;
 import vn.com.fpt.common.response.BaseResponse;
 import vn.com.fpt.responses.*;
+import vn.com.fpt.responses.StatisticalChartRevenueResponse;
 import vn.com.fpt.service.statistical.StatisticalService;
 
 import java.util.List;
 import java.util.regex.Pattern;
 
+import static vn.com.fpt.common.utils.DateUtils.now;
+import static vn.com.fpt.common.utils.DateUtils.toLocalDate;
 import static vn.com.fpt.configs.AppConfigs.*;
 
 @SecurityRequirement(name = "BearerAuth")
@@ -80,5 +83,23 @@ public class StatisticalController {
     public ResponseEntity<BaseResponse<List<ListBilledRoomResponse>>> listBilledRoom(@RequestParam(required = false) Long groupId,
                                                                                      @RequestParam(required = false) String createdTime) {
         return AppResponse.success(statisticalService.listBilledRoom(groupId, createdTime));
+    }
+
+    @GetMapping("/chart/revenue")
+    @Operation(summary = "Dữ liệu cho biểu đồ thống kê doanh thu theo tháng")
+    public ResponseEntity<BaseResponse<List<StatisticalChartRevenueResponse>>> chartRevenue(@RequestParam(required = false) Integer year) {
+        if (year == null) {
+            year = toLocalDate(now()).getYear();
+        }
+        return AppResponse.success(statisticalService.chartRevenue(year));
+    }
+
+    @GetMapping("/chart/room-contract")
+    @Operation(summary = "Dữ liệu cho biểu đồ thống kê hợp đồng phòng theo tháng")
+    public ResponseEntity<BaseResponse<StatisticalChartContractResponse>> chartRoomContract(@RequestParam(required = false) Integer year) {
+        if (year == null) {
+            year = toLocalDate(now()).getYear();
+        }
+        return AppResponse.success(statisticalService.chartContract(year));
     }
 }
