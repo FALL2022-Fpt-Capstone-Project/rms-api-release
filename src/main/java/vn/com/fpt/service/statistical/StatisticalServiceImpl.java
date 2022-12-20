@@ -205,6 +205,7 @@ public class StatisticalServiceImpl implements StatisticalService {
             statisticalContract.setMonth(i);
             statisticalContract.setYear(year);
             statisticalContract.setTotalCreated(listCreatedInYear.stream().filter(e -> toLocalDate(e.getContractStartDate()).getMonthValue() == i).toList().size());
+            statisticalContract.setTotalEnded(listEndedInYear.stream().filter(e -> toLocalDate(e.getModifiedAt()).getMonthValue() == i).toList().size());
 
             byMonth.add(statisticalContract);
         }
