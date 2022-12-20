@@ -198,6 +198,11 @@ public class StatisticalServiceImpl implements StatisticalService {
         var listCreatedInYear = listContract.stream().filter(e -> toLocalDate(e.getContractStartDate()).getYear() == year && !e.getContractIsDisable()).toList();
 
         var listEndedInYear = listContract.stream().filter(e -> (toLocalDate(e.getModifiedAt() == null ? now() : e.getModifiedAt()).getYear() == year && e.getContractIsDisable()) || e.getContractEndDate().compareTo(now()) < 0).toList();
+        listEndedInYear.forEach(
+                e -> {
+                    if (e.getModifiedAt() == null) e.setModifiedAt(now());
+                }
+        );
 
         List<StatisticalChartContractResponse.StatisticalContract> byMonth = new ArrayList<>(Collections.emptyList());
         for (int i : MONTH) {
