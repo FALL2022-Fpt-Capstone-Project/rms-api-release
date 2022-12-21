@@ -183,7 +183,7 @@ public class BillServiceImpl implements BillService {
                             parse(abr.getPaymentTerm()),
                             parse(abr.getCreatedTime()),
                             DateUtils.monthsBetween(now(), contractInfor.getContractStartDate()) % contractInfor.getContractBillCycle() == 0,
-                            roomBill.getRoomId()
+                            roomBill.getId()
                     )
             );
             //lưu vết
