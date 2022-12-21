@@ -243,7 +243,7 @@ public class BillServiceImpl implements BillService {
                 null
         ).stream().filter(e -> e.getContractId() != null).toList();
         List<RoomGroups> roomGroups = new ArrayList<>();
-        if (groupId != null) {
+        if (groupId == null) {
             roomGroups.addAll(groupRepository.findAll());
         } else {
             roomGroups.add(groupService.getGroup(groupId));
