@@ -483,8 +483,8 @@ public class ContractServiceImpl implements ContractService {
             var room = roomService.room(e.getRoomId());
             List<HandOverGeneralServiceDTO> listService = new ArrayList<>();
             List<GeneralServiceDTO> list = servicesService.listGeneralServiceByGroupId(e.getGroupId());
-            var water = list.stream().filter(x -> x.getServiceId() == (BigInteger.valueOf(SERVICE_WATER))).findAny().get();
-            var electrict = list.stream().filter(z -> z.getServiceId() == (BigInteger.valueOf(SERVICE_ELECTRIC))).findAny().get();
+            var water = list.stream().filter(x -> x.getServiceId() == (BigInteger.valueOf(SERVICE_WATER))).findAny().orElse(new GeneralServiceDTO());
+            var electrict = list.stream().filter(z -> z.getServiceId() == (BigInteger.valueOf(SERVICE_ELECTRIC))).findAny().orElse(new GeneralServiceDTO());
 
             HandOverGeneralServiceDTO water1 = new HandOverGeneralServiceDTO();
             water1.setServiceId(water.getServiceId());
