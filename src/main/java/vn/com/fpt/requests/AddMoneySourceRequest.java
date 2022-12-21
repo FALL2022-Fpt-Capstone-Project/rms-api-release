@@ -20,4 +20,6 @@ public class AddMoneySourceRequest {
     private Double serviceMoney;
     private Double otherMoney;
 
+    private String otherMoneyNote;
+
 }

@@ -34,4 +34,7 @@ public class SubMoneySource extends BaseEntity {
     @Column(name = "type")
     private String type;
 
+    @Column(name = "note")
+    private String note;
+
 }

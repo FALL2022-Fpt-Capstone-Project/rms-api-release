@@ -524,15 +524,18 @@ public class BillServiceImpl implements BillService {
                 new SubMoneySource(
                         request.getRoomGroupMoney(),
                         addedMoneyOut.getId(),
-                        "GROUP"),
+                        "GROUP",
+                        null),
                 new SubMoneySource(
                         request.getServiceMoney(),
                         addedMoneyOut.getId(),
-                        "SERVICE"),
+                        "SERVICE",
+                        null),
                 new SubMoneySource(
                         request.getOtherMoney(),
                         addedMoneyOut.getId(),
-                        "OTHER")
+                        "OTHER",
+                        request.getOtherMoneyNote())
         );
         subMoneySourceRepo.saveAll(subMoneySources);
         return request;
@@ -557,6 +560,7 @@ public class BillServiceImpl implements BillService {
             }
             if (e.getType().equals("OTHER")) {
                 e.setMoney(request.getOtherMoney());
+                e.setNote(request.getOtherMoneyNote());
             }
             if (e.getType().equals("GROUP")) {
                 e.setMoney(request.getRoomGroupMoney());
