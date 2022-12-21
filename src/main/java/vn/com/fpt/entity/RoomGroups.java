@@ -77,6 +77,7 @@ public class RoomGroups extends BaseEntity {
         var group = of(name, description, old.getAddress());
 
         //fetch
+        group.setId(old.getId());
         group.setCreatedAt(old.getCreatedAt());
         group.setCreatedBy(old.getCreatedBy());
         group.setIsDisable(false);
