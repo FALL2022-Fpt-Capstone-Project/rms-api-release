@@ -51,7 +51,7 @@ public class BillController {
     }
 
     @Operation(summary = "Danh trang thái hóa đơn của các phòng theo tòa")
-    @GetMapping("/room/list/{groupId}")
+    @GetMapping("/room/list")
     public ResponseEntity<BaseResponse<List<ListRoomWithBillStatusResponse>>> listRoomWithBill(@RequestParam(required = false) Long groupId,
                                                                                                @RequestParam(required = false, defaultValue = "0") Integer paymentCycle) {
         if (paymentCycle != null) {
