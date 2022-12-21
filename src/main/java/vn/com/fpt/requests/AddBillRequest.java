@@ -26,7 +26,7 @@ public class AddBillRequest {
     private String paymentTerm;
     @NotBlank(message = "created_time không được để trống")
     private String createdTime;
-    @NotBlank(message = "service_bill không được để trống")
+
     private List<ServiceBill> serviceBill;
 
     @Getter
@@ -35,15 +35,15 @@ public class AddBillRequest {
     @NoArgsConstructor
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class ServiceBill {
-        @NotBlank(message = "service_id không được để trống")
+
         private Long serviceId;
-        @NotBlank(message = "service_type không được để trống")
+
         private Long serviceType;
-        @NotBlank(message = "service_price không được để trống")
+
         private Double servicePrice;
-        @NotBlank(message = "service_index không được để trống")
+
         private Integer serviceIndex;
-        @NotBlank(message = "service_total_money không được để trống")
+
         private Double serviceTotalMoney;
     }
 }

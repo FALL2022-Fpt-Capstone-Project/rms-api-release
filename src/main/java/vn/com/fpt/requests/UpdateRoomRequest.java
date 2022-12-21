@@ -16,7 +16,6 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class UpdateRoomRequest {
-    @NotBlank(message = "Id phòng không được để trống")
     private Long roomId;
 
     private String roomName;

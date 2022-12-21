@@ -16,16 +16,16 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class GeneralServiceRequest {
-    @NotBlank(message = "Chung cư mini/nhóm căn hộ không được để trống")
+
     private Long groupId;
 
-    @NotBlank(message = "Dịch vụ chung không được để trống")
+
     private Long serviceId;
 
-    @NotBlank(message = "Giá tiền dịch vụ chung không được để trống")
+
     private Double generalServicePrice;
 
-    @NotBlank(message = "Cách tính dịch vụ tiền dịch vụ chung không được để trống")
+
     private Long generalServiceType;
 
     private String note;

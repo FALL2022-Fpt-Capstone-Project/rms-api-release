@@ -15,7 +15,7 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class AddMoneySourceRequest {
-    @NotBlank(message = "group_id không được để trống")
+
     private Long groupId;
 
     @NotBlank(message = "Thời gian tạo không được đ trống")

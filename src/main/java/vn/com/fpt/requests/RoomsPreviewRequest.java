@@ -20,7 +20,6 @@ import java.util.List;
 public class RoomsPreviewRequest {
     private Long groupId;
 
-    @NotBlank(message = "Số phòng mỗi tầng không được để trống")
     @Max(value = 0, message = "Số phòng mỗi tầng không được lớn hơn 10")
     @Min(value = 0, message = "Số phòng mỗi tầng phải là số duơng")
     private Integer totalRoomPerFloor;
@@ -29,7 +28,6 @@ public class RoomsPreviewRequest {
     private Double roomPrice;
     private Double roomArea;
 
-    @NotBlank(message = "Tầng không được để trống")
     private List<Integer> listFloor;
 
 

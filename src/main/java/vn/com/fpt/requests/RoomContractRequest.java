@@ -18,19 +18,15 @@ public class RoomContractRequest {
     private String contractName;
 
     @Min(value = 0, message = "Giá tiền không hợp lệ")
-    @NotBlank(message = "Giá trị hợp đồng không được để trống")
     private Double contractPrice;
 
     @Min(value = 0, message = "Giá tiền không hợp lệ")
-    @NotBlank(message = "Tiền cọc không được để trống")
     private Double contractDeposit;
 
     @Min(value = 0, message = "Chu kỳ hóa đơn không hợp lệ")
-    @NotBlank(message = "Chu kỳ hóa đơn không được để trống")
     private Integer contractBillCycle;
 
     @Min(value = 0, message = "Chu kỳ thanh toán không hợp lệ")
-    @NotBlank(message = "Chu kỳ thanh toán tiền phòng không được để trống")
     private Integer contractPaymentCycle;
 
     @NotBlank(message = "Thời gian bắt đầu lập hợp đồng không được để trống")

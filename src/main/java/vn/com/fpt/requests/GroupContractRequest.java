@@ -25,10 +25,10 @@ public class GroupContractRequest {
     private String contractName;
 
     @Min(value = 0, message = "Giá tiền không hợp lệ")
-    @NotBlank(message = "Giá trị hợp đồng không được để trống")
+
     private Double contractPrice;
     @Min(value = 0, message = "Giá tiền không hợp lệ")
-    @NotBlank(message = "Tiền cọc không được để trống")
+
     private Double contractDeposit;
 
     private Integer contractPaymentCycle;

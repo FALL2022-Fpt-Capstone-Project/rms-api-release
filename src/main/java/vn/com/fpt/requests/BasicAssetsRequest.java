@@ -20,7 +20,7 @@ public class BasicAssetsRequest {
     @NotBlank(message = "Tên trang thiết bị cơ bản không được để trống")
     private String assetName;
 
-    @NotBlank(message = "Vị trí trang thiết bị cơ bản không được để trống")
+
     private Long assetTypeId;
 
 

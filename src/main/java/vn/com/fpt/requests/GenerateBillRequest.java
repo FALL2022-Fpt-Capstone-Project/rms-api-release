@@ -16,7 +16,7 @@ import javax.validation.constraints.Pattern;
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class GenerateBillRequest {
-    @NotBlank(message = "Hợp đồng nhóm phòng không được để trống")
+
     private Long groupContractId;
 
     @NotBlank(message = "Hạn thanh toán không được để trống")
