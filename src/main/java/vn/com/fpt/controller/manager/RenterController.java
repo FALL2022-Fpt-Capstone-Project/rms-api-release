@@ -13,6 +13,7 @@ import vn.com.fpt.requests.RenterRequest;
 import vn.com.fpt.responses.RentersResponse;
 import vn.com.fpt.service.renter.RenterService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 import static vn.com.fpt.configs.AppConfigs.V1_PATH;
@@ -47,13 +48,13 @@ public class RenterController {
 
     @PostMapping("/add")
     @Operation(description = "Thêm mới khách thuê")
-    public ResponseEntity<BaseResponse<RentersResponse>> addRenter(@RequestBody RenterRequest request) {
+    public ResponseEntity<BaseResponse<RentersResponse>> addRenter(@Valid  @RequestBody RenterRequest request) {
         return AppResponse.success(renterService.addRenter(request, Operator.operator()));
     }
 
     @PutMapping("/update/{renterId}")
     @Operation(description = "Cập nhập thông tin khách khách thuê")
-    public ResponseEntity<BaseResponse<RentersResponse>> updateRenter(@RequestBody RenterRequest request,
+    public ResponseEntity<BaseResponse<RentersResponse>> updateRenter(@Valid @RequestBody RenterRequest request,
                                                                       @PathVariable Long renterId) {
         return AppResponse.success(renterService.updateRenter(renterId, request, Operator.operator()));
     }

@@ -18,6 +18,7 @@ import vn.com.fpt.responses.RoomsResponse;
 import vn.com.fpt.service.assets.AssetService;
 import vn.com.fpt.service.rooms.RoomService;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -68,26 +69,26 @@ public class RoomController {
 
     @PutMapping("/update")
     @Operation(summary = "Cập nhập một hoặc nhiều phòng")
-    public ResponseEntity<BaseResponse<String>> update(@RequestBody List<UpdateRoomRequest> requests) {
+    public ResponseEntity<BaseResponse<String>> update(@Valid @RequestBody List<UpdateRoomRequest> requests) {
         var updatedRoom = roomService.update(requests, Operator.operator());
         String roomNameUpdated = String.join(", ", updatedRoom.stream().map(Rooms::getRoomName).toList());
         return AppResponse.success(String.format("Cập nhập %s thành công", roomNameUpdated));
     }
 
     @PostMapping("/room-price-adjust")
-    public ResponseEntity<BaseResponse<AdjustRoomPriceResponse>> adjust(@RequestBody AdjustRoomPriceRequest request){
+    public ResponseEntity<BaseResponse<AdjustRoomPriceResponse>> adjust(@Valid @RequestBody AdjustRoomPriceRequest request){
         return AppResponse.success(roomService.adjustRoomPrice(request, Operator.operator()));
     }
 
     @PostMapping("/generate/preview")
     @Operation(summary = "Xem trước list phòng trước khi gen tự động")
-    public ResponseEntity<BaseResponse<RoomsPreviewResponse.SeparationRoomPreview>> previewGenerate(@RequestBody RoomsPreviewRequest request) {
+    public ResponseEntity<BaseResponse<RoomsPreviewResponse.SeparationRoomPreview>> previewGenerate(@Valid @RequestBody RoomsPreviewRequest request) {
         return AppResponse.success(roomService.preview(request));
     }
 
     @PostMapping("/add")
     @Operation(summary = "Thêm một hoặc nhiều phòng")
-    public ResponseEntity<BaseResponse<List<Rooms>>> add(@RequestBody List<AddRoomsRequest> requests) {
+    public ResponseEntity<BaseResponse<List<Rooms>>> add(@Valid @RequestBody List<AddRoomsRequest> requests) {
         List<Rooms> roomToAdd = new ArrayList<>(Collections.emptyList());
         requests.forEach(e -> {
                     if (e.getIsOld() != null && !e.getIsOld()) {

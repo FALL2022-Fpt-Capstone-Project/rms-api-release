@@ -17,6 +17,7 @@ import vn.com.fpt.requests.GroupContractRequest;
 import vn.com.fpt.requests.RoomContractRequest;
 import vn.com.fpt.service.contract.ContractService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 import static vn.com.fpt.configs.AppConfigs.*;
@@ -34,20 +35,20 @@ public class ContractController {
 
     @Operation(summary = "Thêm mới hợp đồng cho phòng")
     @PostMapping("/room/add")
-    public ResponseEntity<BaseResponse<RoomContractRequest>> addContract(@RequestBody RoomContractRequest request) {
+    public ResponseEntity<BaseResponse<RoomContractRequest>> addContract(@Valid @RequestBody RoomContractRequest request) {
         return AppResponse.success(contractService.addContract(request, Operator.operator()));
     }
 
     @Operation(summary = "Cập nhập hợp đồng cho phòng")
     @PutMapping("/room/update/{contractId}")
     public ResponseEntity<BaseResponse<RoomContractRequest>> updateContract(@PathVariable Long contractId,
-                                                                            @RequestBody RoomContractRequest request) {
+                                                                            @Valid @RequestBody RoomContractRequest request) {
         return AppResponse.success(contractService.updateContract(contractId, request, Operator.operator()));
     }
 
     @Operation(summary = "Kết thúc hợp đồng của phòng")
     @PostMapping("/room/end")
-    public ResponseEntity<BaseResponse<EndRoomContractRequest>> endContract(@RequestBody EndRoomContractRequest request) {
+    public ResponseEntity<BaseResponse<EndRoomContractRequest>> endContract(@Valid @RequestBody EndRoomContractRequest request) {
         return AppResponse.success(contractService.endRoomContract(request, Operator.operator()));
     }
 
@@ -91,7 +92,7 @@ public class ContractController {
 
     @Operation(summary = "Thêm mới một hợp đồng cho nhóm phòng")
     @PostMapping("/group/add")
-    public ResponseEntity<BaseResponse<GroupContractRequest>> addLeaseContract(@RequestBody GroupContractRequest request) {
+    public ResponseEntity<BaseResponse<GroupContractRequest>> addLeaseContract(@Valid @RequestBody GroupContractRequest request) {
         return AppResponse.success(contractService.addContract(request, Operator.operator()));
     }
 

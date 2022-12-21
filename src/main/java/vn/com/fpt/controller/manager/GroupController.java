@@ -18,6 +18,7 @@ import vn.com.fpt.responses.GroupNonContractedResponse;
 import vn.com.fpt.service.group.GroupService;
 import vn.com.fpt.service.rooms.RoomService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 import static vn.com.fpt.configs.AppConfigs.*;
@@ -60,14 +61,14 @@ public class GroupController {
 
     @PostMapping("/add")
     @Operation(summary = "Tạo mới một chung cư mini")
-    public ResponseEntity<BaseResponse<Object>> add(@RequestBody AddGroupRequest request) {
+    public ResponseEntity<BaseResponse<Object>> add(@Valid @RequestBody AddGroupRequest request) {
         return AppResponse.success(groupService.add(request, Operator.operator()));
     }
 
 
     @PostMapping("/update/{groupId}")
     @Operation(summary = "Cập nhập thông tin chung cư mini")
-    public ResponseEntity<BaseResponse<String>> update(@RequestBody UpdateGroupRequest request,
+    public ResponseEntity<BaseResponse<String>> update(@Valid @RequestBody UpdateGroupRequest request,
                                                        @PathVariable Long groupId) {
         return AppResponse.success(groupService.update(groupId, request, Operator.operator()));
     }

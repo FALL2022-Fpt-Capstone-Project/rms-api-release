@@ -53,6 +53,8 @@ public class BillServiceImpl implements BillService {
 
     private final SubMoneySourceRepository subMoneySourceRepo;
 
+    private final GroupRepository groupRepository;
+
 
     @Override
     public List<BillRoomStatusResponse> listBillRoomStatus(Long groupId, Integer paymentCircle) {
@@ -240,52 +242,59 @@ public class BillServiceImpl implements BillService {
                 null,
                 null
         ).stream().filter(e -> e.getContractId() != null).toList();
-        RoomGroups roomGroups = groupService.getGroup(groupId);
+        List<RoomGroups> roomGroups = new ArrayList<>();
+        if (groupId != null) {
+            roomGroups.addAll(groupRepository.findAll());
+        } else {
+            roomGroups.add(groupService.getGroup(groupId));
+        }
         String finalRemindAlert = remindAlert;
-        listRentedRoom.forEach(e -> {
-            RoomContractDTO contract = contractService.roomContract(e.getContractId());
-            if (paymentCircle == 0) {
-                if (ObjectUtils.isNotEmpty(contract.getContractIsDisable())) {
+        roomGroups.forEach(x -> listRentedRoom.forEach(e -> {
+            if (Objects.equals(e.getGroupId(), x.getId())) {
+                RoomContractDTO contract = contractService.roomContract(e.getContractId());
+                if (paymentCircle == 0) {
+                    if (ObjectUtils.isNotEmpty(contract.getContractIsDisable())) {
+                        responses.add(
+                                new ListRoomWithBillStatusResponse(
+                                        x.getGroupName(),
+                                        e.getRoomId(),
+                                        e.getRoomName(),
+                                        e.getContractId(),
+                                        "",
+                                        e.getRoomPrice(),
+                                        e.getRoomCurrentElectricIndex(),
+                                        e.getRoomCurrentWaterIndex(),
+                                        renterService.listRenter(e.getRoomId()).size(),
+                                        contract.getContractPaymentCycle(),
+                                        ObjectUtils.isEmpty(recurringBillRepo.findAllByRoomIdAndIsPaid(e.getRoomId(), false))
+                                        , finalRemindAlert
+                                )
+                        );
+                    }
+                } else {
+                    if (ObjectUtils.isNotEmpty(contract.getContractIsDisable()) && paymentCircle.equals(contract.getContractPaymentCycle())) {
 //                RentersResponse representRenter = renterService.representRenter(contract.getRoomId());
-                    responses.add(
-                            new ListRoomWithBillStatusResponse(
-                                    roomGroups.getGroupName(),
-                                    e.getRoomId(),
-                                    e.getRoomName(),
-                                    e.getContractId(),
-                                    "",
-                                    e.getRoomPrice(),
-                                    e.getRoomCurrentElectricIndex(),
-                                    e.getRoomCurrentWaterIndex(),
-                                    renterService.listRenter(e.getRoomId()).size(),
-                                    contract.getContractPaymentCycle(),
-                                    ObjectUtils.isEmpty(recurringBillRepo.findAllByRoomIdAndIsPaid(e.getRoomId(), false))
-                                    , finalRemindAlert
-                            )
-                    );
-                }
-            } else {
-                if (ObjectUtils.isNotEmpty(contract.getContractIsDisable()) && paymentCircle.equals(contract.getContractPaymentCycle())) {
-//                RentersResponse representRenter = renterService.representRenter(contract.getRoomId());
-                    responses.add(
-                            new ListRoomWithBillStatusResponse(
-                                    roomGroups.getGroupName(),
-                                    e.getRoomId(),
-                                    e.getRoomName(),
-                                    e.getContractId(),
-                                    "",
-                                    e.getRoomPrice(),
-                                    e.getRoomCurrentElectricIndex(),
-                                    e.getRoomCurrentWaterIndex(),
-                                    renterService.listRenter(e.getRoomId()).size(),
-                                    contract.getContractPaymentCycle(),
-                                    ObjectUtils.isEmpty(recurringBillRepo.findAllByRoomIdAndIsPaid(e.getRoomId(), false))
-                                    , finalRemindAlert
-                            )
-                    );
+                        responses.add(
+                                new ListRoomWithBillStatusResponse(
+                                        x.getGroupName(),
+                                        e.getRoomId(),
+                                        e.getRoomName(),
+                                        e.getContractId(),
+                                        "",
+                                        e.getRoomPrice(),
+                                        e.getRoomCurrentElectricIndex(),
+                                        e.getRoomCurrentWaterIndex(),
+                                        renterService.listRenter(e.getRoomId()).size(),
+                                        contract.getContractPaymentCycle(),
+                                        ObjectUtils.isEmpty(recurringBillRepo.findAllByRoomIdAndIsPaid(e.getRoomId(), false))
+                                        , finalRemindAlert
+                                )
+                        );
+                    }
                 }
             }
-        });
+        }));
+
         return responses;
     }
 
@@ -565,11 +574,23 @@ public class BillServiceImpl implements BillService {
             var localDate = toLocalDate(parse(time));
             int month = localDate.getMonthValue();
             int year = localDate.getYear();
-            moneySourceOut.addAll(moneySourceRepo.findAllByKeyInAndMoneyType(groupId, "OUT").stream().filter(
-                    e -> toLocalDate(e.getMoneySourceTime()).getYear() == year && toLocalDate(e.getMoneySourceTime()).getMonthValue() == month
-            ).toList());
+            if (!groupId.isEmpty()) {
+                moneySourceOut.addAll(moneySourceRepo.findAllByKeyInAndMoneyType(groupId, "OUT").stream().filter(
+                        e -> toLocalDate(e.getMoneySourceTime()).getYear() == year && toLocalDate(e.getMoneySourceTime()).getMonthValue() == month
+                ).toList());
+            } else {
+                moneySourceOut.addAll(moneySourceRepo.findAllByMoneyType("OUT").stream().filter(
+                        e -> toLocalDate(e.getMoneySourceTime()).getYear() == year && toLocalDate(e.getMoneySourceTime()).getMonthValue() == month
+                ).toList());
+            }
+
         } else {
-            moneySourceOut.addAll(moneySourceRepo.findAllByKeyInAndMoneyType(groupId, "OUT"));
+            if (!groupId.isEmpty()) {
+                moneySourceOut.addAll(moneySourceRepo.findAllByKeyInAndMoneyType(groupId, "OUT"));
+            } else {
+                moneySourceOut.addAll(moneySourceRepo.findAllByMoneyType("OUT"));
+
+            }
         }
         List<MoneyOutResponse> response = new ArrayList<>(Collections.emptyList());
         if (moneySourceOut.isEmpty()) {
