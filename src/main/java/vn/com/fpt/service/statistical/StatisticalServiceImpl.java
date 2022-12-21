@@ -226,7 +226,7 @@ public class StatisticalServiceImpl implements StatisticalService {
         return response;
     }
 
-    @Scheduled(cron = "0 * * * * ?")
+    @Scheduled(cron = "0 0 0 * * ?")
     private void extendContract() {
         var listContract = contractRepo.findAllByContractType(SUBLEASE_CONTRACT).stream().filter(e -> !e.getContractIsDisable() && e.getContractEndDate().compareTo(now()) < 0).toList();
         if (!listContract.isEmpty()) {
