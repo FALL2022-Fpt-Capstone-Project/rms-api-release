@@ -13,4 +13,6 @@ public interface GeneralServiceRepository extends JpaRepository<GeneralService, 
 
     List<GeneralService> findAllByGroupId(Long groupId);
 
+    GeneralService findByGroupIdAndServiceId(Long groupId, Long serviceId);
+
 }

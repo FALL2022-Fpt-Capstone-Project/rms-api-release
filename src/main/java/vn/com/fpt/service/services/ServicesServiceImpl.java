@@ -243,6 +243,9 @@ public class ServicesServiceImpl implements ServicesService {
 
     @Override
     public GeneralService addGeneralService(GeneralServiceRequest request, Long operator) {
+        if(generalServiceRepository.findByGroupIdAndServiceId(request.getGroupId(), request.getServiceId())!=null){
+            throw new BusinessException(GENERAL_SERVICE_EXISTED, "");
+        }
         return generalServiceRepository.save(GeneralService.add(request, operator));
     }
 
