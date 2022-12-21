@@ -29,6 +29,7 @@ public class RegisterRequest {
 
     private String phoneNumber;
 
+
     private Boolean gender;
 
     private String addressCity;

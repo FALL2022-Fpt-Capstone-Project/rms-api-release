@@ -3,6 +3,7 @@ package vn.com.fpt.controller.auth;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +16,8 @@ import vn.com.fpt.requests.RegisterRequest;
 import vn.com.fpt.responses.AccountResponse;
 import vn.com.fpt.service.authentication.AuthenticationService;
 
+import javax.validation.Valid;
+
 @Tag(name = "Đăng nhập vào hệ thống", description = "Đăng nhập vào hệ thống")
 @RestController
 @RequiredArgsConstructor
@@ -25,12 +28,12 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/login")
-    public ResponseEntity<BaseResponse<AccountResponse>> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<BaseResponse<AccountResponse>> login(@Valid @RequestBody LoginRequest request) {
         return AppResponse.success(authenticationService.login(request));
     }
 
     @PostMapping("/register")
-    public ResponseEntity<BaseResponse<AccountResponse>> add(@RequestBody RegisterRequest request) {
+    public ResponseEntity<BaseResponse<AccountResponse>> add(@Valid @RequestBody RegisterRequest request) {
         return AppResponse.success(authenticationService.register(request, 1L));
     }
 

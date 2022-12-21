@@ -165,8 +165,6 @@ public class BillServiceImpl implements BillService {
                 //lưu vết
                 tableLogComponent.saveRoomBillHistory(roomBill);
             }
-            // tạo hóa đơn dịch vụ
-            Double totalMoneyService = 0.0;
             // tạo hóa đơn định kì
             var var2 = recurringBillRepo.save(
                     RecurringBill.add(
@@ -183,7 +181,7 @@ public class BillServiceImpl implements BillService {
                             parse(abr.getPaymentTerm()),
                             parse(abr.getCreatedTime()),
                             DateUtils.monthsBetween(now(), contractInfor.getContractStartDate()) % contractInfor.getContractBillCycle() == 0,
-                            roomBill.getRoomId()
+                            roomBill.getId()
                     )
             );
             //lưu vết
@@ -480,8 +478,8 @@ public class BillServiceImpl implements BillService {
         response.setGroupName(groupService.getGroup(recurringBill.getGroupId()).getGroupName());
         response.setContractId(room.getContractId());
         response.setGroupContractId(room.getGroupContractId());
-        response.setBillCreatedTime(recurringBill.getBillCreatedTime());
-        response.setPaymentTerm(recurringBill.getPaymentTerm());
+        response.setBillCreatedTime(format(recurringBill.getBillCreatedTime(), DATE_FORMAT_3));
+        response.setPaymentTerm(format(recurringBill.getPaymentTerm(), DATE_FORMAT_3));
         response.setDescription(recurringBill.getDescription());
         response.setTotalServiceMoney(serviceBill.stream().mapToDouble(ServiceBill::getServiceBillTotalMoney).sum());
         response.setTotalRoomMoney(roomBill.getRoomTotalMoney() == null ? 0 : roomBill.getRoomTotalMoney());

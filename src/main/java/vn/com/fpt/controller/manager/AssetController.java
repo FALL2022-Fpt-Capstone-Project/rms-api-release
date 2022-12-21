@@ -20,6 +20,7 @@ import vn.com.fpt.requests.BasicAssetsRequest;
 import vn.com.fpt.requests.RoomAssetsRequest;
 import vn.com.fpt.service.assets.AssetService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 import static vn.com.fpt.configs.AppConfigs.*;
@@ -47,7 +48,7 @@ public class AssetController {
         return AppResponse.success(assetService.listBasicAsset());
     }
 
-    @GetMapping("/{assetId}")
+    @GetMapping("/id/{assetId}")
     @Operation(summary = "Lấy thông tin trang thiết bị cơ bản, thiết yếu")
     public ResponseEntity<BaseResponse<BasicAssets>> basicAsset(@PathVariable Long assetId) {
         return AppResponse.success(assetService.basicAssets(assetId));
@@ -55,7 +56,7 @@ public class AssetController {
 
     @PostMapping("/add")
     @Operation(summary = "Thêm trang thiết bị cơ bản, thiết yếu")
-    public ResponseEntity<BaseResponse<BasicAssets>> add(@RequestBody BasicAssetsRequest request) {
+    public ResponseEntity<BaseResponse<BasicAssets>> add(@RequestBody @Valid BasicAssetsRequest request) {
         return AppResponse.success(assetService.add(request, Operator.operator()));
     }
 

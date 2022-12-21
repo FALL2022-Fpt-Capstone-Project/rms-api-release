@@ -28,8 +28,8 @@ public class BillDetailResponse {
     private Long contractId;
     private Long groupContractId;
 
-    private Date billCreatedTime;
-    private Date paymentTerm;
+    private String billCreatedTime;
+    private String paymentTerm;
     private String description;
 
     private Double totalServiceMoney;

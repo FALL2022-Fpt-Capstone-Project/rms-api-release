@@ -68,7 +68,7 @@ public class Account extends BaseEntity {
             joinColumns = @JoinColumn(name = "account_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     @JsonProperty("roles")
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<Role> roles = new HashSet<>();
 
     @JoinColumn(name = "address_id")
@@ -108,7 +108,7 @@ public class Account extends BaseEntity {
                                  Long operator,
                                  Date time) {
         registerRequest.setDeactivate(registerRequest.getDeactivate() != null
-                                    && registerRequest.getDeactivate());
+                && registerRequest.getDeactivate());
         var account = of(registerRequest, address, roles);
         var addressToUpdate = Address.of(registerRequest);
         addressToUpdate.setId(address.getId());
