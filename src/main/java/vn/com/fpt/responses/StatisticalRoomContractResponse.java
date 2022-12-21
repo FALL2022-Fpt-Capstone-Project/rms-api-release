@@ -22,11 +22,11 @@ public class StatisticalRoomContractResponse {
 
     private Integer totalContract;
 
-    public static StatisticalRoomContractResponse of (Long duration,
-                                                      Integer almostExpiredContract,
-                                                      Integer latestContract,
-                                                      Integer expiredContract,
-                                                      Integer totalContract){
+    public static StatisticalRoomContractResponse of(Long duration,
+                                                     Integer almostExpiredContract,
+                                                     Integer latestContract,
+                                                     Integer expiredContract,
+                                                     Integer totalContract) {
         return StatisticalRoomContractResponse
                 .builder()
                 .duration(duration)

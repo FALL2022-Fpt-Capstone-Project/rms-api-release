@@ -18,7 +18,6 @@ import vn.com.fpt.entity.ServiceTypes;
 import vn.com.fpt.model.GeneralServiceDTO;
 import vn.com.fpt.service.services.ServicesService;
 
-import javax.validation.Valid;
 import java.util.List;
 
 import static vn.com.fpt.configs.AppConfigs.*;
@@ -60,7 +59,7 @@ public class ServiceController {
 
     @Operation(summary = "Thêm mới dịch vụ chung cho tòa")
     @PostMapping("/general/add")
-    public ResponseEntity<BaseResponse<GeneralService>> addGeneralService(@Valid  @RequestBody GeneralServiceRequest request) {
+    public ResponseEntity<BaseResponse<GeneralService>> addGeneralService(@RequestBody GeneralServiceRequest request) {
         return AppResponse.success(servicesService.addGeneralService(request, Operator.operator()));
     }
 
@@ -73,7 +72,7 @@ public class ServiceController {
     @Operation(summary = "Update thông tin của dịch vụ chung theo id")
     @PutMapping("/general/update/{generalServiceId}")
     public ResponseEntity<BaseResponse<GeneralService>> updateGeneralService(@PathVariable Long generalServiceId,
-                                                                             @Valid @RequestBody GeneralServiceRequest request) {
+                                                                             @RequestBody GeneralServiceRequest request) {
         return AppResponse.success(servicesService.updateGeneralService(generalServiceId, request, Operator.operator()));
     }
 

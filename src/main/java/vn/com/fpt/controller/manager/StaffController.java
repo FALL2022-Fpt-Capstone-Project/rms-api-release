@@ -83,7 +83,7 @@ public class StaffController {
 
     @PostMapping("/permission/set")
     @Operation(summary = "Thêm một hoặc nhiều quyền cho nhân viên")
-    public ResponseEntity<BaseResponse<List<Permission>>> addPermission(@Valid @RequestBody AddPermission request){
+    public ResponseEntity<BaseResponse<List<Permission>>> addPermission(@RequestBody AddPermission request){
         return AppResponse.success(staffService.addPermission(request, Operator.operator()));
     }
 

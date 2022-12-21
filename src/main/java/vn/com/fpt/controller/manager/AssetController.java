@@ -75,13 +75,13 @@ public class AssetController {
 
     @PostMapping("/room/add")
     @Operation(summary = "Thêm một hoặc nhiều trang thiết bị cho phòng")
-    public ResponseEntity<BaseResponse<List<RoomAssets>>> roomAdd(@Valid @RequestBody List<RoomAssetsRequest> request) {
+    public ResponseEntity<BaseResponse<List<RoomAssets>>> roomAdd(@Validated @RequestBody List<RoomAssetsRequest> request) {
         return AppResponse.success(assetService.roomAdd(request, Operator.operator()));
     }
 
     @PutMapping("/room/update")
     @Operation(summary = "Cập nhập một hoặc nhiều trang thiết bị trong phòng")
-    public ResponseEntity<BaseResponse<List<RoomAssets>>> roomUpdate(@Valid @RequestBody List<RoomAssetsRequest> requests) {
+    public ResponseEntity<BaseResponse<List<RoomAssets>>> roomUpdate(@Validated @RequestBody List<RoomAssetsRequest> requests) {
         return AppResponse.success(assetService.updateRoomAsset(requests, Operator.operator()));
     }
 
@@ -105,7 +105,7 @@ public class AssetController {
     @PutMapping("/update/{assetId}")
     @Operation(summary = "Cập nhập trang thiết bị cơ bản, thiết yếu")
     public ResponseEntity<BaseResponse<BasicAssets>> update(@PathVariable Long assetId,
-                                                            @Valid @RequestBody BasicAssetsRequest request) {
+                                                            @RequestBody BasicAssetsRequest request) {
         return AppResponse.success(assetService.update(assetId, request, Operator.operator()));
     }
 
