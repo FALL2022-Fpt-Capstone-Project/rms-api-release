@@ -196,7 +196,7 @@ public class BillServiceImpl implements BillService {
                     } else if (Objects.equals(sbr.getServiceId(), SERVICE_WATER) && Objects.equals(sbr.getServiceType(), SERVICE_TYPE_METER)) {
                         newWaterIndex = (roomInfor.getRoomCurrentWaterIndex() == null ? 0 : roomInfor.getRoomCurrentWaterIndex()) + sbr.getServiceIndex();
                     }
-                    if (newElectricIndex != null || newWaterIndex != null) {
+                    if (newElectricIndex != null && newWaterIndex != null) {
                         roomService.setServiceIndex(roomInfor.getId(), newElectricIndex, newWaterIndex, Operator.operator());
                         newWaterIndex = null;
                         newElectricIndex = null;
