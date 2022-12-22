@@ -430,7 +430,6 @@ public class BillServiceImpl implements BillService {
             service.setServiceTypeName(e.getServiceTypeName());
             service.setServiceShowName(e.getServiceShowName());
             service.setServicePrice(e.getServicePrice());
-            service.setHandOverGeneralServiceIndex(1);
             if (e.getServiceId().equals(BigInteger.valueOf(SERVICE_ELECTRIC))) {
                 service.setHandOverGeneralServiceIndex(room.getRoomCurrentElectricIndex());
             }
@@ -438,7 +437,7 @@ public class BillServiceImpl implements BillService {
                 service.setHandOverGeneralServiceIndex(room.getRoomCurrentWaterIndex());
             }
             if (e.getServiceTypeId().equals(BigInteger.valueOf(SERVICE_TYPE_PERSON))) {
-                service.setHandOverGeneralServiceIndex(renter.size());
+                service.setHandOverGeneralServiceIndex(renter.size() + 1);
             }
             list.add(service);
         });
@@ -451,7 +450,7 @@ public class BillServiceImpl implements BillService {
         response.setContractId(room.getContractId());
         response.setGroupContractId(room.getGroupContractId());
         response.setRoomPrice(room.getRoomPrice());
-        response.setTotalRenter(renter.size());
+        response.setTotalRenter(renter.size() + 1);
         response.setContractPaymentCycle(contract.getContractPaymentCycle());
         response.setListGeneralService(list);
         return response;
