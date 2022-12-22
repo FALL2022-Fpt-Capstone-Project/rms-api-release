@@ -124,10 +124,10 @@ public class ContractServiceImpl implements ContractService {
                     renterService.addRenter(Renters.add(RenterRequest.contractOf(request), address, operator));
 
             // sau khi thêm khách thuê đại diện -> set thông tin đại diện cho hợp đồng để add
-            contractsInformation.setRackRenters(newRenter.getId());
+            contractsInformation.setRenters(newRenter.getId());
         } else {
             // nếu khách đã tồn tại -> set renter_id vào hợp đồng
-            contractsInformation.setRackRenters(checkRenter.getId());
+            contractsInformation.setRenters(checkRenter.getId());
             renterService.updateRenter(checkRenter.getId(), RenterRequest.contractOf(request), operator);
         }
 
