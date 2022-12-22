@@ -17,6 +17,7 @@ import vn.com.fpt.requests.PreviewAddBillRequest;
 import vn.com.fpt.responses.*;
 import vn.com.fpt.service.bill.BillService;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -70,7 +71,7 @@ public class BillController {
 
     @Operation(summary = "Tạo một hoặc nhiều hóa đơn cho phòng")
     @PostMapping("/room/create")
-    public ResponseEntity<BaseResponse<List<AddBillRequest>>> createBill(@RequestBody List<AddBillRequest> requests) {
+    public ResponseEntity<BaseResponse<List<AddBillRequest>>> createBill(@Valid @RequestBody List<AddBillRequest> requests) {
         return AppResponse.success(billService.addBill(requests));
     }
 
