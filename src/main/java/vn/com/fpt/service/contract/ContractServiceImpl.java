@@ -692,6 +692,12 @@ public class ContractServiceImpl implements ContractService {
             e.setGroupContractId(null);
             e.setContractId(null);
         });
+        var listRoomContractId = room.stream().filter(e -> e.getContractId() != null).map(Rooms::getContractId).toList();
+        var listRoomContract = contractRepository.findAllByIdIn(listRoomContractId);
+        listRoomContract.forEach(e -> e.setContractIsDisable(true));
+
+        contractRepository.saveAll(listRoomContract);
+
         roomsRepository.saveAll(room);
         var renters = renterRepository.findAllByRoomIdIn(room.stream().map(Rooms::getId).toList());
         renters.forEach(e -> {

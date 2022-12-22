@@ -46,5 +46,7 @@ public interface RoomsRepository extends JpaRepository<Rooms, Long>, JpaSpecific
 
     List<Rooms> findAllByGroupContractId(Long groupContractId);
 
+    List<Rooms> findAllByGroupContractIdAndIsDisableIsFalse(Long groupContractId);
+
     Rooms findByIdAndContractIdNotNull(Long id);
 }
