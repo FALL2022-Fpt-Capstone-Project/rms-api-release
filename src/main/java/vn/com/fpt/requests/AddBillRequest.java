@@ -9,6 +9,7 @@ import lombok.Setter;
 import vn.com.fpt.model.GeneralServiceDTO;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 @Getter
@@ -23,8 +24,10 @@ public class AddBillRequest {
     private Double totalServiceMoney;
     private String description;
     @NotBlank(message = "payment_term không được để trống")
+    @NotEmpty(message = "payment_term không được để trống")
     private String paymentTerm;
     @NotBlank(message = "created_time không được để trống")
+    @NotEmpty(message = "created_time không được để trống")
     private String createdTime;
 
     private List<ServiceBill> serviceBill;

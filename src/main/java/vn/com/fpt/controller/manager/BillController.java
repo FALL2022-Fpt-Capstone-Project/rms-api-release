@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.common.response.AppResponse;
@@ -28,6 +29,7 @@ import static vn.com.fpt.configs.AppConfigs.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(BillController.PATH)
+@Validated
 public class BillController {
     public static final String PATH = V1_PATH + MANAGER_PATH + BILL_PATH;
 
