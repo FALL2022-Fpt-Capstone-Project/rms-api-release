@@ -18,7 +18,6 @@ import java.util.List;
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class AddBillRequest {
-    @NotBlank(message = "room_id không được để trống")
     private Long roomId;
     private Double totalRoomMoney;
     private Double totalServiceMoney;
