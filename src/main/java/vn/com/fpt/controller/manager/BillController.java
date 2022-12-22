@@ -29,7 +29,6 @@ import static vn.com.fpt.configs.AppConfigs.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(BillController.PATH)
-@Validated
 public class BillController {
     public static final String PATH = V1_PATH + MANAGER_PATH + BILL_PATH;
 
