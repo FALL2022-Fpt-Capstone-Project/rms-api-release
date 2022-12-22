@@ -432,10 +432,18 @@ public class BillServiceImpl implements BillService {
             service.setServicePrice(e.getServicePrice());
             service.setHandOverGeneralServiceIndex(1);
             if (e.getServiceId().equals(BigInteger.valueOf(SERVICE_ELECTRIC))) {
-                service.setHandOverGeneralServiceIndex(room.getRoomCurrentElectricIndex());
+                if (e.getServiceTypeId().equals(BigInteger.valueOf(SERVICE_TYPE_MONTH))) {
+                    service.setHandOverGeneralServiceIndex(1);
+                } else {
+                    service.setHandOverGeneralServiceIndex(room.getRoomCurrentElectricIndex());
+                }
             }
             if (e.getServiceId().equals(BigInteger.valueOf(SERVICE_WATER))) {
-                service.setHandOverGeneralServiceIndex(room.getRoomCurrentWaterIndex());
+                if (e.getServiceTypeId().equals(BigInteger.valueOf(SERVICE_TYPE_MONTH))) {
+                    service.setHandOverGeneralServiceIndex(1);
+                } else {
+                    service.setHandOverGeneralServiceIndex(room.getRoomCurrentWaterIndex());
+                }
             }
             if (e.getServiceTypeId().equals(BigInteger.valueOf(SERVICE_TYPE_PERSON))) {
                 service.setHandOverGeneralServiceIndex(renter.size() + 1);
