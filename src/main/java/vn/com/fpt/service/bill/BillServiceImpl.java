@@ -191,12 +191,12 @@ public class BillServiceImpl implements BillService {
             if (!abr.getServiceBill().isEmpty()) {
                 List<ServiceBill> serviceBills = new ArrayList<>(Collections.emptyList());
                 for (AddBillRequest.ServiceBill sbr : abr.getServiceBill()) {
-                    if (Objects.equals(sbr.getServiceId(), SERVICE_ELECTRIC)) {
+                    if (Objects.equals(sbr.getServiceId(), SERVICE_ELECTRIC) && Objects.equals(sbr.getServiceType(), SERVICE_TYPE_METER)) {
                         newElectricIndex = roomInfor.getRoomCurrentElectricIndex() + sbr.getServiceIndex();
-                    } else if (Objects.equals(sbr.getServiceId(), SERVICE_WATER)) {
+                    } else if (Objects.equals(sbr.getServiceId(), SERVICE_WATER) && Objects.equals(sbr.getServiceType(), SERVICE_TYPE_METER)) {
                         newWaterIndex = roomInfor.getRoomCurrentWaterIndex() + sbr.getServiceIndex();
                     }
-                    if (newElectricIndex != null && newWaterIndex != null) {
+                    if (newElectricIndex != null || newWaterIndex != null) {
                         roomService.setServiceIndex(roomInfor.getId(), newElectricIndex, newWaterIndex, Operator.operator());
                         newWaterIndex = null;
                         newElectricIndex = null;
