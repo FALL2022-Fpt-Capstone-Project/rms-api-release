@@ -622,6 +622,7 @@ public class BillServiceImpl implements BillService {
             subMoneySourceRepo.findAllByMoneySourceId(e.getId()).forEach(x -> {
                         mos.setTime(format(e.getMoneySourceTime(), "yyyy-MM-dd"));
                         mos.setGroupName(groupService.getGroup(e.getKey()).getGroupName());
+                        mos.setNote(x.getNote());
                         if (x.getType().equals("SERVICE")) mos.setServiceMoney(x.getMoney());
                         if (x.getType().equals("GROUP")) mos.setRoomGroupMoney(x.getMoney());
                         if (x.getType().equals("OTHER")) mos.setOtherMoney(x.getMoney());

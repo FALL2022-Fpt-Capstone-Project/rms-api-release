@@ -22,4 +22,6 @@ public class MoneyOutResponse {
     private Double serviceMoney;
     private Double otherMoney;
     private Double totalMoney;
+
+    private String note;
 }
