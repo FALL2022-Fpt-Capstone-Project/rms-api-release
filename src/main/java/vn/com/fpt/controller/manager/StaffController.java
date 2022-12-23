@@ -74,7 +74,6 @@ public class StaffController {
     }
 
     @PutMapping("/update/{staffId}")
-    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Update tài khoản cho nhân viên theo id")
     public ResponseEntity<BaseResponse<AccountResponse>> update(@RequestBody RegisterRequest request,
                                                                 @PathVariable Long staffId) {
