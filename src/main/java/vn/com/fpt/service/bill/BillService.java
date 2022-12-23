@@ -20,7 +20,7 @@ public interface BillService {
 
     List<PreviewAddBillResponse> addBillPreview(List<PreviewAddBillRequest> requests);
 
-    List<RecurringBill> roomBillHistory(Long roomId);
+    List<RecurringBill> roomBillHistory(Long roomId, String time);
 
     void payRoomBill(List<Long> billId);
 

@@ -79,8 +79,9 @@ public class BillController {
 
     @Operation(summary = "Xem lịch sử hóa đơn của phòng")
     @GetMapping("/room/history/{roomId}")
-    public ResponseEntity<BaseResponse<List<RecurringBill>>> roomBillHistory(@PathVariable Long roomId) {
-        return AppResponse.success(billService.roomBillHistory(roomId));
+    public ResponseEntity<BaseResponse<List<RecurringBill>>> roomBillHistory(@PathVariable Long roomId,
+                                                                             @RequestParam(required = false) String time) {
+        return AppResponse.success(billService.roomBillHistory(roomId, time));
     }
 
     @Operation(summary = "Chi trả một hoặc nhiều hóa đơn định kỳ ")

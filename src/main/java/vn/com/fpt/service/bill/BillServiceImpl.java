@@ -3,6 +3,7 @@ package vn.com.fpt.service.bill;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.sql.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -339,11 +340,18 @@ public class BillServiceImpl implements BillService {
     }
 
     @Override
-    public List<RecurringBill> roomBillHistory(Long roomId) {
-        var response = recurringBillRepo.findAllByRoomId(roomId);
+    public List<RecurringBill> roomBillHistory(Long roomId, String time) {
+        List<RecurringBill> recurringBills = new ArrayList<>();
+        if (StringUtils.isNotBlank(time)) {
+            int year = toLocalDate(parse(time, "yyyy-MM")).getYear();
+            int month = toLocalDate(parse(time, "yyyy-MM")).getMonthValue();
+            recurringBills.addAll(recurringBillRepo.findAllByRoomId(roomId).stream().filter(e -> toLocalDate(e.getBillCreatedTime()).getYear() == year && toLocalDate(e.getBillCreatedTime()).getMonthValue() == month).toList());
+        } else {
+            recurringBills.addAll(recurringBillRepo.findAllByRoomId(roomId));
+        }
         var roomName = roomService.room(roomId).getRoomName();
-        response.forEach(e -> e.setRoomName(roomName));
-        return response;
+        recurringBills.forEach(e -> e.setRoomName(roomName));
+        return recurringBills;
     }
 
     @Override
@@ -582,8 +590,8 @@ public class BillServiceImpl implements BillService {
     @Override
     public List<MoneyOutResponse> listMoneySourceOut(List<Long> groupId, String time) {
         List<MoneySource> moneySourceOut = new ArrayList<>(Collections.emptyList());
-        if (time != null) {
-            var localDate = toLocalDate(parse(time));
+        if (StringUtils.isNotBlank(time)) {
+            var localDate = toLocalDate(parse(time, "yyyy-MM"));
             int month = localDate.getMonthValue();
             int year = localDate.getYear();
             if (!groupId.isEmpty()) {
