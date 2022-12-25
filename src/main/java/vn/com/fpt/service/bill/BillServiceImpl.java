@@ -2,13 +2,10 @@ package vn.com.fpt.service.bill;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.apache.commons.collections.comparators.BooleanComparator;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.sql.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import vn.com.fpt.common.BusinessException;
 import vn.com.fpt.common.utils.DateUtils;
 import vn.com.fpt.common.utils.Operator;
 import vn.com.fpt.entity.*;
@@ -17,7 +14,6 @@ import vn.com.fpt.model.RoomContractDTO;
 import vn.com.fpt.repositories.*;
 import vn.com.fpt.requests.AddBillRequest;
 import vn.com.fpt.requests.AddMoneySourceRequest;
-import vn.com.fpt.requests.GenerateBillRequest;
 import vn.com.fpt.requests.PreviewAddBillRequest;
 import vn.com.fpt.responses.*;
 import vn.com.fpt.service.DeleteLog;
@@ -32,7 +28,6 @@ import vn.com.fpt.service.services.ServicesService;
 import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Predicate;
 
 import static vn.com.fpt.common.constants.ManagerConstants.*;
 import static vn.com.fpt.common.utils.DateUtils.*;
@@ -119,7 +114,7 @@ public class BillServiceImpl implements BillService {
                 response.setIsInBillCycle(false);
                 response.setTotalMoneyRoomPrice((double) 0);
             }
-            var recurringBills = recurringBillRepo.findAllByRoomIdOrderByIsPaidDesc(rcd.getRoomId());
+            var recurringBills = recurringBillRepo.findAllByRoomIdOrderByIsPaidAsc(rcd.getRoomId());
             var check = recurringBills.stream().filter(e -> toLocalDate(e.getBillCreatedTime()).getMonthValue() == currentMonth && toLocalDate(e.getBillCreatedTime()).getYear() == currentYear).toList();
             if (ObjectUtils.isNotEmpty(check)) {
                 var recurringBill = recurringBills.stream().filter(e -> toLocalDate(e.getBillCreatedTime()).getMonthValue() == currentMonth && toLocalDate(e.getBillCreatedTime()).getYear() == currentYear).findFirst().get();
@@ -346,9 +341,9 @@ public class BillServiceImpl implements BillService {
         if (StringUtils.isNotBlank(time)) {
             int year = toLocalDate(parse(time, "yyyy-MM")).getYear();
             int month = toLocalDate(parse(time, "yyyy-MM")).getMonthValue();
-            recurringBills.addAll(recurringBillRepo.findAllByRoomIdOrderByIsPaidDesc(roomId).stream().filter(e -> toLocalDate(e.getBillCreatedTime()).getYear() == year && toLocalDate(e.getBillCreatedTime()).getMonthValue() == month).toList());
+            recurringBills.addAll(recurringBillRepo.findAllByRoomIdOrderByIsPaidAsc(roomId).stream().filter(e -> toLocalDate(e.getBillCreatedTime()).getYear() == year && toLocalDate(e.getBillCreatedTime()).getMonthValue() == month).toList());
         } else {
-            recurringBills.addAll(recurringBillRepo.findAllByRoomIdOrderByIsPaidDesc(roomId));
+            recurringBills.addAll(recurringBillRepo.findAllByRoomIdOrderByIsPaidAsc(roomId));
         }
         var roomName = roomService.room(roomId).getRoomName();
         recurringBills.forEach(e -> e.setRoomName(roomName));
