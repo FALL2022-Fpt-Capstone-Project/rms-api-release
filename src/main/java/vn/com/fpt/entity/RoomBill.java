@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
+import vn.com.fpt.common.utils.Operator;
 import vn.com.fpt.configs.AppConfigs;
 
 import javax.persistence.AttributeOverride;
@@ -89,6 +90,7 @@ public class RoomBill extends BaseEntity {
                 billCreatedTime,
                 note);
         add.setCreatedAt(now());
+        add.setCreatedBy(Operator.operator());
         return add;
     }
 }
