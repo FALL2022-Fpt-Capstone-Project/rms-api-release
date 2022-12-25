@@ -2,6 +2,7 @@ package vn.com.fpt.service.bill;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.apache.commons.collections.comparators.BooleanComparator;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.sql.Update;
@@ -106,7 +107,7 @@ public class BillServiceImpl implements BillService {
             response.setRoomCurrentWaterIndex(room.getRoomCurrentWaterIndex() == null ? 0 : room.getRoomCurrentWaterIndex());
             response.setRoomCurrentElectricIndex(room.getRoomCurrentElectricIndex() == null ? 0 : room.getRoomCurrentElectricIndex());
             response.setRoomPrice(room.getRoomPrice());
-            response.setTotalRenter(renter.isEmpty() ? 1 : renter.size());
+            response.setTotalRenter(renter.size() == 0 ? 1 : renter.size());
             response.setListGeneralService(generalService);
             response.setContractPaymentCycle(rcd.getContractPaymentCycle());
             response.setBillCycle(rcd.getContractBillCycle());
@@ -118,7 +119,7 @@ public class BillServiceImpl implements BillService {
                 response.setIsInBillCycle(false);
                 response.setTotalMoneyRoomPrice((double) 0);
             }
-            var recurringBills = recurringBillRepo.findAllByRoomId(rcd.getRoomId());
+            var recurringBills = recurringBillRepo.findAllByRoomIdOrderByIsPaidDesc(rcd.getRoomId());
             var check = recurringBills.stream().filter(e -> toLocalDate(e.getBillCreatedTime()).getMonthValue() == currentMonth && toLocalDate(e.getBillCreatedTime()).getYear() == currentYear).toList();
             if (ObjectUtils.isNotEmpty(check)) {
                 var recurringBill = recurringBills.stream().filter(e -> toLocalDate(e.getBillCreatedTime()).getMonthValue() == currentMonth && toLocalDate(e.getBillCreatedTime()).getYear() == currentYear).findFirst().get();
@@ -295,7 +296,7 @@ public class BillServiceImpl implements BillService {
                 }
             }
         }));
-
+        responses.sort((r1, r2) -> Boolean.compare(r1.getIsAllPaid(), r2.getIsAllPaid()));
         return responses;
     }
 
@@ -321,7 +322,7 @@ public class BillServiceImpl implements BillService {
             response.setContractId(room.getContractId());
             response.setGroupContractId(room.getGroupContractId());
             response.setRoomPrice(room.getRoomPrice());
-            response.setTotalRenter(renter.size());
+            response.setTotalRenter(renter.size() == 0 ? 1 : renter.size());
             response.setTotalMoneyServicePrice(e.getTotalMoneyServicePrice());
             response.setTotalMoney(e.getTotalMoneyRoomPrice() + (ObjectUtils.isEmpty(e.getTotalMoneyServicePrice()) ? 0 : e.getTotalMoneyServicePrice()));
             response.setContractPaymentCycle(contract.getContractPaymentCycle());
@@ -345,9 +346,9 @@ public class BillServiceImpl implements BillService {
         if (StringUtils.isNotBlank(time)) {
             int year = toLocalDate(parse(time, "yyyy-MM")).getYear();
             int month = toLocalDate(parse(time, "yyyy-MM")).getMonthValue();
-            recurringBills.addAll(recurringBillRepo.findAllByRoomId(roomId).stream().filter(e -> toLocalDate(e.getBillCreatedTime()).getYear() == year && toLocalDate(e.getBillCreatedTime()).getMonthValue() == month).toList());
+            recurringBills.addAll(recurringBillRepo.findAllByRoomIdOrderByIsPaidDesc(roomId).stream().filter(e -> toLocalDate(e.getBillCreatedTime()).getYear() == year && toLocalDate(e.getBillCreatedTime()).getMonthValue() == month).toList());
         } else {
-            recurringBills.addAll(recurringBillRepo.findAllByRoomId(roomId));
+            recurringBills.addAll(recurringBillRepo.findAllByRoomIdOrderByIsPaidDesc(roomId));
         }
         var roomName = roomService.room(roomId).getRoomName();
         recurringBills.forEach(e -> e.setRoomName(roomName));
@@ -454,7 +455,7 @@ public class BillServiceImpl implements BillService {
                 }
             }
             if (e.getServiceTypeId().equals(BigInteger.valueOf(SERVICE_TYPE_PERSON))) {
-                service.setHandOverGeneralServiceIndex(renter.size() + 1);
+                service.setHandOverGeneralServiceIndex(renter.size() == 0 ? 1 : renter.size());
             }
             list.add(service);
         });
@@ -467,7 +468,7 @@ public class BillServiceImpl implements BillService {
         response.setContractId(room.getContractId());
         response.setGroupContractId(room.getGroupContractId());
         response.setRoomPrice(room.getRoomPrice());
-        response.setTotalRenter(renter.size() + 1);
+        response.setTotalRenter(renter.size() == 0 ? 1 : renter.size());
         response.setContractPaymentCycle(contract.getContractPaymentCycle());
         response.setListGeneralService(list);
         return response;
