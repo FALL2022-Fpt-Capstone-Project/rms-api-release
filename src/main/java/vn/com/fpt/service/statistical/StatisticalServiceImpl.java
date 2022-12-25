@@ -59,6 +59,7 @@ public class StatisticalServiceImpl implements StatisticalService {
         almostExpired.as(rootCondition);
         almostExpired.add(SearchCriteria.of("contractEndDate", now, GREATER_THAN_EQUAL));
         almostExpired.add(SearchCriteria.of("contractEndDate", monthsCalculate(now, duration), LESS_THAN_EQUAL));
+        almostExpired.add(SearchCriteria.of("contractIsDisable", false, EQUAL));
         Integer total1 = contractRepo.findAll(almostExpired).size();
 
         // tổng số hợp đồng mới tạo
@@ -66,6 +67,7 @@ public class StatisticalServiceImpl implements StatisticalService {
         latest.as(rootCondition);
         latest.add(SearchCriteria.of("contractStartDate", monthsCalculate(now, -duration), GREATER_THAN_EQUAL));
         latest.add(SearchCriteria.of("contractStartDate", now, LESS_THAN_EQUAL));
+        latest.add(SearchCriteria.of("contractIsDisable", false, EQUAL));
         Integer total2 = contractRepo.findAll(latest).size();
 
         // tổng số hợp đồng đã hết hạn
