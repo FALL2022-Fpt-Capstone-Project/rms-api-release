@@ -1,7 +1,9 @@
 package vn.com.fpt.service.authentication;
 
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -102,6 +104,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
         if (roles.isEmpty()) throw new BusinessException(INVALID_ROLE, "Quyền: " + strRoles);
         return roles;
+    }
+
+    public String accountName(Long id){
+        return accountRepository.findById(id).get().getUserName();
     }
 
 }

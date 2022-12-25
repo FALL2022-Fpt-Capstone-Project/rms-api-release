@@ -52,6 +52,8 @@ public class BillServiceImpl implements BillService {
 
     private final GroupRepository groupRepository;
 
+    private final AccountRepository accountRepository;
+
 
     @Override
     public List<BillRoomStatusResponse> listBillRoomStatus(Long groupId, Integer paymentCircle) {
@@ -493,6 +495,7 @@ public class BillServiceImpl implements BillService {
         var room = roomService.room(recurringBill.getRoomId());
         var contract = contractService.contract(room.getContractId());
         BillDetailResponse response = new BillDetailResponse();
+        roomBill.setCreatedName(accountRepository.findById(roomBill.getCreatedBy()).get().getUserName());
         response.setRoomId(recurringBill.getRoomId());
         response.setRoomName(room.getRoomName());
         response.setGroupId(recurringBill.getGroupId());

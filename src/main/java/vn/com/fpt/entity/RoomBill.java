@@ -53,6 +53,8 @@ public class RoomBill extends BaseEntity {
     @Column(name = "note")
     private String note;
 
+    private String createdName;
+
     public static RoomBill of(Long contractId,
                               Long groupContractId,
                               Long groupId,
