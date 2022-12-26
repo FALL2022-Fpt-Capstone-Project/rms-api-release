@@ -129,6 +129,9 @@ public class Rooms extends BaseEntity {
         room.setCreatedBy(old.getCreatedBy());
         room.setIsDisable(old.getIsDisable());
 
+        room.setRoomCurrentWaterIndex(old.getRoomCurrentWaterIndex());
+        room.setRoomCurrentElectricIndex(old.getRoomCurrentElectricIndex());
+
         room.setModifiedAt(DateUtils.now());
         room.setCreatedBy(operator);
 
