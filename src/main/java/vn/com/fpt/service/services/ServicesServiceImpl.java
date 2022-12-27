@@ -23,7 +23,6 @@ import javax.persistence.Query;
 import java.util.*;
 
 import static vn.com.fpt.common.constants.ErrorStatusConstants.*;
-import static vn.com.fpt.common.constants.ManagerConstants.*;
 import static vn.com.fpt.model.GeneralServiceDTO.SQL_RESULT_SET_MAPPING;
 
 
@@ -247,21 +246,11 @@ public class ServicesServiceImpl implements ServicesService {
         if (generalServiceRepository.findByGroupIdAndServiceId(request.getGroupId(), request.getServiceId()) != null) {
             throw new BusinessException(GENERAL_SERVICE_EXISTED, "");
         }
-        if (request.getServiceId() != SERVICE_ELECTRIC && request.getServiceId() != SERVICE_WATER) {
-            if (request.getGeneralServiceType().equals(SERVICE_TYPE_METER))
-                throw new BusinessException(INVALID_TYPE, "Cách tính tiền dịch vụ không hợp lệ!!");
-        }
         return generalServiceRepository.save(GeneralService.add(request, operator));
     }
 
     @Override
     public List<GeneralService> addGeneralService(List<GeneralServiceRequest> request, Long operator) {
-        request.forEach(e -> {
-            if (e.getServiceId() != SERVICE_ELECTRIC && e.getServiceId() != SERVICE_WATER) {
-                if (e.getGeneralServiceType().equals(SERVICE_TYPE_METER))
-                    throw new BusinessException(INVALID_TYPE, "Cách tính tiền dịch vụ không hợp lệ!!");
-            }
-        });
         return generalServiceRepository.saveAll(request.stream().map(GeneralService::of).toList());
     }
 
@@ -286,11 +275,11 @@ public class ServicesServiceImpl implements ServicesService {
                                                                 Long operator) {
         var old = handOverGeneralServicesRepo.findById(id).get();
         return handOverGeneralServicesRepo.save(HandOverGeneralServices.modify(old,
-                contractId,
-                request.getHandOverGeneralServiceIndex(),
-                request.getGeneralServiceId(),
-                dateDelivery,
-                operator
+                                                contractId,
+                                                request.getHandOverGeneralServiceIndex(),
+                                                request.getGeneralServiceId(),
+                                                dateDelivery,
+                                                operator
         ));
     }
 
