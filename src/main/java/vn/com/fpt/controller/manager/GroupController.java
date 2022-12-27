@@ -61,7 +61,7 @@ public class GroupController {
 
     @PostMapping("/add")
     @Operation(summary = "Tạo mới một chung cư mini")
-    public ResponseEntity<BaseResponse<Object>> add(@Valid @RequestBody AddGroupRequest request) {
+    public ResponseEntity<BaseResponse<Object>> add(@RequestBody AddGroupRequest request) {
         return AppResponse.success(groupService.add(request, Operator.operator()));
     }
 
