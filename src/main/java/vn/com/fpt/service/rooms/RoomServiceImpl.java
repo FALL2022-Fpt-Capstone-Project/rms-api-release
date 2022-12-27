@@ -535,7 +535,7 @@ public class RoomServiceImpl implements RoomService {
                         rs.getRoomName(),
                         rs.getRoomFloor(),
                         rs.getRoomLimitPeople(),
-                        rs.getRoomPrice() - request.getNumber(),
+                        Math.max(rs.getRoomPrice() - request.getNumber(), 0.0),
                         rs.getRoomArea(),
                         operator));
             }
