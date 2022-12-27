@@ -142,11 +142,12 @@ public class BillServiceImpl implements BillService {
     @Override
     @SneakyThrows
     public List<AddBillRequest> addBill(List<AddBillRequest> addBillRequests) {
-        var currentMonth = toLocalDate(now()).getMonth().getValue();
-        var currentYear = toLocalDate(now()).getYear();
+
         Integer newElectricIndex = null;
         Integer newWaterIndex = null;
         for (AddBillRequest abr : addBillRequests) {
+            var currentMonth = toLocalDate(parse(abr.getCreatedTime())).getMonth().getValue();
+            var currentYear = toLocalDate(parse(abr.getCreatedTime())).getYear();
             //tạo hóa đơn cho tiền phòng
             var roomInfor = roomService.room(abr.getRoomId());
             var contractInfor = contractService.contract(roomInfor.getContractId());
