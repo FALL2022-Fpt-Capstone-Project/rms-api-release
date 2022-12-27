@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static vn.com.fpt.common.constants.ErrorStatusConstants.DUPLICATE_NAME;
+import static vn.com.fpt.common.constants.ErrorStatusConstants.INVALID_TOTAL;
 import static vn.com.fpt.common.constants.ManagerConstants.DEFAULT_ASSET_QUANTITY;
 import static vn.com.fpt.common.constants.ManagerConstants.LEASE_CONTRACT;
 import static vn.com.fpt.common.constants.SearchOperation.IN;
@@ -115,25 +116,25 @@ public class GroupServiceImpl implements GroupService {
         }
 
         BaseSpecification<RoomGroups> contractSpec = new BaseSpecification<>();
-        if(ObjectUtils.isNotEmpty(addressId)){
+        if (ObjectUtils.isNotEmpty(addressId)) {
             contractSpec.add(SearchCriteria.of("address", addressId, IN));
         }
         var listNonContractedGroup = groupRepository.findAll(contractSpec, Sort.by("id").descending());
         List<GroupNonContractedResponse> result = new ArrayList<>(Collections.emptyList());
 
         for (RoomGroups roomGroups : listNonContractedGroup) {
-                if (contractRepository.findByGroupIdAndContractTypeAndContractIsDisableIsFalse(roomGroups.getId(), LEASE_CONTRACT).isEmpty() && !roomGroups.getIsDisable()) {
-                    GroupNonContractedResponse group = new GroupNonContractedResponse();
-                    group.setGroupId(roomGroups.getId());
-                    group.setGroupName(roomGroups.getGroupName());
-                    group.setDescription(roomGroups.getGroupDescription());
-                    group.setTotalRoom(roomsRepository.findAllByGroupIdAndIsDisableIsFalse(roomGroups.getId()).size());
-                    group.setTotalFloor(roomsRepository.findAllFloorByGroupId(roomGroups.getId()).size());
-                    group.setAddress(addressRepository.findById(roomGroups.getAddress()).get());
-                    group.setListRooms(roomService.listRoom(roomGroups.getId(), null, null, null, null));
-                    group.setListGeneralService(servicesService.listGeneralServiceByGroupId(roomGroups.getId()));
-                    group.setGroupContracted(false);
-                    result.add(group);
+            if (contractRepository.findByGroupIdAndContractTypeAndContractIsDisableIsFalse(roomGroups.getId(), LEASE_CONTRACT).isEmpty() && !roomGroups.getIsDisable()) {
+                GroupNonContractedResponse group = new GroupNonContractedResponse();
+                group.setGroupId(roomGroups.getId());
+                group.setGroupName(roomGroups.getGroupName());
+                group.setDescription(roomGroups.getGroupDescription());
+                group.setTotalRoom(roomsRepository.findAllByGroupIdAndIsDisableIsFalse(roomGroups.getId()).size());
+                group.setTotalFloor(roomsRepository.findAllFloorByGroupId(roomGroups.getId()).size());
+                group.setAddress(addressRepository.findById(roomGroups.getAddress()).get());
+                group.setListRooms(roomService.listRoom(roomGroups.getId(), null, null, null, null));
+                group.setListGeneralService(servicesService.listGeneralServiceByGroupId(roomGroups.getId()));
+                group.setGroupContracted(false);
+                result.add(group);
             }
         }
         return result;
@@ -165,6 +166,8 @@ public class GroupServiceImpl implements GroupService {
     @Override
     @Transactional
     public AddGroupRequest add(AddGroupRequest request, Long operator) {
+        if (request.getTotalRoomPerFloor() * request.getTotalFloor() >= 40)
+            throw new BusinessException(INVALID_TOTAL, "Tổng số phòng: " + (request.getTotalRoomPerFloor() * request.getTotalFloor()));
         var addressId = addressRepository.save(Address.add(
                 request.getAddressCity(),
                 request.getAddressDistrict(),
@@ -213,7 +216,7 @@ public class GroupServiceImpl implements GroupService {
         if (ObjectUtils.isNotEmpty(request.getListAsset())) {
             for (Long lri : listRoomId) {
                 request.getListAsset().forEach(e -> {
-                    if(!ObjectUtils.isEmpty(e))
+                    if (!ObjectUtils.isEmpty(e))
                         listRoomAsset.add(RoomAssets.add(
                                 e.getAssetName(),
                                 ObjectUtils.isEmpty(e.getAssetQuantity()) ? DEFAULT_ASSET_QUANTITY : e.getAssetQuantity(),
@@ -224,7 +227,7 @@ public class GroupServiceImpl implements GroupService {
                 });
             }
         }
-        if(!listRoomAsset.isEmpty()) assetService.add(listRoomAsset);
+        if (!listRoomAsset.isEmpty()) assetService.add(listRoomAsset);
         //add general service
         request.getListGeneralService().forEach(e -> e.setGroupId(group.getId()));
         servicesService.addGeneralService(request.getListGeneralService(), operator);
