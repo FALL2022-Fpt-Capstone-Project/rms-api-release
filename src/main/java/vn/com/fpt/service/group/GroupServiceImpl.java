@@ -228,7 +228,7 @@ public class GroupServiceImpl implements GroupService {
         if (!listRoomAsset.isEmpty()) assetService.add(listRoomAsset);
         //add general service
         request.getListGeneralService().forEach(e -> {
-            if (e.getServiceId() != SERVICE_ELECTRIC || e.getServiceId() != SERVICE_WATER) {
+            if (e.getServiceId() != SERVICE_ELECTRIC && e.getServiceId() != SERVICE_WATER) {
                 if (e.getGeneralServiceType().equals(SERVICE_TYPE_METER)) throw new BusinessException(INVALID_TYPE, "Cách tính tiền dịch vụ không hợp lệ!!");
             }
             e.setGroupId(group.getId());

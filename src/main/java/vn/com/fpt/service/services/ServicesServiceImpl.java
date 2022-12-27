@@ -247,7 +247,7 @@ public class ServicesServiceImpl implements ServicesService {
         if (generalServiceRepository.findByGroupIdAndServiceId(request.getGroupId(), request.getServiceId()) != null) {
             throw new BusinessException(GENERAL_SERVICE_EXISTED, "");
         }
-        if (request.getServiceId() != SERVICE_ELECTRIC || request.getServiceId() != SERVICE_WATER) {
+        if (request.getServiceId() != SERVICE_ELECTRIC && request.getServiceId() != SERVICE_WATER) {
             if (request.getGeneralServiceType().equals(SERVICE_TYPE_METER))
                 throw new BusinessException(INVALID_TYPE, "Cách tính tiền dịch vụ không hợp lệ!!");
         }
@@ -257,7 +257,7 @@ public class ServicesServiceImpl implements ServicesService {
     @Override
     public List<GeneralService> addGeneralService(List<GeneralServiceRequest> request, Long operator) {
         request.forEach(e -> {
-            if (e.getServiceId() != SERVICE_ELECTRIC || e.getServiceId() != SERVICE_WATER) {
+            if (e.getServiceId() != SERVICE_ELECTRIC && e.getServiceId() != SERVICE_WATER) {
                 if (e.getGeneralServiceType().equals(SERVICE_TYPE_METER))
                     throw new BusinessException(INVALID_TYPE, "Cách tính tiền dịch vụ không hợp lệ!!");
             }
