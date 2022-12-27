@@ -21,12 +21,12 @@ public class AddGroupRequest {
     @NotBlank(message = "Tên chung cư mini/ nhóm căn hộ không được để trống")
     private String groupName;
 
-    @Min(value = 0, message = "Số tầng phải là số dương")
-    @Max(value = 0, message = "Số tầng không được lớn hơn 10")
+    @Min(value = 1, message = "Số tầng phải là số dương")
+    @Max(value = 10, message = "Số tầng không được lớn hơn 10")
     private Integer totalFloor;
 
-    @Max(value = 0, message = "Số phòng mỗi tầng không được lớn hơn 10")
-    @Min(value = 0, message = "Số phòng mỗi tầng phải là số duơng")
+    @Max(value = 10, message = "Số phòng mỗi tầng không được lớn hơn 10")
+    @Min(value = 1, message = "Số phòng mỗi tầng phải là số duơng")
     private Integer totalRoomPerFloor;
 
     private String roomNameConvention;

@@ -21,6 +21,8 @@ public enum ErrorStatusConstants {
 
     INVALID_TOTAL(HttpStatus.BAD_REQUEST, 400030, "Tổng số lượng phòng tạo ra quá lớn, vui lòng kiểm tra lại!!"),
 
+    INVALID_TYPE(HttpStatus.BAD_REQUEST, 400031, "Loại không hợp lệ, vui lòng kiểm tra lại!!!"),
+
     EXISTED_ACCOUNT(HttpStatus.BAD_REQUEST, 400002, "Tài khoản đã tồn tại, vui lòng kiểm tra lại!!"),
 
     WRONG_LOGIN_INFORMATION(HttpStatus.FORBIDDEN, 403001, "Sai thông tin đăng nhập, vui lòng kiểm tra lại!!"),
